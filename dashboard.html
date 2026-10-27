@@ -83,15 +83,22 @@
         <p class="t-label-cap mb-3 mt-3 px-1 text-[12px] font-semibold uppercase tracking-[0.14em] text-muted-strong">Workspace</p>
         <ul class="space-y-1.5">
             <li><a href="/dashboard" th:href="@{/dashboard}" data-nav="overview" aria-current="page"
-                   class="nav-link is-active"><i data-lucide="layout-dashboard" class="h-5 w-5"></i><span class="t-label">Overview</span></a></li>
-            <li><a href="/meeting-history" th:href="@{/meeting-history}" data-nav="meeting-history" class="nav-link"><i data-lucide="history"
-                                                                                          class="h-5 w-5"></i><span class="t-label">Meeting History</span></a>
+                   class="nav-link is-active"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect
+                     width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect
+                     width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg><span class="t-label">Overview</span></a></li>
+            <li><a href="/meeting-history" th:href="@{/meeting-history}" data-nav="meeting-history" class="nav-link"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg><span class="t-label">Meeting History</span></a>
             </li>
-            <li><a href="/settings" th:href="@{/settings}" data-nav="settings" class="nav-link"><i data-lucide="settings"
-                                                                                                class="h-5 w-5"></i><span class="t-label">Settings</span></a>
+            <li><a href="/settings" th:href="@{/settings}" data-nav="settings" class="nav-link"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg><span class="t-label">Settings</span></a>
             </li>
-            <li><a href="/help" th:href="@{/help}" data-nav="help" class="nav-link"><i data-lucide="circle-help"
-                                                                                                class="h-5 w-5"></i><span class="t-label">Help &amp; Support</span></a>
+            <li><a href="/help" th:href="@{/help}" data-nav="help" class="nav-link"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg><span class="t-label">Help &amp; Support</span></a>
             </li>
         </ul>
     </nav>
@@ -105,7 +112,9 @@
                 <p class="text-xs leading-4 text-muted-strong" data-user-role>User</p>
             </div>
             <button id="sidebar-logout" type="button" data-action="logout" class="icon-btn-plain" aria-label="Sign out">
-                <i data-lucide="log-out" class="h-5 w-5"></i></button>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg></button>
         </div>
     </div>
 

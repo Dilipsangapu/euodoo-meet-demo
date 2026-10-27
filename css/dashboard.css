@@ -206,11 +206,12 @@ input[type="search"]::-webkit-search-cancel-button {
 .sidebar-toggle {
     display: none;
     position: absolute;
-    top: 50%;
+    /* Aligned with the brand/header row near the top of the sidebar; anchored
+       to the top so the placement is identical whatever the sidebar height. */
+    top: 22px;
     right: -14px;
     width: 28px;
     height: 28px;
-    margin-top: -14px;
     z-index: 10;
     align-items: center;
     justify-content: center;
@@ -305,6 +306,11 @@ html[data-theme="dark"] .sidebar-toggle {
     html {
         --sidebar-w: 248px;
     }
+
+    /* Header row is 88px tall at lg: keep the toggle centered on it. */
+    .sidebar-toggle {
+        top: 30px;
+    }
 }
 
 @media (min-width: 768px) {
@@ -344,6 +350,17 @@ html[data-theme="dark"] .sidebar-toggle {
     font-weight: 500;
     color: var(--muted-strong);
     transition: background-color .18s ease, color .18s ease;
+}
+
+/* Inline sidebar icons: keep them crisp and allow stroke color inheritance
+   (hover/visited/active states flow through currentColor). */
+.nav-link > svg {
+    flex: none;
+}
+
+.nav-link:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 2px;
 }
 
 .nav-link:hover {
