@@ -472,9 +472,7 @@
             flex: 1;
             position: relative;
             overflow: hidden;
-            background-color: #fff;
-            background-image: radial-gradient(#cbd5e1 1.2px, transparent 1.2px);
-            background-size: 24px 24px;
+            background-color: #ffffff;
             cursor: crosshair
         }
 
@@ -587,158 +585,6 @@
             transform: scale(1.15)
         }
 
-        /* Subtle empty-state hint shown until the first stroke is committed */
-        .wb-empty-hint {
-            position: absolute;
-            inset: 0;
-            z-index: 4;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            pointer-events: none;
-            text-align: center;
-            padding: 0 20px 120px 0
-        }
-
-        .wb-empty-hint strong {
-            font-size: 14.5px;
-            font-weight: 700;
-            color: #17333D
-        }
-
-        .wb-empty-hint span {
-            font-size: 12.5px;
-            line-height: 1.5;
-            color: #718893;
-            max-width: 380px;
-            background: rgba(255, 255, 255, .9);
-            padding: 6px 14px;
-            border-radius: 10px
-        }
-
-        .wb-empty-hint[hidden] {
-            display: none
-        }
-
-        .wb-diagram-title {
-            font-size: 26px;
-            font-weight: 800;
-            color: #0b6b68;
-            top: 36px;
-            left: 100px;
-            letter-spacing: -.5px;
-            white-space: nowrap
-        }
-
-        .wb-diagram-title::after {
-            content: "";
-            position: absolute;
-            bottom: -6px;
-            left: 0;
-            width: 140px;
-            height: 3px;
-            background: #0b6b68;
-            border-radius: 2px
-        }
-
-        .wb-step-card {
-            width: 120px;
-            height: 130px;
-            border-radius: 12px;
-            padding: 14px;
-            font-size: 13px;
-            font-weight: 600;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
-            top: 110px
-        }
-
-        .wb-step-card small {
-            font-size: 11.5px;
-            opacity: .9;
-            font-weight: 500
-        }
-
-        .card-yellow {
-            background: #fef08a;
-            border: 1px solid #fde047;
-            color: #713f12;
-            left: 100px
-        }
-
-        .card-pink {
-            background: #fbcfe8;
-            border: 1px solid #f472b6;
-            color: #831843;
-            left: 270px
-        }
-
-        .card-cyan {
-            background: #cffafe;
-            border: 1px solid #67e8f9;
-            color: #155e75;
-            left: 440px
-        }
-
-        .card-peach {
-            background: #fed7aa;
-            border: 1px solid #fdba74;
-            color: #9a3412;
-            left: 610px
-        }
-
-        .wb-risks-box {
-            top: 290px;
-            left: 100px;
-            width: 270px;
-            padding: 18px;
-            border: 2px solid var(--or);
-            border-radius: 18px;
-            background: rgba(255, 255, 255, .95)
-        }
-
-        .wb-risks-box h4 {
-            color: var(--or);
-            font-size: 15px;
-            margin-bottom: 8px
-        }
-
-        .wb-risks-box ul {
-            list-style: none;
-            font-size: 13px;
-            color: #334155;
-            display: flex;
-            flex-direction: column;
-            gap: 4px
-        }
-
-        .wb-risks-box li::before {
-            content: "• ";
-            color: var(--or);
-            font-weight: 700
-        }
-
-        .wb-goal-oval {
-            top: 295px;
-            left: 440px;
-            width: 210px;
-            height: 120px;
-            border: 2.5px solid #00bfa5;
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-size: 15px;
-            font-weight: 700;
-            color: #0b6b68;
-            background: rgba(255, 255, 255, .9)
-        }
-
         .wb-note {
             min-width: 110px;
             min-height: 60px;
@@ -748,33 +594,6 @@
             color: #1e293b;
             outline: none;
             box-shadow: 0 2px 6px rgba(0, 0, 0, .08)
-        }
-
-        .live-cursor {
-            position: absolute;
-            pointer-events: none;
-            z-index: 20;
-            animation: sway 6s ease-in-out infinite alternate
-        }
-
-        @keyframes sway {
-            50% {
-                transform: translate(6px, -4px)
-            }
-            100% {
-                transform: translate(-3px, 5px)
-            }
-        }
-
-        .cursor-label {
-            display: block;
-            padding: 3px 10px;
-            border-radius: var(--r-full);
-            font-size: 11px;
-            font-weight: 600;
-            color: #fff;
-            margin: 2px 0 0 12px;
-            white-space: nowrap
         }
 
         .wb-zoom-bar {
@@ -2182,7 +2001,7 @@
         <div class="whiteboard-stage-wrapper" id="whiteboardStageView">
             <div class="whiteboard-canvas-card">
                 <div class="wb-top-bar">
-                    <div class="wb-title-box"><i data-ic="screen" data-s="16"></i><span>Whiteboard — demo board for this meeting</span>
+                    <div class="wb-title-box"><i data-ic="screen" data-s="16"></i><span>Whiteboard — demo board (same browser only)</span>
                     </div>
                     <div class="wb-edit-badge">
                         <div class="wb-edit-dot"></div>
@@ -2191,38 +2010,8 @@
                 </div>
                 <div class="wb-viewport" id="wbViewport">
                     <canvas id="drawingCanvas"></canvas>
-                    <div class="wb-empty-hint" id="wbEmptyHint">
-                        <strong>Pick a tool and start sketching</strong>
-                        <span>Drawings stay on this demo board in this browser only — they sync between tabs of this meeting, never across devices.</span>
-                    </div>
                     <div class="wb-floating-tools" id="wbTools"></div>
-                    <div class="wb-elements-layer" id="wbLayer">
-                        <h2 class="wb-diagram-title interactive-element">Q4 Launch Plan</h2>
-                        <div class="wb-step-card card-yellow interactive-element">Design review<small>Owner:
-                            Dawan</small></div>
-                        <div class="wb-step-card card-pink interactive-element">Beta release<small>15 Nov</small></div>
-                        <div class="wb-step-card card-cyan interactive-element">QA sign-off<small>Owner: Jhanavi</small>
-                        </div>
-                        <div class="wb-step-card card-peach interactive-element">Go live<small>30 Nov</small></div>
-                        <div class="wb-risks-box interactive-element"><h4>Risks</h4>
-                            <ul>
-                                <li>Vendor delay</li>
-                                <li>Load testing on mobile</li>
-                                <li>Caption accuracy</li>
-                            </ul>
-                        </div>
-                        <div class="wb-goal-oval interactive-element"><span>Goal: 10k</span><span>beta users</span>
-                        </div>
-                        <div class="live-cursor" style="top:92px;left:250px"><i data-ic="ptr" data-s="18"
-                                                                                style="color:#00817a"></i><span
-                                class="cursor-label" style="background:#00817a">Dawan S</span></div>
-                        <div class="live-cursor" style="top:220px;left:395px"><i data-ic="ptr" data-s="18"
-                                                                                 style="color:#00605c"></i><span
-                                class="cursor-label" style="background:#00605c">Rithu Singh</span></div>
-                        <div class="live-cursor" style="top:370px;left:630px"><i data-ic="ptr" data-s="18"
-                                                                                 style="color:#ea580c"></i><span
-                                class="cursor-label" style="background:#ea580c">Ajay Tomar</span></div>
-                    </div>
+                    <div class="wb-elements-layer" id="wbLayer"></div>
                     <div class="wb-zoom-bar" role="toolbar" aria-label="Whiteboard tools">
                         <button class="wb-zoom-btn" id="btnWbUndo" title="Undo last stroke" aria-label="Undo"><i
                                 data-ic="undoic" data-s="15"></i></button>
@@ -2413,6 +2202,7 @@
 
 <script src="js/app.js?v=3"></script>
 <script src="js/toast.js"></script>
+<script src="js/confirm.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const $ = id => document.getElementById(id);
@@ -2804,10 +2594,31 @@
         $('hostMuteAllBtn').onclick = requireHost(muteAll);
         $('hostBreakoutBtn').onclick = () => toast('Breakout rooms are coming soon.');
         $('btnHostEndMeeting').onclick = requireHost(() => {
-            if (confirm('End meeting for all participants?')) {
-                if (app) app.endMeeting(meetingId); // participants are notified via shared demo state
-                endLocalMeeting('You ended the meeting for everyone.');
-            }
+            // Custom modal (js/confirm.js) replaces the native confirm() dialog.
+            // Authorization: requireHost checks the demo registry's stored host
+            // identity — never URL params. Frontend demo: ending writes the ended
+            // state to the shared browser registry so other tabs react; a real
+            // backend/LiveKit integration must enforce this server-side instead.
+            EuodooConfirm.ask({
+                title: 'End meeting?',
+                description: 'Are you sure you want to end this meeting for all participants?',
+                confirmLabel: 'End meeting',
+                cancelLabel: 'Cancel',
+                danger: true,
+                errorTitle: 'Unable to end meeting',
+                errorMessage: 'Something went wrong. Please try again.',
+                onConfirm: () => {
+                    if (!app) throw new Error('Meeting state unavailable.');
+                    if (!meetingId) throw new Error('Missing meeting ID.');
+                    app.endMeeting(meetingId);
+                }
+            }).then(ok => {
+                if (!ok) return; // cancelled or failed: the meeting keeps running
+                notify('success', 'Meeting ended', 'The meeting has ended for all participants.');
+                // Give the success toast a moment to be visible before the
+                // meeting-over screen replaces the page body.
+                setTimeout(() => endLocalMeeting('You ended the meeting for everyone.'), 1400);
+            });
         });
         $('toggleAllowWhiteboard').onchange = e => {
             if (!e.target.checked) showWhiteboard(false);
@@ -3302,7 +3113,7 @@
             if (wbOps.length > 250) wbOps = wbOps.slice(-250); // keep the op log lean
             redrawAll();
             saveBoard();
-            updateWbHint();
+
         };
         const endStroke = () => {
             if (!drawing) return;
@@ -3333,24 +3144,34 @@
             wbRedo.push(wbOps.pop());
             redrawAll();
             saveBoard();
-            updateWbHint();
+
         };
         $('btnWbRedo').onclick = () => {
             if (!wbRedo.length || state.locked) return;
             wbOps.push(wbRedo.pop());
             redrawAll();
             saveBoard();
-            updateWbHint();
+
         };
         $('btnWbClear').onclick = () => {
             if (state.locked) return toast('Whiteboard is locked by the host.');
             if (!wbOps.length) return;
-            if (!confirm('Clear the whole board? Every sketch on this demo board is removed.')) return;
-            wbOps = [];
-            wbRedo.length = 0;
-            redrawAll();
-            saveBoard();
-            updateWbHint();
+            // Custom modal (js/confirm.js) replaces the native confirm() dialog.
+            EuodooConfirm.ask({
+                title: 'Clear whiteboard?',
+                description: 'Every sketch on this demo board will be removed. This cannot be undone.',
+                confirmLabel: 'Clear board',
+                cancelLabel: 'Cancel',
+                danger: true,
+                errorTitle: 'Unable to clear board',
+                errorMessage: 'The board could not be cleared. Please try again.',
+                onConfirm: () => {
+                    wbOps = [];
+                    wbRedo.length = 0;
+                    redrawAll();
+                    saveBoard();
+                }
+            });
         };
         document.querySelectorAll('.wb-size-btn').forEach(b => b.onclick = () => {
             state.size = b.dataset.size;
@@ -3380,13 +3201,9 @@
                 wbOps = [];
             }
             wbRedo.length = 0;
-            updateWbHint();
+
         }
 
-        function updateWbHint() {
-            const hint = $('wbEmptyHint');
-            if (hint) hint.hidden = wbOps.length > 0;
-        }
 
         function applyWbDraw() {
             const label = $('wbEditText');
@@ -3412,7 +3229,7 @@
             wbOps = incoming;
             wbRedo.length = 0;
             redrawAll();
-            updateWbHint();
+
         }
 
         window.addEventListener('storage', onWbStorage);

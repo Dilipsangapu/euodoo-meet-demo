@@ -2,7 +2,7 @@
  * EuodooToast — shared, reusable toast notification component.
  *
  * One single implementation for every page (dashboard, call page, waiting room).
- * Sheets in its own styles on first use; no external dependencies; GSAP used for
+ * Injects its own styles on first use; no external dependencies; GSAP is used for
  * enter/exit only if available and `prefers-reduced-motion` is not set.
  *
  * API:
@@ -15,10 +15,10 @@
     'use strict';
 
     var TYPES = {
-        success: { color: '#0FA49A', tint: '#F0FAF9', label: 'Success' },
-        error: { color: '#F06422', tint: '#FEF4EE', label: 'Error' },
-        warning: { color: '#C47E10', tint: '#FEF8EC', label: 'Warning' },
-        info: { color: '#718893', tint: '#F2F7F9', label: 'Information' }
+        success: {color: '#0FA49A', tint: '#F0FAF9', label: 'Success'},
+        error: {color: '#DC2626', tint: '#FDECEC', label: 'Error'},
+        warning: {color: '#C47E10', tint: '#FEF8EC', label: 'Warning'},
+        info: {color: '#0F7FA0', tint: '#EDF6FA', label: 'Information'}
     };
 
     var ICONS = {
@@ -30,20 +30,21 @@
 
     var CSS_TEXT = [
         '.euodoo-toast-region{position:fixed;z-index:2100;top:max(72px,calc(env(safe-area-inset-top) + 12px));right:20px;display:flex;flex-direction:column;align-items:flex-end;gap:10px;pointer-events:none;max-width:min(380px,calc(100vw - 32px));}',
-        '.euodoo-toast{pointer-events:auto;display:flex;align-items:flex-start;gap:10px;width:100%;max-width:380px;padding:12px 12px 12px 14px;border-radius:12px;border:1px solid #E1E8EB;background:#fff;box-shadow:0 10px 28px -12px rgba(23,51,61,.28);opacity:0;transform:translateY(-6px);transition:opacity .22s ease,transform .22s ease;position:relative;overflow:hidden;}',
+        '.euodoo-toast{pointer-events:auto;display:flex;align-items:flex-start;gap:10px;width:100%;max-width:380px;padding:12px 12px 14px 14px;border-radius:12px;border:1px solid #E1E8EB;background:#fff;box-shadow:0 10px 28px -12px rgba(23,51,61,.28);opacity:0;transform:translateY(-6px);transition:opacity .22s ease,transform .22s ease;position:relative;overflow:hidden;}',
         '.euodoo-toast.is-shown{opacity:1;transform:translateY(0);}',
         '.euodoo-toast.is-leaving{opacity:0;transform:translateY(-4px);}',
         '.euodoo-toast-icon{flex-shrink:0;width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;margin-top:1px;}',
         '.euodoo-toast-body{min-width:0;flex:1;}',
         '.euodoo-toast-title{margin:0;font-size:13.5px;font-weight:700;line-height:1.35;color:#17333D;}',
         '.euodoo-toast-message{margin:2px 0 0;font-size:12.5px;line-height:1.45;color:#718893;overflow-wrap:anywhere;}',
-        '.euodoo-toast-toast{font-size:13.5px;color:#17333D;}',// message-only variant keeps text prominent
+        '.euodoo-toast-toast{font-size:13.5px;color:#17333D;}', // message-only variant keeps text prominent
         '.euodoo-toast-close{flex-shrink:0;width:24px;height:24px;margin:2px 0 0;border:none;background:transparent;color:#718893;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;}',
         '.euodoo-toast-close:hover{background:#F0F7F8;color:#17333D;}',
         '.euodoo-toast-close:focus-visible{outline:2px solid #0FA49A;outline-offset:1px;}',
         '.euodoo-toast:focus-visible{outline:2px solid #0FA49A;outline-offset:2px;}',
+        '.euodoo-toast-progress{position:absolute;left:0;right:0;bottom:0;height:3px;background:#0FA49A;transform-origin:0 50%;will-change:transform;}',
         '@media (max-width:640px){.euodoo-toast-region{top:max(12px,env(safe-area-inset-top));left:12px;right:12px;align-items:center;}.euodoo-toast{max-width:min(420px,100%);}}',
-        '@media (prefers-reduced-motion:reduce){.euodoo-toast{transition:none;transform:none;opacity:1;}.euodoo-toast.is-leaving{opacity:0;transition:none;}}'
+        '@media (prefers-reduced-motion:reduce){.euodoo-toast{transition:none;transform:none;opacity:1;}.euodoo-toast.is-leaving{opacity:0;transition:none;}.euodoo-toast-progress{display:none;}}'
     ].join('\n');
 
     var region = null;
@@ -84,8 +85,9 @@
         if (!el || el.dataset.closing) return;
         el.dataset.closing = '1';
         if (el._hoverTimer) { clearTimeout(el._hoverTimer); el._hoverTimer = null; }
+        if (el._interval) { clearInterval(el._interval); el._interval = null; }
         if (window.gsap && !prefersReducedMotion()) {
-            window.gsap.to(el, { opacity: 0, y: -6, duration: 0.18, onComplete: () => el.remove() });
+            window.gsap.to(el, {opacity: 0, y: -6, duration: 0.18, onComplete: () => el.remove()});
         } else {
             el.classList.add('is-leaving');
             setTimeout(() => el.remove(), prefersReducedMotion() ? 90 : 220);
@@ -94,7 +96,8 @@
 
     /**
      * options: { type, title, message, duration }
-     * Computes dismissal time; 'error' toasts stay longer and must be dismissed.
+     * Ordinary notifications dismiss roughly in 4 s; warnings 6 s and errors 7.5 s.
+     * A thin progress bar shows the remaining display time and pauses on hover.
      */
     function show(options) {
         var o = options || {};
@@ -119,13 +122,10 @@
         el.className = 'euodoo-toast toast-' + type;
         el.tabIndex = -1;
         el.setAttribute('role', type === 'error' ? 'alert' : 'status');
-        el.style.setProperty('--toast-color', meta.color);
-        if (!el.style.getPropertyValue) { /* very old browsers: fallback inline */ }
 
         var iconDisc = '<span class="euodoo-toast-icon" style="background:' + meta.tint + ';color:' + meta.color + '">' + ICONS[type] + '</span>';
         var bodyHtml = message
-            ? (title ? '' : '') +
-              '<p class="euodoo-toast-title">' + escHtml(title || meta.label) + '</p>' +
+            ? '<p class="euodoo-toast-title">' + escHtml(title || meta.label) + '</p>' +
               (title ? '<p class="euodoo-toast-message">' + escHtml(message) + '</p>' : '')
             : '<p class="euodoo-toast-title">' + escHtml(title) + '</p>';
         // message-only toasts keep a single prominent text line
@@ -139,7 +139,8 @@
             '<div class="euodoo-toast-body">' + bodyHtml + '</div>' +
             '<button type="button" class="euodoo-toast-close" aria-label="Dismiss notification">' +
             '<svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5.5 5.5l9 9M14.5 5.5l-9 9"/></svg>' +
-            '</button>';
+            '</button>' +
+            '<div class="euodoo-toast-progress" aria-hidden="true" style="background:' + meta.color + '"></div>';
 
         reg.appendChild(el);
 
@@ -147,55 +148,72 @@
         closeBtn.addEventListener('click', () => removeToast(el));
         el.addEventListener('keydown', e => { if (e.key === 'Escape') removeToast(el); });
 
-        // Pause auto-dismiss while hovered so people can actually read it.
+        // Pause auto-dismiss while hovered so people can actually read it. The
+        // progress bar is JS-driven so timer and bar always stay in sync.
         var duration = Number(o.duration) ||
             (type === 'error' ? 7500 : type === 'warning' ? 6000 : 4000);
+        var bar = el.querySelector('.euodoo-toast-progress');
+        var remaining = duration;
+        var endTime = Date.now() + duration;
         var timer = null;
-        var startCountdown = () => {
-            if (el._hoverTimer) clearTimeout(el._hoverTimer);
-            if (duration && duration > 0) {
-                timer = setTimeout(() => removeToast(el), duration);
+        var interval = null;
+
+        // Timer-driven drain (10 Hz): unlike rAF this also advances in
+        // throttled/background tabs, and it always stays in sync with the
+        // dismiss timer because both derive from `endTime`.
+        var tick = () => {
+            if (bar) {
+                var left = endTime - Date.now();
+                if (left <= 0) return; // dismissal handled by the timer
+                bar.style.transform = 'scaleX(' + Math.max(0, left / duration).toFixed(4) + ')';
             }
+        };
+        if (bar && !prefersReducedMotion()) bar.style.transform = 'scaleX(1)';
+
+        var startCountdown = () => {
+            endTime = Date.now() + remaining;
+            if (remaining > 0) timer = setTimeout(() => removeToast(el), remaining);
+            if (interval) clearInterval(interval);
+            if (bar && !prefersReducedMotion()) interval = setInterval(tick, 100);
         };
         var pauseCountdown = () => {
             if (timer) { clearTimeout(timer); timer = null; }
+            if (interval) { clearInterval(interval); interval = null; }
+            remaining = Math.max(0, endTime - Date.now());
         };
         el.addEventListener('mouseenter', pauseCountdown);
         el.addEventListener('mouseleave', startCountdown);
-        el._hoverTimer = timer;
-        closeBtn._pauseTimer = pauseCountdown; // expose in case pages need it
 
         // Enter animation (GSAP if available, always honoring reduced motion).
         if (window.gsap && !prefersReducedMotion()) {
-            window.gsap.fromTo(el, { opacity: 0, y: -8 }, { opacity: 1, y: 0, duration: 0.24, ease: 'power2.out' });
-            el._hoverTimer = null;
+            window.gsap.fromTo(el, {opacity: 0, y: -8}, {opacity: 1, y: 0, duration: 0.24, ease: 'power2.out'});
         } else {
             requestAnimationFrame(() => el.classList.add('is-shown'));
         }
         startCountdown();
-        el._hoverTimer = timer;
         el._pauseTimer = pauseCountdown;
         el._startTimer = startCountdown;
+        el._interval = interval;
         return el;
     }
 
     function escHtml(s) {
-        return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        return String(s).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
     }
 
     /** Legacy signature: toast(message, { type, duration }). */
     function toast(message, opts) {
         if (message === null || message === undefined || message === '') return null;
-        return show({ type: (opts && opts.type) || 'info', message: String(message), duration: opts && opts.duration });
+        return show({type: (opts && opts.type) || 'info', message: String(message), duration: opts && opts.duration});
     }
 
     window.EuodooToast = {
         show: show,
         toast: toast,
-        success: (title, message) => show({ type: 'success', title: title, message: message }),
-        error: (title, message) => show({ type: 'error', title: title, message: message }),
-        warning: (title, message) => show({ type: 'warning', title: title, message: message }),
-        info: (title, message) => show({ type: 'info', title: title, message: message })
+        success: (title, message) => show({type: 'success', title: title, message: message}),
+        error: (title, message) => show({type: 'error', title: title, message: message}),
+        warning: (title, message) => show({type: 'warning', title: title, message: message}),
+        info: (title, message) => show({type: 'info', title: title, message: message})
     };
     window.showToast = window.showToast || show;
 })();

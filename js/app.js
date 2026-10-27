@@ -239,7 +239,10 @@
         goToMeetingPage(meetingId) {
             const id = meetingId || (this.getMeeting() ? this.getMeeting().code : '');
             if (!id) {
-                alert('No meeting ID found. Please join a meeting from the dashboard.');
+                // Toast notification instead of a native browser alert.
+                const msg = 'No meeting ID found. Please join a meeting from the dashboard.';
+                if (window.EuodooToast) EuodooToast.toast(msg, {type: 'error'});
+                else console.warn(msg);
                 return;
             }
             const target = this.MEETING_PAGE_URL + '?meetingId=' + encodeURIComponent(id);
