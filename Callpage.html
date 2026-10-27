@@ -507,25 +507,38 @@
 
         .wb-floating-tools {
             position: absolute;
-            top: 20px;
-            left: 20px;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
             background: #fff;
-            border-radius: var(--r-lg);
-            padding: 8px 6px;
-            box-shadow: var(--sh-lg);
+            border-radius: 14px;
+            padding: 6px;
+            box-shadow: var(--sh-md);
             border: 1px solid var(--border);
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
+            max-width: min(calc(100% - 32px), 680px);
+            overflow-x: auto;
+            overflow-y: hidden;
+            scrollbar-width: none;
             z-index: 15
+        }
+
+        .wb-floating-tools::-webkit-scrollbar {
+            display: none
         }
 
         .wb-tool-btn {
             width: 36px;
             height: 36px;
             border-radius: 10px;
-            color: #475569
+            color: #475569;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0
         }
 
         .wb-tool-btn:hover {
@@ -539,22 +552,25 @@
         }
 
         .wb-divider {
-            width: 24px;
-            height: 1px;
+            width: 1px;
+            height: 22px;
             background: var(--border);
-            margin: 4px 0
+            margin: 0 4px;
+            flex-shrink: 0
         }
 
         .wb-color-picker {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             gap: 6px;
-            align-items: center
+            align-items: center;
+            flex-shrink: 0;
+            padding-right: 2px
         }
 
         .color-swatch {
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             cursor: pointer;
             border: 2px solid #fff;
@@ -569,6 +585,41 @@
         .color-swatch.active {
             box-shadow: 0 0 0 2px var(--teal);
             transform: scale(1.15)
+        }
+
+        /* Subtle empty-state hint shown until the first stroke is committed */
+        .wb-empty-hint {
+            position: absolute;
+            inset: 0;
+            z-index: 4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            pointer-events: none;
+            text-align: center;
+            padding: 0 20px 120px 0
+        }
+
+        .wb-empty-hint strong {
+            font-size: 14.5px;
+            font-weight: 700;
+            color: #17333D
+        }
+
+        .wb-empty-hint span {
+            font-size: 12.5px;
+            line-height: 1.5;
+            color: #718893;
+            max-width: 380px;
+            background: rgba(255, 255, 255, .9);
+            padding: 6px 14px;
+            border-radius: 10px
+        }
+
+        .wb-empty-hint[hidden] {
+            display: none
         }
 
         .wb-diagram-title {
@@ -728,31 +779,81 @@
 
         .wb-zoom-bar {
             position: absolute;
-            bottom: 20px;
+            bottom: 16px;
             left: 50%;
             transform: translateX(-50%);
+            max-width: calc(100% - 24px);
             background: #fff;
             border-radius: var(--r-full);
-            padding: 6px 14px;
+            padding: 6px 12px;
             box-shadow: var(--sh-md);
             border: 1px solid var(--border);
             display: flex;
             align-items: center;
-            gap: 12px;
-            z-index: 15
+            gap: 8px;
+            z-index: 15;
+            overflow-x: auto;
+            scrollbar-width: none
+        }
+
+        .wb-zoom-bar::-webkit-scrollbar {
+            display: none
         }
 
         .wb-zoom-btn {
-            width: 26px;
-            height: 26px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             color: #475569;
             font-size: 15px;
-            font-weight: 700
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            padding: 0
         }
 
         .wb-zoom-btn:hover {
             background: #f1f5f9
+        }
+
+        .wb-zoom-btn:disabled {
+            opacity: .4;
+            cursor: default
+        }
+
+        .wb-bar-div {
+            width: 1px;
+            height: 18px;
+            background: #e2e8f0;
+            flex-shrink: 0
+        }
+
+        .wb-size-group {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            flex-shrink: 0
+        }
+
+        .wb-size-btn {
+            height: 26px;
+            min-width: 26px;
+            padding: 0 7px;
+            border-radius: var(--r-full);
+            color: #475569;
+            font-size: 11px;
+            font-weight: 700
+        }
+
+        .wb-size-btn:hover {
+            background: #f1f5f9
+        }
+
+        .wb-size-btn.active {
+            background: var(--teal);
+            color: #fff
         }
 
         .wb-zoom-text {
@@ -1718,21 +1819,6 @@
             color: #fff
         }
 
-        .toast {
-            position: fixed;
-            top: 76px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #0f172a;
-            color: #fff;
-            padding: 10px 18px;
-            border-radius: var(--r-full);
-            font-size: 13px;
-            font-weight: 600;
-            z-index: 2000;
-            box-shadow: var(--sh-lg)
-        }
-
         .video-grid-view.layout-speaker {
             grid-template-columns:repeat(5, minmax(0, 1fr));
             grid-template-rows:minmax(0, 1fr) 130px
@@ -1997,6 +2083,36 @@
                 display: none
             }
 
+            .whiteboard-canvas-card {
+                border-radius: var(--r-lg)
+            }
+
+            .wb-floating-tools {
+                top: 10px;
+                max-width: calc(100% - 24px)
+            }
+
+            .wb-zoom-bar {
+                left: auto;
+                right: 12px;
+                transform: none;
+                bottom: 12px;
+                padding: 5px 10px;
+                gap: 6px
+            }
+
+            .wb-top-bar {
+                padding: 0 10px;
+                gap: 6px
+            }
+
+            .wb-title-box {
+                font-size: 12px;
+                padding: 5px 10px;
+                white-space: normal;
+                line-height: 1.35
+            }
+
             .side-panel-drawer {
                 position: absolute;
                 right: 20px;
@@ -2052,19 +2168,21 @@
             <video id="shareVideo" autoplay playsinline></video>
             <div class="share-banner">
                 <div class="share-dot"></div>
-                <div class="share-banner-text"><strong id="shareBannerTitle">You are sharing your screen</strong><span>Local demo preview — the stream is not transmitted to other participants.</span></div>
+                <div class="share-banner-text"><strong id="shareBannerTitle">You are sharing your screen</strong><span>Local demo preview — the stream is not transmitted to other participants.</span>
+                </div>
                 <button class="share-stop-btn" id="btnStopSharing">Stop sharing</button>
             </div>
         </div>
 
-        <div class="grid-empty-hint hidden" id="gridEmptyHint"><i data-ic="users" data-s="14"></i><span>No other participants yet — share the meeting ID to invite people.</span></div>
+        <div class="grid-empty-hint hidden" id="gridEmptyHint"><i data-ic="users" data-s="14"></i><span>No other participants yet — share the meeting ID to invite people.</span>
+        </div>
 
         <div class="video-grid-view" id="videoGridView"></div>
 
         <div class="whiteboard-stage-wrapper" id="whiteboardStageView">
             <div class="whiteboard-canvas-card">
                 <div class="wb-top-bar">
-                    <div class="wb-title-box"><i data-ic="screen" data-s="16"></i><span>Whiteboard - Rithu Singh is presenting</span>
+                    <div class="wb-title-box"><i data-ic="screen" data-s="16"></i><span>Whiteboard — demo board for this meeting</span>
                     </div>
                     <div class="wb-edit-badge">
                         <div class="wb-edit-dot"></div>
@@ -2073,6 +2191,10 @@
                 </div>
                 <div class="wb-viewport" id="wbViewport">
                     <canvas id="drawingCanvas"></canvas>
+                    <div class="wb-empty-hint" id="wbEmptyHint">
+                        <strong>Pick a tool and start sketching</strong>
+                        <span>Drawings stay on this demo board in this browser only — they sync between tabs of this meeting, never across devices.</span>
+                    </div>
                     <div class="wb-floating-tools" id="wbTools"></div>
                     <div class="wb-elements-layer" id="wbLayer">
                         <h2 class="wb-diagram-title interactive-element">Q4 Launch Plan</h2>
@@ -2101,12 +2223,30 @@
                                                                                  style="color:#ea580c"></i><span
                                 class="cursor-label" style="background:#ea580c">Ajay Tomar</span></div>
                     </div>
-                    <div class="wb-zoom-bar">
-                        <button class="wb-zoom-btn" id="btnWbUndo" title="Undo" aria-label="Undo">↶</button>
-                        <div style="width:1px;height:16px;background:#e2e8f0"></div>
-                        <button class="wb-zoom-btn" id="btnZoomOut" aria-label="Zoom out">-</button>
+                    <div class="wb-zoom-bar" role="toolbar" aria-label="Whiteboard tools">
+                        <button class="wb-zoom-btn" id="btnWbUndo" title="Undo last stroke" aria-label="Undo"><i
+                                data-ic="undoic" data-s="15"></i></button>
+                        <button class="wb-zoom-btn" id="btnWbRedo" title="Redo last stroke" aria-label="Redo"><i
+                                data-ic="redoic" data-s="15"></i></button>
+                        <div class="wb-bar-div"></div>
+                        <div class="wb-size-group" role="group" aria-label="Stroke thickness">
+                            <button class="wb-size-btn" data-size="sm" title="Thin stroke" aria-label="Thin stroke"
+                                    aria-pressed="false">S
+                            </button>
+                            <button class="wb-size-btn active" data-size="md" title="Medium stroke"
+                                    aria-label="Medium stroke" aria-pressed="true">M
+                            </button>
+                            <button class="wb-size-btn" data-size="lg" title="Thick stroke" aria-label="Thick stroke"
+                                    aria-pressed="false">L
+                            </button>
+                        </div>
+                        <div class="wb-bar-div"></div>
+                        <button class="wb-zoom-btn" id="btnWbClear" title="Clear the whole board"
+                                aria-label="Clear board"><i data-ic="trash" data-s="15"></i></button>
+                        <div class="wb-bar-div"></div>
+                        <button class="wb-zoom-btn" id="btnZoomOut" title="Zoom out" aria-label="Zoom out">−</button>
                         <span class="wb-zoom-text" id="zoomLevel">100%</span>
-                        <button class="wb-zoom-btn" id="btnZoomIn" aria-label="Zoom in">+</button>
+                        <button class="wb-zoom-btn" id="btnZoomIn" title="Zoom in" aria-label="Zoom in">+</button>
                     </div>
                 </div>
             </div>
@@ -2193,7 +2333,8 @@
             <div class="panel-title-wrap"><span class="panel-title">Waiting room</span><span
                     class="panel-counter-badge" id="waitingCounterBadge" style="background: var(--or)">0</span>
             </div>
-            <button class="panel-close-btn" id="btnCloseWaitingPanel" title="Close" aria-label="Close waiting-room panel"><i
+            <button class="panel-close-btn" id="btnCloseWaitingPanel" title="Close"
+                    aria-label="Close waiting-room panel"><i
                     data-ic="x" data-s="18"></i></button>
         </div>
         <div class="people-section-title">PENDING JOIN REQUESTS</div>
@@ -2204,7 +2345,8 @@
                     type="checkbox" id="toggleSampleParticipants" aria-label="Include sample participants"><span
                     class="switch-slider"></span></label></div>
             <div style="display:flex;gap:10px">
-                <button class="btn-invite" id="btnAddSampleRequest" title="Queue a labelled sample join request">+ Sample
+                <button class="btn-invite" id="btnAddSampleRequest" title="Queue a labelled sample join request">+
+                    Sample
                     request
                 </button>
                 <button class="btn-invite" id="btnOpenWaitingTab" title="Open the waiting room in another tab">Waiting
@@ -2270,6 +2412,7 @@
 </div>
 
 <script src="js/app.js?v=3"></script>
+<script src="js/toast.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const $ = id => document.getElementById(id);
@@ -2300,7 +2443,14 @@
             marker: '<path d="m9 11-6 6v3h3l6-6"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/>',
             shape: '<rect x="3" y="3" width="18" height="18" rx="2"/>',
             sticky: '<path d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8z"/><polyline points="15 3 21 9 15 9"/>',
-            eraser: '<path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/>'
+            eraser: '<path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/>',
+            line: '<path d="M5 19 19 5"/><circle cx="19" cy="5" r="1.2" fill="currentColor"/></circle><circle cx="5" cy="19" r="1.2" fill="currentColor"/>',
+            rect: '<rect x="4" y="5" width="16" height="14" rx="1.5"/>',
+            circle: '<circle cx="12" cy="12" r="8"/><rect x="0" y="0" width="0" height="0"/>',
+            arrow: '<path d="M5 19 18 6"/><path d="M13 6h5v5"/>',
+            trash: '<path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/>',
+            undoic: '<path d="M3 7v6h6"/><path d="M3 13a9 9 0 1 0 3-7.7L3 7"/>',
+            redoic: '<path d="M21 7v6h-6"/><path d="M21 13a9 9 0 1 1-3-7.7L21 7"/>'
         };
         const ic = (k, s = 20, sw = 2) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[k]}</svg>`;
         document.querySelectorAll('[data-ic]').forEach(el => {
@@ -2316,17 +2466,18 @@
             '"': '&quot;',
             "'": '&#39;'
         }[m]));
-        let toastTimer;
 
         function toast(msg) {
-            document.querySelector('.toast')?.remove();
-            const t = document.createElement('div');
-            t.className = 'toast';
-            t.textContent = msg;
-            t.setAttribute('role', 'status');
-            document.body.appendChild(t);
-            clearTimeout(toastTimer);
-            toastTimer = setTimeout(() => t.remove(), 2200);
+            // Thin page-level wrapper over the shared EuodooToast component
+            // (js/toast.js). All call sites below keep their existing messages.
+            if (window.EuodooToast) return EuodooToast.toast(msg, {type: 'info'});
+        }
+
+        // Higher-fidelity notification for typed toasts (success/error) using the
+        // shared component; falls back to the plain message toast above.
+        function notify(type, title, message) {
+            if (window.EuodooToast) return EuodooToast.show({type, title, message});
+            toast(title ? title + ': ' + message : message);
         }
 
         // ---------- Session, meeting & demo role resolution ----------
@@ -2399,6 +2550,7 @@
             recSeconds: 24 * 60 + 18,
             tool: 'pen',
             color: '#00817a',
+            size: 'md',
             zoom: 100,
             locked: false
         };
@@ -2417,7 +2569,7 @@
         let query = '';
 
         /** Everyone currently visible in the grid: admitted roster members (host +
-            admitted participants) first, then the labelled sample people when enabled. */
+         admitted participants) first, then the labelled sample people when enabled. */
         function visiblePeople() {
             const real = [];
             roster.forEach((m, idx) => {
@@ -2449,8 +2601,8 @@
             $('participantsList').innerHTML = people.filter(p => p.n.toLowerCase().includes(query)).map(p => {
                 const role = p.you ? ('You' + (myState.hand ? ' • Raised hand' : '') + (p.host ? ' (Host)' : ''))
                     : p.host ? 'Host' + (p.speaking ? ' • Speaking' : '')
-                    : p.sample ? 'Sample participant'
-                    : p.hand ? 'Raised hand' : (p.muted ? 'Participant' : 'Participant');
+                        : p.sample ? 'Sample participant'
+                            : p.hand ? 'Raised hand' : (p.muted ? 'Participant' : 'Participant');
                 const cls = p.speaking ? 'speaking' : p.hand ? 'raised' : '';
                 return `<div class="participant-row"><div class="participant-user-info"><div class="p-avatar bg-${p.c === 't' ? 'teal' : 'orange'}">${esc(p.i)}</div>
         <div class="p-details"><span class="p-name">${esc(p.n)}${p.you ? ' (You)' : ''}${p.host ? ' <span class="pill-host" style="font-size:10px;padding:2px 8px">Host</span>' : ''}</span><span class="p-role ${cls}">${role}</span></div></div>
@@ -2565,6 +2717,8 @@
             }
             state.whiteboard = on;
             updateView();
+            // Size the canvas to the now-visible viewport and re-render saved ops.
+            if (on) resizeCanvas();
         }
 
         Object.entries(LAYOUT_BTNS).forEach(([k, id]) => $(id).onclick = () => setView(k));
@@ -2801,7 +2955,12 @@
         // ---------- Meeting ended / leave ----------
         function endLocalMeeting(title) {
             stopMedia();
-            // Remove the shared timers/listeners before the page is torn down.
+            // Clear this meeting's whiteboard demo data so a future meeting can't
+            // inherit old sketches (the board is scoped to the meeting ID).
+            try {
+                localStorage.removeItem('euodoo_wb_ops:' + (meetingId || 'demo'));
+            } catch (e) {
+            }
             showMeetingOver(title, 'Thank you for attending Euodoo Meet.', 'Back to dashboard');
         }
 
@@ -2893,34 +3052,129 @@
         }, 1000);
 
         // ---------- Whiteboard ----------
-        const TOOLS = [['select', 'select', 'Select'], ['pen', 'pen', 'Pen'], ['highlighter', 'marker', 'Marker'], ['shapes', 'shape', 'Add shape'], ['text', null, 'Text note'], ['sticky', 'sticky', 'Sticky note'], ['eraser', 'eraser', 'Eraser']];
-        const COLORS = [['#0f172a', 'Black'], ['#00817a', 'Teal'], ['#ea580c', 'Orange'], ['#ef4444', 'Red']];
-        $('wbTools').innerHTML = TOOLS.map(([t, icon, title]) => `<button class="wb-tool-btn ${t === 'pen' ? 'active' : ''}" data-tool="${t}" title="${title}" aria-label="${title}">${icon ? ic(icon, 18) : '<b style="font-size:16px">T</b>'}</button>`).join('') +
+        // Tools: only tools that actually work are shown. Shape and freehand ops are
+        // committed as drawing ops (see wbOps below) so undo/redo & synced replays stay exact.
+        const TOOLS = [
+            ['pen', 'pen', 'Pen'],
+            ['highlighter', 'marker', 'Highlighter'],
+            ['eraser', 'eraser', 'Eraser'],
+            null,
+            ['line', 'line', 'Line'],
+            ['rect', 'rect', 'Rectangle'],
+            ['ellipse', 'circle', 'Ellipse'],
+            ['arrow', 'arrow', 'Arrow'],
+            null,
+            ['text', null, 'Text note'],
+            ['sticky', 'sticky', 'Sticky note'],
+            null,
+            ['select', 'select', 'Select / move notes']
+        ];
+        const COLORS = [['#17333D', 'Ink'], ['#0FA49A', 'Teal'], ['#F06422', 'Orange'], ['#DC2626', 'Red']];
+        $('wbTools').innerHTML = TOOLS.map(t => t ? `<button class="wb-tool-btn ${t[0] === 'pen' ? 'active' : ''}" data-tool="${t[0]}" title="${t[2]}" aria-label="${t[2]}" aria-pressed="${t[0] === 'pen'}">${t[1] ? ic(t[1], 18) : '<b style="font-size:15px;font-weight:700">T</b>'}</button>` : '<div class="wb-divider"></div>').join('') +
             '<div class="wb-divider"></div><div class="wb-color-picker">' +
-            COLORS.map(([c, n]) => `<button class="color-swatch ${c === state.color ? 'active' : ''}" data-color="${c}" style="background:${c}" title="${n}" aria-label="${n}"></button>`).join('') + '</div>';
+            COLORS.map(([c, n]) => `<button class="color-swatch ${c === state.color ? 'active' : ''}" data-color="${c}" style="background:${c}" title="${n}" aria-label="${n}" aria-pressed="${c === state.color}"></button>`).join('') + '</div>';
 
         const canvas = $('drawingCanvas'), ctx = canvas.getContext('2d'), vp = $('wbViewport'), layer = $('wbLayer');
-        const history = [];
-        let drawing = false, lx = 0, ly = 0;
+        let wbOps = [], wbRedo = [];
+        let drawing = false, curStroke = null, curShape = null, lx = 0, ly = 0;
+        // wbDraw: participant edit permission — host toggles it through the shared
+        // meeting record (see toggleParticipantsDraw / the record listener below).
+        let wbDraw = true, wbDrawMsgAt = 0;
+        const SHAPE_TOOLS = ['line', 'rect', 'ellipse', 'arrow'];
+        const SIZES = {sm: 2, md: 3.5, lg: 6};
         const z = () => state.zoom / 100;
+        const opWidth = () => SIZES[state.size || 'md'];
+        // Board ops live per meeting so two meetings never share sketch data.
+        const wbKey = () => 'euodoo_wb_ops:' + (meetingId || 'demo');
 
-        // Canvas is 2x the viewport so it still covers the board at 50% zoom; resizing keeps strokes.
+        // The ops model: every committed stroke or shape is one small plain-JS object
+        // (no base64 snapshots). The canvas is re-rendered by replaying the ops, which
+        // makes undo, redo, resize-safe rendering and the cross-tab sync all exact.
+        function styleStroke(c, tool, color, w) {
+            c.lineCap = c.lineJoin = 'round';
+            if (tool === 'eraser') {
+                c.globalCompositeOperation = 'destination-out';
+                c.globalAlpha = 1;
+                c.lineWidth = 20;
+                c.strokeStyle = c.fillStyle = '#000';
+            } else if (tool === 'highlighter') {
+                c.globalCompositeOperation = 'source-over';
+                c.globalAlpha = .35;
+                c.lineWidth = 14;
+                c.strokeStyle = c.fillStyle = color;
+            } else {
+                c.globalCompositeOperation = 'source-over';
+                c.globalAlpha = 1;
+                c.lineWidth = w || 3;
+                c.strokeStyle = c.fillStyle = color;
+            }
+        }
+
+        function drawOp(c, op, W, H) {
+            if (op.k === 'stroke') {
+                c.save();
+                styleStroke(c, op.tool, op.color, op.w);
+                const pts = op.pts;
+                if (pts.length < 2) { // a single tap leaves its dot
+                    c.beginPath();
+                    c.arc(pts[0][0] * W, pts[0][1] * H, c.lineWidth / 2, 0, Math.PI * 2);
+                    c.fill();
+                } else {
+                    c.beginPath();
+                    c.moveTo(pts[0][0] * W, pts[0][1] * H);
+                    for (let i = 1; i < pts.length; i++) c.lineTo(pts[i][0] * W, pts[i][1] * H);
+                    c.stroke();
+                }
+                c.restore();
+                return;
+            }
+            c.save();
+            c.globalCompositeOperation = 'source-over';
+            c.globalAlpha = 1;
+            c.strokeStyle = op.color;
+            c.lineWidth = op.w;
+            c.lineCap = c.lineJoin = 'round';
+            const x1 = op.x1 * W, y1 = op.y1 * H, x2 = op.x2 * W, y2 = op.y2 * H;
+            c.beginPath();
+            if (op.shape === 'line') {
+                c.moveTo(x1, y1);
+                c.lineTo(x2, y2);
+            } else if (op.shape === 'rect') {
+                c.rect(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x2 - x1), Math.abs(y2 - y1));
+            } else if (op.shape === 'ellipse') {
+                c.ellipse((x1 + x2) / 2, (y1 + y2) / 2, Math.abs(x2 - x1) / 2, Math.abs(y2 - y1) / 2, 0, 0, Math.PI * 2);
+            } else { // arrow: shaft plus two short head lines
+                c.moveTo(x1, y1);
+                c.lineTo(x2, y2);
+                const a = Math.atan2(y2 - y1, x2 - x1), hl = Math.max(8, op.w * 3.5);
+                c.moveTo(x2, y2);
+                c.lineTo(x2 - hl * Math.cos(a - Math.PI / 7), y2 - hl * Math.sin(a - Math.PI / 7));
+                c.moveTo(x2, y2);
+                c.lineTo(x2 - hl * Math.cos(a + Math.PI / 7), y2 - hl * Math.sin(a + Math.PI / 7));
+            }
+            c.stroke();
+            c.restore();
+        }
+
+        function redrawAll() {
+            const W = canvas.width, H = canvas.height;
+            ctx.clearRect(0, 0, W, H);
+            for (const op of wbOps) drawOp(ctx, op, W, H);
+        }
+
+        // Canvas is 2x the viewport so it still covers the board at 50% zoom; ops are
+        // re-rendered after every size change so drawings are never lost on resize.
         function resizeCanvas() {
             const r = vp.getBoundingClientRect();
             if (!r.width) return;
             const w = Math.max(canvas.width, Math.round(r.width * 2)),
                 h = Math.max(canvas.height, Math.round(r.height * 2));
             if (w === canvas.width && h === canvas.height) return;
-            const copy = document.createElement('canvas');
-            copy.width = canvas.width;
-            copy.height = canvas.height;
-            copy.getContext('2d').drawImage(canvas, 0, 0);
             canvas.width = w;
             canvas.height = h;
             canvas.style.width = w + 'px';
             canvas.style.height = h + 'px';
-            ctx.drawImage(copy, 0, 0);
-            history.length = 0;
+            redrawAll();
         }
 
         window.addEventListener('resize', () => {
@@ -2939,23 +3193,13 @@
 
         function seg(x, y) {
             ctx.save();
-            ctx.lineCap = ctx.lineJoin = 'round';
+            styleStroke(ctx, state.tool, state.color, opWidth());
             ctx.beginPath();
             ctx.moveTo(lx, ly);
             ctx.lineTo(x, y);
-            if (state.tool === 'eraser') {
-                ctx.globalCompositeOperation = 'destination-out';
-                ctx.lineWidth = 20;
-            } else if (state.tool === 'highlighter') {
-                ctx.globalAlpha = .35;
-                ctx.strokeStyle = state.color;
-                ctx.lineWidth = 14;
-            } else {
-                ctx.strokeStyle = state.color;
-                ctx.lineWidth = 3;
-            }
             ctx.stroke();
             ctx.restore();
+            curStroke.pts.push([x / canvas.width, y / canvas.height]);
             lx = x;
             ly = y;
         }
@@ -2992,46 +3236,188 @@
 
         function setTool(tool) {
             state.tool = tool;
-            document.querySelectorAll('.wb-tool-btn').forEach(b => b.classList.toggle('active', b.dataset.tool === tool));
+            document.querySelectorAll('.wb-tool-btn').forEach(b => {
+                const active = b.dataset.tool === tool;
+                b.classList.toggle('active', active);
+                b.setAttribute('aria-pressed', String(active));
+            });
             vp.classList.toggle('select-mode', tool === 'select');
             vp.style.cursor = tool === 'select' ? 'default' : 'crosshair';
         }
 
         document.querySelectorAll('.wb-tool-btn').forEach(b => b.onclick = () => setTool(b.dataset.tool));
         document.querySelectorAll('.color-swatch').forEach(s => s.onclick = () => {
-            document.querySelectorAll('.color-swatch').forEach(x => x.classList.remove('active'));
+            document.querySelectorAll('.color-swatch').forEach(x => {
+                x.classList.remove('active');
+                x.setAttribute('aria-pressed', 'false');
+            });
             s.classList.add('active');
+            s.setAttribute('aria-pressed', 'true');
             state.color = s.dataset.color;
             if (state.tool === 'eraser') setTool('pen');
         });
 
         canvas.addEventListener('pointerdown', e => {
             if (state.locked || state.tool === 'select') return;
+            if (!wbDraw) { // host-only edit mode (synced via the meeting record)
+                if (Date.now() - wbDrawMsgAt > 3000) {
+                    toast('Drawing is limited to the host right now.');
+                    wbDrawMsgAt = Date.now();
+                }
+                return;
+            }
             const [x, y] = pt(e);
-            if (['text', 'sticky', 'shapes'].includes(state.tool)) return addElement(state.tool, x, y);
+            if (['text', 'sticky'].includes(state.tool)) return addElement(state.tool, x, y);
             drawing = true;
-            canvas.setPointerCapture(e.pointerId);
-            lx = x;
-            ly = y;
-            seg(x, y);
+            try {
+                canvas.setPointerCapture(e.pointerId);
+            } catch (err) {
+            }
+            if (SHAPE_TOOLS.includes(state.tool)) {
+                curShape = {
+                    k: 'shape', shape: state.tool, color: state.color, w: opWidth(),
+                    x1: x / canvas.width, y1: y / canvas.height, x2: x / canvas.width, y2: y / canvas.height
+                };
+            } else {
+                curStroke = {k: 'stroke', tool: state.tool, color: state.color, w: opWidth(), pts: []};
+                lx = x;
+                ly = y;
+                seg(x, y);
+            }
         });
         canvas.addEventListener('pointermove', e => {
-            if (drawing) seg(...pt(e));
+            if (!drawing) return;
+            const [x, y] = pt(e);
+            if (curShape) {
+                curShape.x2 = x / canvas.width;
+                curShape.y2 = y / canvas.height;
+                redrawAll();
+                drawOp(ctx, curShape, canvas.width, canvas.height); // live preview until commit
+            } else {
+                seg(x, y);
+            }
         });
+        const commitBoard = () => {
+            wbRedo.length = 0;
+            if (wbOps.length > 250) wbOps = wbOps.slice(-250); // keep the op log lean
+            redrawAll();
+            saveBoard();
+            updateWbHint();
+        };
         const endStroke = () => {
             if (!drawing) return;
             drawing = false;
-            history.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
-            if (history.length > 20) history.shift();
+            if (curStroke) {
+                wbOps.push(curStroke); // even a single tap leaves its dot
+                curStroke = null;
+                commitBoard();
+            } else if (curShape) {
+                if (Math.abs(curShape.x2 - curShape.x1) * canvas.width + Math.abs(curShape.y2 - curShape.y1) * canvas.height > 4) {
+                    wbOps.push(curShape);
+                    commitBoard();
+                } else redrawAll(); // a click without a drag: no accidental tick
+                curShape = null;
+            }
         };
         canvas.addEventListener('pointerup', endStroke);
-        canvas.addEventListener('pointercancel', endStroke);
+        canvas.addEventListener('pointercancel', () => {
+            if (!drawing) return;
+            drawing = false;
+            curStroke = null;
+            if (curShape) curShape = null;
+            redrawAll();
+        });
 
         $('btnWbUndo').onclick = () => {
-            history.pop();
-            const last = history[history.length - 1];
-            last ? ctx.putImageData(last, 0, 0) : ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (!wbOps.length || state.locked) return;
+            wbRedo.push(wbOps.pop());
+            redrawAll();
+            saveBoard();
+            updateWbHint();
         };
+        $('btnWbRedo').onclick = () => {
+            if (!wbRedo.length || state.locked) return;
+            wbOps.push(wbRedo.pop());
+            redrawAll();
+            saveBoard();
+            updateWbHint();
+        };
+        $('btnWbClear').onclick = () => {
+            if (state.locked) return toast('Whiteboard is locked by the host.');
+            if (!wbOps.length) return;
+            if (!confirm('Clear the whole board? Every sketch on this demo board is removed.')) return;
+            wbOps = [];
+            wbRedo.length = 0;
+            redrawAll();
+            saveBoard();
+            updateWbHint();
+        };
+        document.querySelectorAll('.wb-size-btn').forEach(b => b.onclick = () => {
+            state.size = b.dataset.size;
+            document.querySelectorAll('.wb-size-btn').forEach(x => {
+                const active = x === b;
+                x.classList.toggle('active', active);
+                x.setAttribute('aria-pressed', String(active));
+            });
+        });
+
+        // ---------- Board persistence (localStorage, per meeting) & cross-tab sync ----------
+        // Demo-only collaboration: ops are tiny JS objects written to localStorage after
+        // each commit; other TABS of the same browser pick them up via the storage event.
+        // There is no backend, so nothing synchronizes across separate devices.
+        function saveBoard() {
+            try {
+                localStorage.setItem(wbKey(), JSON.stringify(wbOps));
+            } catch (e) { /* quota/privacy errors: the board simply stays local */
+            }
+        }
+
+        function loadBoard() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(wbKey()) || '[]');
+                wbOps = Array.isArray(saved) ? saved : [];
+            } catch (e) {
+                wbOps = [];
+            }
+            wbRedo.length = 0;
+            updateWbHint();
+        }
+
+        function updateWbHint() {
+            const hint = $('wbEmptyHint');
+            if (hint) hint.hidden = wbOps.length > 0;
+        }
+
+        function applyWbDraw() {
+            const label = $('wbEditText');
+            if (label) label.textContent = wbDraw ? 'Everyone can edit' : 'Only host can edit';
+            const toggle = $('toggleParticipantsDraw');
+            if (toggle && toggle.checked !== wbDraw) toggle.checked = wbDraw;
+        }
+
+        // Initial edit permission comes from the shared meeting record.
+        const wbInitRec = app ? app.getDemoMeeting(meetingId) : null;
+        if (wbInitRec && wbInitRec.wbDraw === false) wbDraw = false;
+        applyWbDraw();
+
+        function onWbStorage(e) {
+            if (!e.key || e.key !== wbKey() || drawing) return;
+            let incoming;
+            try {
+                incoming = JSON.parse(e.newValue || '[]');
+            } catch (err) {
+                return;
+            }
+            if (!Array.isArray(incoming) || JSON.stringify(incoming) === JSON.stringify(wbOps)) return;
+            wbOps = incoming;
+            wbRedo.length = 0;
+            redrawAll();
+            updateWbHint();
+        }
+
+        window.addEventListener('storage', onWbStorage);
+        loadBoard();
+
         $('btnZoomIn').onclick = () => {
             state.zoom = Math.min(200, state.zoom + 10);
             applyZoom();
@@ -3041,27 +3427,38 @@
             applyZoom();
         };
 
-        // Export: the drawing layer on a white background (the HTML cards/notes are not included)
+        // Export: the drawing layer on a white background (the HTML cards/notes are not included).
+        // Frontend-only demo: the PNG is downloaded locally, nothing is sent to any server.
         $('btnExportWhiteboard').onclick = () => {
             if (!$('toggleAllowExport').checked) return toast('Export is turned off by the host.');
-            const out = document.createElement('canvas');
-            out.width = canvas.width;
-            out.height = canvas.height;
-            const c = out.getContext('2d');
-            c.fillStyle = '#fff';
-            c.fillRect(0, 0, out.width, out.height);
-            c.drawImage(canvas, 0, 0);
-            const a = document.createElement('a');
-            a.download = 'Euodoo-Meet-Whiteboard-Q4-Plan.png';
-            a.href = out.toDataURL('image/png');
-            a.click();
+            try {
+                const out = document.createElement('canvas');
+                out.width = canvas.width;
+                out.height = canvas.height;
+                const c = out.getContext('2d');
+                c.fillStyle = '#fff';
+                c.fillRect(0, 0, out.width, out.height);
+                c.drawImage(canvas, 0, 0);
+                const a = document.createElement('a');
+                a.download = 'Euodoo-Meet-Whiteboard-' + (meetingId || 'demo') + '.png';
+                a.href = out.toDataURL('image/png');
+                a.click();
+                notify('success', 'Whiteboard exported', 'A PNG copy was downloaded to this device. Nothing was sent to a server.');
+            } catch (err) {
+                notify('error', 'Export failed', 'The PNG could not be generated in this browser.');
+            }
         };
         $('toggleLockWb').onchange = e => {
             state.locked = e.target.checked;
             toast(state.locked ? 'Whiteboard locked.' : 'Whiteboard unlocked.');
         };
         $('toggleParticipantsDraw').onchange = e => {
-            $('wbEditText').textContent = e.target.checked ? 'Everyone can edit' : 'Only host can edit';
+            wbDraw = e.target.checked;
+            applyWbDraw();
+            // Host-only control: share the setting through the meeting record so every
+            // tab of this browser's meeting follows. This is a demo-only sync — no
+            // server, so separate devices never see it.
+            if (isHost && app) app.updateDemoMeeting(meetingId, {wbDraw});
         };
         $('btnGiveEdit').onclick = () => toast('Drawing permission granted to Ajay Tomar.');
 
@@ -3239,8 +3636,17 @@
                 if (sampleToggle) sampleToggle.checked = sharedSample;
                 render();
             }
+            // Whiteboard edit permission (host toggle, shared via the record).
+            if (typeof record.wbDraw === 'boolean' && record.wbDraw !== wbDraw) {
+                wbDraw = record.wbDraw;
+                applyWbDraw();
+            }
             if (record.endedAt && !endedHandled) {
                 endedHandled = true;
+                try {
+                    localStorage.removeItem('euodoo_wb_ops:' + (meetingId || 'demo'));
+                } catch (e) {
+                }
                 showMeetingOver('The host ended the meeting',
                     'The meeting was ended for everyone. You can start or join another meeting from your dashboard.',
                     'Back to dashboard');
@@ -3251,6 +3657,7 @@
             clearInterval(captionsInterval);
             clearInterval(recInterval);
             [stopRosterListener, stopRecordListener, stopWaitingRequestsListener].forEach(s => s && s());
+            window.removeEventListener('storage', onWbStorage);
             stopShareScreen();
             if (camStream) camStream.getTracks().forEach(t => t.stop());
         }

@@ -899,6 +899,7 @@
     }
   </style>
   <script src="js/app.js?v=3"></script>
+<script src="js/toast.js"></script>
 </head>
 <body>
 
@@ -1458,6 +1459,9 @@
 
       let toastTimer = null;
       function showToast(message) {
+        // Delegates to the shared EuodooToast component (js/toast.js) so the
+        // waiting room uses the same notification design as the other pages.
+        if (window.EuodooToast) { EuodooToast.toast(message, { type: 'info' }); return; }
         clearTimeout(toastTimer);
         toast.textContent = message;
         toast.classList.add('show');

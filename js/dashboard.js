@@ -674,14 +674,16 @@ window.EuodooDemoData = {
        Toasts
        ====================================================================== */
     function toast(message, {type = 'info', duration = 3800} = {}) {
-        const region = els.toasts;
+        // Delegates to the shared EuodooToast component (js/toast.js), which is
+        // the single toast implementation used across all Euodoo Meet pages.
+        if (window.EuodooToast) return EuodooToast.toast(message, {type: type === 'success' ? 'success' : type, duration});
+        const region = els.toasts; // very late-load fallback
         if (!region) return;
         while (region.children.length >= 3) region.firstElementChild.remove();
-        const icon = type === 'success' ? 'circle-check' : type === 'error' ? 'triangle-alert' : 'info';
         const el = document.createElement('div');
         el.className = `toast toast-${type}`;
         el.setAttribute('role', type === 'error' ? 'alert' : 'status');
-        el.innerHTML = `<i data-lucide="${icon}" class="h-5 w-5"></i><p>${esc(message)}</p>`;
+        el.innerHTML = `<i data-lucide="info" class="h-5 w-5"></i><p>${esc(message)}</p>`;
         region.appendChild(el);
         refreshIcons();
         setTimeout(() => {
