@@ -165,12 +165,6 @@
             border: 1px solid rgba(0, 129, 122, .15)
         }
 
-        .badge-recording {
-            background: var(--or-l);
-            color: var(--or-a);
-            border: 1px solid rgba(224, 86, 37, .2)
-        }
-
         .rec-dot {
             width: 7px;
             height: 7px;
@@ -184,6 +178,43 @@
                 opacity: .3;
                 transform: scale(1.2)
             }
+        }
+
+        /* Record button in the nav bar */
+        .record-toggle-btn {
+            gap: 8px;
+            padding: 7px 14px;
+            border-radius: var(--r-full);
+            font-size: 12.5px;
+            font-weight: 600;
+            background: #edf2f5;
+            color: #334155;
+            border: 1px solid transparent;
+            white-space: nowrap
+        }
+
+        .record-toggle-btn:hover {
+            background: var(--border)
+        }
+
+        .record-toggle-btn .rec-dot {
+            background: #94a3b8;
+            animation: none
+        }
+
+        .record-toggle-btn.recording {
+            background: var(--or-l);
+            color: var(--or-a);
+            border-color: rgba(224, 86, 37, .2)
+        }
+
+        .record-toggle-btn.recording:hover {
+            background: #fde3d6
+        }
+
+        .record-toggle-btn.recording .rec-dot {
+            background: var(--or-a);
+            animation: pulse 1.5s infinite
         }
 
         .segmented-control {
@@ -472,7 +503,7 @@
             flex: 1;
             position: relative;
             overflow: hidden;
-            background-color: #ffffff;
+            background-color: #fff;
             cursor: crosshair
         }
 
@@ -1687,12 +1718,12 @@
             right: 8px
         }
 
-        /* Host-only visibility: hidden on the participant view of the same page */
+        /* Host-only visibility */
         body.role-participant .host-only {
             display: none !important
         }
 
-        /* Screen-share stage: shared screen fills the main stage, tiles move into a strip */
+        /* Screen-share stage */
         .share-stage {
             display: none;
             position: relative;
@@ -1786,7 +1817,6 @@
             height: 100%
         }
 
-        /* Hint shown when nobody else is in the meeting */
         .grid-empty-hint {
             position: absolute;
             top: 16px;
@@ -1807,7 +1837,7 @@
             white-space: nowrap
         }
 
-        /* Waiting-room request list (host only) */
+        /* Waiting-room list */
         .pending-request-item {
             display: flex;
             align-items: center;
@@ -1945,6 +1975,10 @@
             .brand-info span {
                 display: none
             }
+
+            .record-toggle-btn #recordToggleLabel {
+                display: none
+            }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -1964,11 +1998,13 @@
     </div>
     <div class="meeting-badges">
         <div class="badge-pill badge-encrypted"><i data-ic="lock" data-s="14"></i><span>Encrypted</span></div>
-        <div class="badge-pill badge-recording" id="recordingBadge">
-            <div class="rec-dot"></div>
-            <span id="recordingTimerText">REC 24:18</span></div>
     </div>
     <div class="top-actions">
+        <button class="record-toggle-btn recording" id="btnRecordToggle" title="Stop recording" aria-pressed="true">
+            <span class="rec-dot"></span>
+            <span id="recordToggleLabel">Recording</span>
+            <span id="recordingTimerText">24:18</span>
+        </button>
         <div class="segmented-control">
             <button class="segmented-btn active" id="btnViewGrid" title="Grid view"><i data-ic="grid" data-s="15"></i>Grid
             </button>
@@ -2119,12 +2155,12 @@
 
     <aside class="side-panel-drawer hidden host-only" id="waitingPanel">
         <div class="panel-header">
-            <div class="panel-title-wrap"><span class="panel-title">Waiting room</span><span
-                    class="panel-counter-badge" id="waitingCounterBadge" style="background: var(--or)">0</span>
+            <div class="panel-title-wrap"><span class="panel-title">Waiting room</span><span class="panel-counter-badge"
+                                                                                             id="waitingCounterBadge"
+                                                                                             style="background: var(--or)">0</span>
             </div>
             <button class="panel-close-btn" id="btnCloseWaitingPanel" title="Close"
-                    aria-label="Close waiting-room panel"><i
-                    data-ic="x" data-s="18"></i></button>
+                    aria-label="Close waiting-room panel"><i data-ic="x" data-s="18"></i></button>
         </div>
         <div class="people-section-title">PENDING JOIN REQUESTS</div>
         <div class="participants-list" id="pendingRequestsList"></div>
@@ -2135,8 +2171,7 @@
                     class="switch-slider"></span></label></div>
             <div style="display:flex;gap:10px">
                 <button class="btn-invite" id="btnAddSampleRequest" title="Queue a labelled sample join request">+
-                    Sample
-                    request
+                    Sample request
                 </button>
                 <button class="btn-invite" id="btnOpenWaitingTab" title="Open the waiting room in another tab">Waiting
                     room tab
@@ -2250,21 +2285,15 @@
             el.replaceWith(span);
         });
         const esc = s => s.replace(/[&<>"']/g, m => ({
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#39;'
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
         }[m]));
 
         function toast(msg) {
-            // Thin page-level wrapper over the shared EuodooToast component
-            // (js/toast.js). All call sites below keep their existing messages.
+            // Thin page-level wrapper over the shared EuodooToast component (js/toast.js).
             if (window.EuodooToast) return EuodooToast.toast(msg, {type: 'info'});
         }
 
-        // Higher-fidelity notification for typed toasts (success/error) using the
-        // shared component; falls back to the plain message toast above.
+        // Typed toasts (success/error) using the shared component; falls back to plain toast.
         function notify(type, title, message) {
             if (window.EuodooToast) return EuodooToast.show({type, title, message});
             toast(title ? title + ': ' + message : message);
@@ -2272,9 +2301,9 @@
 
         // ---------- Session, meeting & demo role resolution ----------
         // Role comes ONLY from the shared demo meeting registry (EuodooApp):
-        //   the meeting's stored host identity is compared with the logged-in user.
+        // the meeting's stored host identity is compared with the logged-in user.
         // URL parameters (e.g. "?role=host") are never trusted. Demo limitation:
-        //   these browser-only checks are UI demonstration, not secure authorization.
+        // these browser-only checks are UI demonstration, not secure authorization.
         const app = window.EuodooApp;
         const urlParams = new URLSearchParams(window.location.search);
         let meetingId = (urlParams.get('meetingId') || '').trim();
@@ -2293,8 +2322,6 @@
         if (isHost) {
             app.ensureHostInRoster(meetingId, {uid: myUid, name: session.name, initials: session.initials});
         } else {
-            // Registered/real participant entering the (existing) call page joins the roster;
-            // participants coming straight from the waiting room were already added on admission.
             app.addRosterMember(meetingId, {uid: myUid, name: session.name, initials: session.initials, host: false});
         }
         if (meetingTitle) app.setMeeting({id: meetingId, code: meetingId, title: meetingTitle, isHost: isHost});
@@ -2309,7 +2336,7 @@
         let roster = app ? app.getRoster(meetingId) : [];
         let sampleParticipants = RECORD ? RECORD.sampleParticipants !== false : true;
 
-        // Explicitly-labelled sample/demo people (they are simulated, not real participants).
+        // Explicitly-labelled sample/demo people (simulated, not real participants).
         const SAMPLES = [
             {uid: 'sample-rs', i: 'RS', n: 'Rithu Singh (Sample)', c: 't', speaking: true},
             {uid: 'sample-ds', i: 'DS', n: 'Dawan S (Sample)', c: 'o'},
@@ -2328,24 +2355,11 @@
         };
 
         const state = {
-            layout: 'grid',
-            whiteboard: false,
-            panel: 'none',
-            hostTools: false,
-            captions: true,
-            palette: false,
-            camera: false,
-            sharing: false,
-            recording: true,
-            recSeconds: 24 * 60 + 18,
-            tool: 'pen',
-            color: '#00817a',
-            size: 'md',
-            zoom: 100,
-            locked: false
+            layout: 'grid', whiteboard: false, panel: 'none', hostTools: false, captions: true,
+            palette: false, camera: false, sharing: false, recording: true, recSeconds: 24 * 60 + 18,
+            tool: 'pen', color: '#00817a', size: 'md', zoom: 100, locked: false
         };
 
-        // Show the real meeting identity in the page chrome.
         $('headerMeetingId').textContent = meetingId || 'demo (no ID)';
         $('leaveMeetingId').textContent = meetingId || 'demo (no ID)';
 
@@ -2358,18 +2372,14 @@
         vid.style.transform = 'scaleX(-1)';
         let query = '';
 
-        /** Everyone currently visible in the grid: admitted roster members (host +
-         admitted participants) first, then the labelled sample people when enabled. */
+        /** Everyone currently visible: admitted roster members first, then labelled samples when enabled. */
         function visiblePeople() {
             const real = [];
             roster.forEach((m, idx) => {
                 if (real.some((r) => r.uid === m.uid)) return; // dedupe
                 real.push({
-                    uid: m.uid,
-                    i: m.initials || 'EM',
-                    n: m.name || 'Participant',
-                    c: m.host ? 't' : (idx % 2 ? 'o' : 't'),
-                    host: !!m.host
+                    uid: m.uid, i: m.initials || 'EM', n: m.name || 'Participant',
+                    c: m.host ? 't' : (idx % 2 ? 'o' : 't'), host: !!m.host
                 });
             });
             const mineFromRoster = real.find((p) => p.uid === myUid);
@@ -2404,7 +2414,6 @@
         function applyGridDensity() {
             const gridEl = $('videoGridView');
             if (state.sharing || state.layout !== 'grid' || state.whiteboard) {
-                // share strip / speaker / sidebar layouts define their own templates
                 gridEl.style.gridTemplateColumns = '';
                 gridEl.style.gridTemplateRows = '';
                 return;
@@ -2412,7 +2421,7 @@
             const n = Math.max(1, visiblePeople().length);
             const wide = window.innerWidth > 1024;
             let cols;
-            if (!wide) cols = n <= 2 ? 2 : 2;
+            if (!wide) cols = 2;
             else cols = n <= 1 ? 1 : n <= 2 ? 2 : n <= 4 ? 2 : n <= 6 ? 3 : 4;
             const rows = Math.ceil(n / cols);
             gridEl.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
@@ -2436,7 +2445,6 @@
             $('gridEmptyHint').classList.toggle('hidden', count > 1);
         }
 
-        // Grid recalculation on resize (responsive columns).
         let resizeDensityTimer = null;
         window.addEventListener('resize', () => {
             clearTimeout(resizeDensityTimer);
@@ -2475,12 +2483,10 @@
         }
 
         // ---------- View switching ----------
-        // Grid / Speaker / Sidebar change the video layout. The whiteboard stays hidden until its button is clicked.
         const LAYOUT_BTNS = {grid: 'btnViewGrid', speaker: 'btnViewSpeaker', sidebar: 'btnViewSidebar'};
 
         function updateView() {
             const wb = state.whiteboard;
-            // Screen sharing takes over the layout with a dedicated stage + tile strip.
             $('videoGridView').className = 'video-grid-view' +
                 (state.sharing ? ' layout-share' : (state.layout === 'grid' ? '' : ' layout-' + state.layout));
             $('videoGridView').style.display = wb ? 'none' : '';
@@ -2507,7 +2513,6 @@
             }
             state.whiteboard = on;
             updateView();
-            // Size the canvas to the now-visible viewport and re-render saved ops.
             if (on) resizeCanvas();
         }
 
@@ -2554,8 +2559,7 @@
         };
 
         function muteAll() {
-            // Demo: real participants control their own mic; "mute all" affects the
-            // labelled sample participants so the tiles visibly update.
+            // Demo: "mute all" affects the labelled sample participants so the tiles visibly update.
             SAMPLES.forEach(p => {
                 p.muted = true;
             });
@@ -2594,11 +2598,8 @@
         $('hostMuteAllBtn').onclick = requireHost(muteAll);
         $('hostBreakoutBtn').onclick = () => toast('Breakout rooms are coming soon.');
         $('btnHostEndMeeting').onclick = requireHost(() => {
-            // Custom modal (js/confirm.js) replaces the native confirm() dialog.
-            // Authorization: requireHost checks the demo registry's stored host
-            // identity — never URL params. Frontend demo: ending writes the ended
-            // state to the shared browser registry so other tabs react; a real
-            // backend/LiveKit integration must enforce this server-side instead.
+            // Custom modal (js/confirm.js). Authorization: requireHost checks the demo
+            // registry's stored host identity. A real backend must enforce this server-side.
             EuodooConfirm.ask({
                 title: 'End meeting?',
                 description: 'Are you sure you want to end this meeting for all participants?',
@@ -2613,10 +2614,8 @@
                     app.endMeeting(meetingId);
                 }
             }).then(ok => {
-                if (!ok) return; // cancelled or failed: the meeting keeps running
+                if (!ok) return;
                 notify('success', 'Meeting ended', 'The meeting has ended for all participants.');
-                // Give the success toast a moment to be visible before the
-                // meeting-over screen replaces the page body.
                 setTimeout(() => endLocalMeeting('You ended the meeting for everyone.'), 1400);
             });
         });
@@ -2629,10 +2628,49 @@
                 $('reactionsPalette').classList.add('hidden');
             }
         };
+
+        // ---------- Recording (nav-bar button + confirmation) ----------
+        const fmtRec = s => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+
+        function applyRecording(on) {
+            state.recording = on;
+            const btn = $('btnRecordToggle');
+            btn.classList.toggle('recording', on);
+            btn.setAttribute('aria-pressed', String(on));
+            btn.title = on ? 'Stop recording' : 'Start recording';
+            $('recordToggleLabel').textContent = on ? 'Recording' : 'Record';
+            $('recordingTimerText').textContent = on ? fmtRec(state.recSeconds) : '';
+            $('toggleRecordMeeting').checked = on;
+        }
+
+        const requestRecordingToggle = requireHost(() => {
+            const starting = !state.recording;
+            EuodooConfirm.ask({
+                title: starting ? 'Start recording?' : 'Stop recording?',
+                description: starting
+                    ? 'Do you want to start the recording? Everyone in the meeting will see that it is being recorded.'
+                    : 'Do you want to stop the recording? You can start a new recording at any time.',
+                confirmLabel: starting ? 'Start recording' : 'Stop recording',
+                cancelLabel: 'Cancel',
+                danger: !starting,
+                errorTitle: 'Recording error',
+                errorMessage: 'Something went wrong. Please try again.',
+                onConfirm: () => {
+                }
+            }).then(ok => {
+                if (!ok) return;
+                if (starting) state.recSeconds = 0; // a new recording starts from 00:00
+                applyRecording(starting);
+                notify('success', starting ? 'Recording started' : 'Recording stopped',
+                    starting ? 'This meeting is now being recorded.' : 'The recording has been stopped.');
+            });
+        });
+
+        $('btnRecordToggle').onclick = requestRecordingToggle;
+        // The Host tools switch uses the same confirmation flow.
         $('toggleRecordMeeting').onchange = e => {
-            state.recording = e.target.checked;
-            $('recordingBadge').style.display = state.recording ? 'inline-flex' : 'none';
-            toast(state.recording ? 'Recording started.' : 'Recording stopped.');
+            e.target.checked = state.recording; // revert until the host confirms
+            requestRecordingToggle();
         };
 
         // ---------- Captions & reactions ----------
@@ -2682,7 +2720,6 @@
         let camStream = null, shareStream = null;
 
         function syncVideo() {
-            // Camera goes into the user's own tile; screen share gets a dedicated stage.
             vid.srcObject = camStream || null;
             $('videoGridView').querySelector('[data-mine]')?.classList.toggle('camera-active', !!camStream);
         }
@@ -2719,7 +2756,6 @@
             state.sharing = false;
             $('shareVideo').srcObject = null;
             B('ShareScreen').classList.remove('active-teal');
-            // Restores the regular participant grid automatically.
             updateView();
         }
 
@@ -2730,12 +2766,9 @@
             } catch (err) {
                 return toast('Screen sharing cancelled or unavailable.');
             }
-            // Show the shared screen in the main stage; participant tiles reorganize
-            // into a bottom strip (CSS layout-share) without any page reload.
             $('shareVideo').srcObject = shareStream;
             state.sharing = true;
             B('ShareScreen').classList.add('active-teal');
-            // If the user stops from the browser's native sharing UI, react to the track.
             shareStream.getVideoTracks()[0].addEventListener('ended', () => {
                 if (state.sharing) {
                     toast('Screen sharing ended.');
@@ -2766,8 +2799,6 @@
         // ---------- Meeting ended / leave ----------
         function endLocalMeeting(title) {
             stopMedia();
-            // Clear this meeting's whiteboard demo data so a future meeting can't
-            // inherit old sketches (the board is scoped to the meeting ID).
             try {
                 localStorage.removeItem('euodoo_wb_ops:' + (meetingId || 'demo'));
             } catch (e) {
@@ -2791,7 +2822,6 @@
         $('btnLeaveMeeting').onclick = () => $('leaveDialog').classList.add('show');
         $('btnCancelLeave').onclick = () => $('leaveDialog').classList.remove('show');
         $('btnConfirmLeave').onclick = () => {
-            // Leaving removes this user from the shared roster (host grid updates everywhere).
             if (app) app.removeRosterMember(meetingId, myUid);
             endLocalMeeting('You left the meeting');
         };
@@ -2859,12 +2889,10 @@
         const recInterval = setInterval(() => {
             if (!state.recording) return;
             state.recSeconds++;
-            $('recordingTimerText').textContent = `REC ${String(Math.floor(state.recSeconds / 60)).padStart(2, '0')}:${String(state.recSeconds % 60).padStart(2, '0')}`;
+            $('recordingTimerText').textContent = fmtRec(state.recSeconds);
         }, 1000);
 
         // ---------- Whiteboard ----------
-        // Tools: only tools that actually work are shown. Shape and freehand ops are
-        // committed as drawing ops (see wbOps below) so undo/redo & synced replays stay exact.
         const TOOLS = [
             ['pen', 'pen', 'Pen'],
             ['highlighter', 'marker', 'Highlighter'],
@@ -2888,19 +2916,13 @@
         const canvas = $('drawingCanvas'), ctx = canvas.getContext('2d'), vp = $('wbViewport'), layer = $('wbLayer');
         let wbOps = [], wbRedo = [];
         let drawing = false, curStroke = null, curShape = null, lx = 0, ly = 0;
-        // wbDraw: participant edit permission — host toggles it through the shared
-        // meeting record (see toggleParticipantsDraw / the record listener below).
         let wbDraw = true, wbDrawMsgAt = 0;
         const SHAPE_TOOLS = ['line', 'rect', 'ellipse', 'arrow'];
         const SIZES = {sm: 2, md: 3.5, lg: 6};
         const z = () => state.zoom / 100;
         const opWidth = () => SIZES[state.size || 'md'];
-        // Board ops live per meeting so two meetings never share sketch data.
         const wbKey = () => 'euodoo_wb_ops:' + (meetingId || 'demo');
 
-        // The ops model: every committed stroke or shape is one small plain-JS object
-        // (no base64 snapshots). The canvas is re-rendered by replaying the ops, which
-        // makes undo, redo, resize-safe rendering and the cross-tab sync all exact.
         function styleStroke(c, tool, color, w) {
             c.lineCap = c.lineJoin = 'round';
             if (tool === 'eraser') {
@@ -2926,7 +2948,7 @@
                 c.save();
                 styleStroke(c, op.tool, op.color, op.w);
                 const pts = op.pts;
-                if (pts.length < 2) { // a single tap leaves its dot
+                if (pts.length < 2) {
                     c.beginPath();
                     c.arc(pts[0][0] * W, pts[0][1] * H, c.lineWidth / 2, 0, Math.PI * 2);
                     c.fill();
@@ -2954,7 +2976,7 @@
                 c.rect(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x2 - x1), Math.abs(y2 - y1));
             } else if (op.shape === 'ellipse') {
                 c.ellipse((x1 + x2) / 2, (y1 + y2) / 2, Math.abs(x2 - x1) / 2, Math.abs(y2 - y1) / 2, 0, 0, Math.PI * 2);
-            } else { // arrow: shaft plus two short head lines
+            } else {
                 c.moveTo(x1, y1);
                 c.lineTo(x2, y2);
                 const a = Math.atan2(y2 - y1, x2 - x1), hl = Math.max(8, op.w * 3.5);
@@ -2973,8 +2995,6 @@
             for (const op of wbOps) drawOp(ctx, op, W, H);
         }
 
-        // Canvas is 2x the viewport so it still covers the board at 50% zoom; ops are
-        // re-rendered after every size change so drawings are never lost on resize.
         function resizeCanvas() {
             const r = vp.getBoundingClientRect();
             if (!r.width) return;
@@ -3034,11 +3054,8 @@
                 el.textContent = 'Text';
                 el.contentEditable = 'true';
             } else Object.assign(el.style, {
-                width: '140px',
-                height: '80px',
-                borderRadius: '10px',
-                border: `2.5px solid ${state.color}`,
-                background: 'rgba(255,255,255,.6)'
+                width: '140px', height: '80px', borderRadius: '10px',
+                border: `2.5px solid ${state.color}`, background: 'rgba(255,255,255,.6)'
             });
             layer.appendChild(el);
             setTool('select');
@@ -3070,7 +3087,7 @@
 
         canvas.addEventListener('pointerdown', e => {
             if (state.locked || state.tool === 'select') return;
-            if (!wbDraw) { // host-only edit mode (synced via the meeting record)
+            if (!wbDraw) {
                 if (Date.now() - wbDrawMsgAt > 3000) {
                     toast('Drawing is limited to the host right now.');
                     wbDrawMsgAt = Date.now();
@@ -3103,30 +3120,29 @@
                 curShape.x2 = x / canvas.width;
                 curShape.y2 = y / canvas.height;
                 redrawAll();
-                drawOp(ctx, curShape, canvas.width, canvas.height); // live preview until commit
+                drawOp(ctx, curShape, canvas.width, canvas.height);
             } else {
                 seg(x, y);
             }
         });
         const commitBoard = () => {
             wbRedo.length = 0;
-            if (wbOps.length > 250) wbOps = wbOps.slice(-250); // keep the op log lean
+            if (wbOps.length > 250) wbOps = wbOps.slice(-250);
             redrawAll();
             saveBoard();
-
         };
         const endStroke = () => {
             if (!drawing) return;
             drawing = false;
             if (curStroke) {
-                wbOps.push(curStroke); // even a single tap leaves its dot
+                wbOps.push(curStroke);
                 curStroke = null;
                 commitBoard();
             } else if (curShape) {
                 if (Math.abs(curShape.x2 - curShape.x1) * canvas.width + Math.abs(curShape.y2 - curShape.y1) * canvas.height > 4) {
                     wbOps.push(curShape);
                     commitBoard();
-                } else redrawAll(); // a click without a drag: no accidental tick
+                } else redrawAll();
                 curShape = null;
             }
         };
@@ -3144,19 +3160,16 @@
             wbRedo.push(wbOps.pop());
             redrawAll();
             saveBoard();
-
         };
         $('btnWbRedo').onclick = () => {
             if (!wbRedo.length || state.locked) return;
             wbOps.push(wbRedo.pop());
             redrawAll();
             saveBoard();
-
         };
         $('btnWbClear').onclick = () => {
             if (state.locked) return toast('Whiteboard is locked by the host.');
             if (!wbOps.length) return;
-            // Custom modal (js/confirm.js) replaces the native confirm() dialog.
             EuodooConfirm.ask({
                 title: 'Clear whiteboard?',
                 description: 'Every sketch on this demo board will be removed. This cannot be undone.',
@@ -3183,13 +3196,10 @@
         });
 
         // ---------- Board persistence (localStorage, per meeting) & cross-tab sync ----------
-        // Demo-only collaboration: ops are tiny JS objects written to localStorage after
-        // each commit; other TABS of the same browser pick them up via the storage event.
-        // There is no backend, so nothing synchronizes across separate devices.
         function saveBoard() {
             try {
                 localStorage.setItem(wbKey(), JSON.stringify(wbOps));
-            } catch (e) { /* quota/privacy errors: the board simply stays local */
+            } catch (e) {
             }
         }
 
@@ -3201,9 +3211,7 @@
                 wbOps = [];
             }
             wbRedo.length = 0;
-
         }
-
 
         function applyWbDraw() {
             const label = $('wbEditText');
@@ -3212,7 +3220,6 @@
             if (toggle && toggle.checked !== wbDraw) toggle.checked = wbDraw;
         }
 
-        // Initial edit permission comes from the shared meeting record.
         const wbInitRec = app ? app.getDemoMeeting(meetingId) : null;
         if (wbInitRec && wbInitRec.wbDraw === false) wbDraw = false;
         applyWbDraw();
@@ -3229,7 +3236,6 @@
             wbOps = incoming;
             wbRedo.length = 0;
             redrawAll();
-
         }
 
         window.addEventListener('storage', onWbStorage);
@@ -3244,8 +3250,7 @@
             applyZoom();
         };
 
-        // Export: the drawing layer on a white background (the HTML cards/notes are not included).
-        // Frontend-only demo: the PNG is downloaded locally, nothing is sent to any server.
+        // Export: the drawing layer on a white background. The PNG is downloaded locally.
         $('btnExportWhiteboard').onclick = () => {
             if (!$('toggleAllowExport').checked) return toast('Export is turned off by the host.');
             try {
@@ -3272,9 +3277,6 @@
         $('toggleParticipantsDraw').onchange = e => {
             wbDraw = e.target.checked;
             applyWbDraw();
-            // Host-only control: share the setting through the meeting record so every
-            // tab of this browser's meeting follows. This is a demo-only sync — no
-            // server, so separate devices never see it.
             if (isHost && app) app.updateDemoMeeting(meetingId, {wbDraw});
         };
         $('btnGiveEdit').onclick = () => toast('Drawing permission granted to Ajay Tomar.');
@@ -3340,11 +3342,11 @@
                 addSystem(`${m.name} joined the meeting.`);
             });
             next.forEach(m => previousUids.add(m.uid));
-            previousUids = new Set(next.map(m => m.uid)); // removed members disappear silently
+            previousUids = new Set(next.map(m => m.uid));
             render();
         }) : null;
 
-        // Host-only waiting-room panel (migrated from the removed host demo page).
+        // Host-only waiting-room panel.
         function renderPendingRequests(pending) {
             const container = $('pendingRequestsList');
             if (!container) return;
@@ -3402,7 +3404,6 @@
                 const reqId = btn.dataset.request;
                 const name = btn.dataset.name || 'Participant';
                 if (admitBtn) {
-                    // Duplicate clicks / stale statuses are rejected inside EuodooApp.
                     if (app.admitParticipant(reqId)) {
                         toast(`Admitted ${name} to the meeting.`);
                         addSystem(`${name} was admitted to the meeting.`);
@@ -3418,7 +3419,7 @@
                 renderPendingRequests(app.getRequestsForMeeting(meetingId).filter(r => r.status === 'PENDING'));
             });
 
-            // Migrated demo helper: queue a clearly-labelled sample join request.
+            // Demo helper: queue a clearly-labelled sample join request.
             let sampleRequestIndex = 0;
             $('btnAddSampleRequest').onclick = requireHost(() => {
                 const sampleNames = ['Sarah Jenkins (Sample)', 'Alex Rivera (Sample)', 'David Chen (Sample)', 'Priya Sharma (Sample)'];
@@ -3442,8 +3443,7 @@
             });
         }
 
-        // Meeting record changes: sample-participant toggle shared from the host tab,
-        // plus "end meeting for everyone" notification for participants.
+        // Meeting record changes: sample-participant toggle, whiteboard permission, and "end meeting for everyone".
         let endedHandled = false;
         const stopRecordListener = app ? app.listenToMeetingRecord(meetingId, record => {
             if (!record) return;
@@ -3453,7 +3453,6 @@
                 if (sampleToggle) sampleToggle.checked = sharedSample;
                 render();
             }
-            // Whiteboard edit permission (host toggle, shared via the record).
             if (typeof record.wbDraw === 'boolean' && record.wbDraw !== wbDraw) {
                 wbDraw = record.wbDraw;
                 applyWbDraw();
@@ -3482,9 +3481,6 @@
         // Clean up timers, media and listeners when leaving the page.
         window.addEventListener('pagehide', e => {
             stopTimersAndListeners();
-            // On a real unload (tab close, refresh or navigation) also remove this
-            // member so the roster/grid stays accurate for the remaining callers.
-            // A persisted pagehide means the page only enters the back-forward cache.
             if (!e.persisted && app && meetingId && myUid) {
                 app.removeRosterMember(meetingId, myUid);
             }
