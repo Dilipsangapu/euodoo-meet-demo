@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Euodoo Meet - Sign in</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-color: #f3f8f9;
+      --brand-dark: #083642;
+      --brand-orange: #f36417;
+      --brand-orange-hover: #e0540b;
+      --teal-primary: #0a8a92;
+      --teal-light-bg: #e2f5f4;
+      --orange-light-bg: #fdf0e6;
+      --text-main: #0c333e;
+      --text-muted: #627b87;
+      --card-bg: #ffffff;
+      --input-border: #d0dbe5;
+      --font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow-x: hidden;
+      padding: clamp(1rem, 3vh, 2.5rem) clamp(1rem, 3vw, 2rem);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---------- Decorative shapes ---------- */
+    .bg-shape-top {
+      position: fixed; top: 0; left: 0;
+      width: clamp(60px, 8vw, 120px);      /* FIX: scales instead of fixed 120px */
+      aspect-ratio: 1;
+      background: #f36417;
+      border-bottom-right-radius: 100%;
+      z-index: 1; pointer-events: none;
+    }
+    .bg-shape-bottom-svg {
+      position: fixed; bottom: 0; left: 0;
+      width: clamp(120px, 16vw, 220px);    /* FIX: smaller so it no longer sits under the feature text */
+      aspect-ratio: 1;
+      z-index: 1; pointer-events: none;
+      opacity: .85;
+    }
+
+    /* ---------- Layout ---------- */
+    .page-container {
+      position: relative; z-index: 10;
+      width: 100%; max-width: 1200px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);   /* FIX: minmax(0,…) stops content forcing the columns wider */
+      align-items: center;
+      gap: clamp(2rem, 4vw, 3.5rem);
+    }
+
+    .left-section {
+      position: relative; z-index: 10;
+      display: flex; flex-direction: column;
+      gap: clamp(1.5rem, 3.5vh, 2.25rem);
+      padding-left: clamp(0rem, 4vw, 4.25rem);   /* FIX: indent shrinks with the screen */
+      padding-right: 1rem;
+      max-width: 600px;
+    }
+
+    .brand-logo { display: inline-flex; align-items: center; gap: .75rem; text-decoration: none; width: fit-content; }
+    .logo-badge {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, #0ba39c, #077977);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 800; font-size: 1.6rem;
+      box-shadow: 0 4px 10px rgba(7,121,119,.22);
+    }
+    .logo-text { font-size: 1.85rem; font-weight: 800; letter-spacing: -.5px; color: var(--brand-dark); }
+    .logo-text span { color: var(--brand-orange); }
+
+    .hero-heading {
+      font-size: clamp(2.25rem, 4vw, 3.25rem);   /* FIX: fluid heading */
+      line-height: 1.15; font-weight: 800;
+      color: var(--brand-dark); letter-spacing: -1px;
+    }
+    .hero-heading .orange-text { color: var(--brand-orange); }
+    .hero-description {
+      font-size: 1.08rem; line-height: 1.6;
+      color: var(--text-muted);
+      max-width: 450px;
+      margin-top: -1rem;
+    }
+
+    .features-row {
+      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.25rem;
+      position: relative; z-index: 15;
+    }
+    .feature-item {
+      display: flex; flex-direction: column; align-items: flex-start;
+      border-right: 1px solid rgba(11,163,156,.2);
+      padding-right: .85rem;
+    }
+    .feature-item:last-child { border-right: none; padding-right: 0; }
+    .feature-icon-circle {
+      width: 44px; height: 44px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: .8rem; flex-shrink: 0;
+    }
+    .feature-icon-circle.teal { background: var(--teal-light-bg); color: var(--teal-primary); }
+    .feature-icon-circle.orange { background: var(--orange-light-bg); color: var(--brand-orange); }
+    /* FIX: removed white-space: nowrap, "Schedule Meetings" overflowed its column */
+    .feature-title { font-size: .95rem; font-weight: 700; color: var(--brand-dark); margin-bottom: .3rem; line-height: 1.3; }
+    .feature-desc { font-size: .8rem; line-height: 1.4; color: var(--text-muted); }
+
+    /* ---------- Card ---------- */
+    .card-wrapper { display: flex; justify-content: center; position: relative; z-index: 10; }
+    .sign-in-card {
+      background: var(--card-bg);
+      width: 100%; max-width: 460px;
+      border-radius: 24px;
+      padding: clamp(1.75rem, 4vh, 2.5rem) clamp(1.5rem, 3vw, 2.5rem);   /* FIX: less vertical padding so it fits a 768px screen */
+      box-shadow: 0 20px 45px rgba(8,54,66,.08);
+    }
+    .card-header { margin-bottom: 1.5rem; }
+    .card-title { font-size: 2rem; font-weight: 800; color: #1a2936; letter-spacing: -.5px; margin-bottom: .35rem; }
+    .card-subtitle { font-size: .92rem; color: #8896a6; }
+
+    .auth-form { display: flex; flex-direction: column; gap: 1.15rem; }
+    .form-group { display: flex; flex-direction: column; gap: .45rem; }
+    .form-label { font-size: .9rem; font-weight: 600; color: #273e4d; }
+    .input-wrapper { position: relative; display: flex; align-items: center; }
+    .input-icon { position: absolute; left: 1rem; color: #94a3b8; display: flex; pointer-events: none; }
+    .form-input {
+      width: 100%; height: 48px;
+      padding: 0 1rem 0 2.85rem;
+      border: 1px solid var(--input-border);
+      border-radius: 10px;
+      font-family: inherit; font-size: .92rem; color: #1e293b;
+      background: #fff; outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .form-input.has-toggle { padding-right: 3rem; }
+    .form-input::placeholder { color: #9aa9b9; }
+    .form-input:focus { border-color: var(--teal-primary); box-shadow: 0 0 0 3px rgba(10,138,146,.12); }
+
+    .toggle-password {
+      position: absolute; right: .75rem;
+      background: none; border: none; cursor: pointer; color: #889ca8;
+      padding: .4rem; display: flex; border-radius: 6px;
+    }
+    .toggle-password:hover { color: #334155; }
+
+    .forgot-link-wrapper { display: flex; justify-content: flex-end; margin-top: -.3rem; }
+    .forgot-password-link { color: var(--teal-primary); font-size: .82rem; font-weight: 600; text-decoration: none; }
+    .forgot-password-link:hover { text-decoration: underline; }
+
+    .btn-submit {
+      width: 100%; height: 50px;
+      background: var(--brand-orange); color: #fff; border: none; border-radius: 10px;
+      font: 700 1rem var(--font-family);
+      display: flex; align-items: center; justify-content: center; gap: .5rem;
+      cursor: pointer; margin-top: .25rem;
+      transition: background-color .2s, transform .15s;
+      box-shadow: 0 4px 14px rgba(243,100,23,.28);
+    }
+    .btn-submit:hover { background: var(--brand-orange-hover); transform: translateY(-1px); }
+    .btn-submit:active { transform: translateY(0); }
+    .btn-submit:disabled { opacity: .75; cursor: not-allowed; transform: none; }
+
+    .divider { position: relative; text-align: center; margin: 1.15rem 0; }
+    .divider::before { content: ""; position: absolute; left: 0; top: 50%; width: 100%; height: 1px; background: #e2e8f0; }
+    .divider span { position: relative; background: #fff; padding: 0 .85rem; font-size: .78rem; font-weight: 600; color: #94a3b8; letter-spacing: .5px; }
+
+    .btn-google {
+      width: 100%; height: 48px;
+      background: #fff; border: 1px solid #d4dce4; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; gap: .75rem;
+      font: 600 .95rem var(--font-family); color: #1e3a47;
+      cursor: pointer; transition: background-color .2s, border-color .2s;
+    }
+    .btn-google:hover { background: #f8fafc; border-color: #cbd5e1; }
+
+    .card-footer { margin-top: 1.25rem; text-align: center; font-size: .88rem; color: #7d8f9b; }
+    .card-footer a { color: var(--teal-primary); text-decoration: none; font-weight: 700; margin-left: .25rem; }
+    .card-footer a:hover { text-decoration: underline; }
+
+    .form-message {
+      display: none; padding: .65rem .9rem; border-radius: 8px;
+      font-size: .85rem; font-weight: 500; text-align: center; margin-bottom: 1rem;
+    }
+    .form-message.success { display: block; background: #e6f8f0; color: #0b7c4b; border: 1px solid #b7ecd3; }
+    .form-message.error { display: block; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ---------- Responsive ---------- */
+    /* Short laptop screens: trim the left column so the page fits without scrolling */
+    @media (max-height: 760px) and (min-width: 961px) {
+      .features-row .feature-desc { display: none; }
+      .feature-icon-circle { margin-bottom: .5rem; }
+    }
+
+    @media (max-width: 960px) {
+      .page-container { grid-template-columns: minmax(0, 1fr); gap: 2rem; max-width: 520px; }
+      .left-section { padding: 0; text-align: center; align-items: center; }
+      .hero-description { margin-top: -.5rem; }
+      .features-row { width: 100%; text-align: left; }
+    }
+
+    @media (max-width: 540px) {
+      .bg-shape-bottom-svg { display: none; }     /* FIX: no decoration sitting on top of small-screen content */
+      .features-row { grid-template-columns: 1fr; gap: 1rem; }
+      .feature-item {
+        flex-direction: row; flex-wrap: wrap; align-items: center; column-gap: .9rem;
+        border-right: none; padding: 0 0 1rem;
+        border-bottom: 1px solid rgba(11,163,156,.15);
+      }
+      .feature-item:last-child { border-bottom: none; padding-bottom: 0; }
+      .feature-icon-circle { margin-bottom: 0; grid-row: span 2; }
+      .feature-title, .feature-desc { flex: 1 1 calc(100% - 60px); margin: 0; }
+      .feature-icon-circle { align-self: flex-start; }
+      .logo-text { font-size: 1.6rem; }
+      .form-input { font-size: 16px; }           /* stops iOS zoom on focus */
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-shape-top"></div>
+
+  <svg class="bg-shape-bottom-svg" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <circle cx="0" cy="300" r="260" stroke="#6cdad0" stroke-width="2" opacity="0.6"/>
+    <circle cx="0" cy="300" r="200" fill="#18aba2" opacity="0.7"/>
+    <circle cx="0" cy="300" r="130" fill="#087c78" opacity="0.9"/>
+  </svg>
+
+  <main class="page-container">
+
+    <!-- Left hero -->
+    <section class="left-section">
+      <a href="login.html" class="brand-logo" aria-label="Euodoo Meet Home">
+        <div class="logo-badge">E</div>
+        <div class="logo-text">Euodoo <span>Meet</span></div>
+      </a>
+
+      <h1 class="hero-heading">
+        Welcome to<br />
+        Euodoo <span class="orange-text">Meet</span>
+      </h1>
+
+      <p class="hero-description">Connect with your team. Meet, collaborate, and communicate securely.</p>
+
+      <div class="features-row">
+        <div class="feature-item">
+          <div class="feature-icon-circle teal">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8Z" /><rect width="14" height="12" x="2" y="6" rx="2" /></svg>
+          </div>
+          <div class="feature-title">HD Video</div>
+          <div class="feature-desc">Clear and smooth meetings</div>
+        </div>
+
+        <div class="feature-item">
+          <div class="feature-icon-circle orange">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="14" y2="13"/></svg>
+          </div>
+          <div class="feature-title">Real-time Chat</div>
+          <div class="feature-desc">Stay connected instantly</div>
+        </div>
+
+        <div class="feature-item">
+          <div class="feature-icon-circle teal">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" /><line x1="16" x2="16" y1="2" y2="6" /><line x1="8" x2="8" y1="2" y2="6" /><line x1="3" x2="21" y1="10" y2="10" /><circle cx="8" cy="14" r="1" fill="currentColor"/><circle cx="12" cy="14" r="1" fill="currentColor"/><circle cx="16" cy="14" r="1" fill="currentColor"/></svg>
+          </div>
+          <div class="feature-title">Schedule Meetings</div>
+          <div class="feature-desc">Plan and manage easily</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right card (duplicate logo removed: the left side already shows it) -->
+    <section class="card-wrapper">
+      <div class="sign-in-card">
+        <div class="card-header">
+          <h2 class="card-title">Sign in</h2>
+          <p class="card-subtitle">Enter your details to continue to your workspace.</p>
+        </div>
+
+        <div id="formMessage" class="form-message" role="status"></div>
+
+        <form class="auth-form" id="loginForm" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="email">Email</label>
+            <div class="input-wrapper">
+              <span class="input-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+              </span>
+              <input type="email" id="email" class="form-input" placeholder="Enter your email address" autocomplete="email" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="password">Password</label>
+            <div class="input-wrapper">
+              <span class="input-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </span>
+              <input type="password" id="password" class="form-input has-toggle" placeholder="Enter your password" autocomplete="current-password" required />
+              <button type="button" id="togglePassword" class="toggle-password" aria-label="Toggle password visibility">
+                <svg id="eyeOffIcon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" y1="2" x2="22" y2="22"/></svg>
+                <svg id="eyeIcon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="forgot-link-wrapper">
+            <a href="#" class="forgot-password-link">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="btn-submit" id="submitBtn">
+            <span>Sign in</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </button>
+        </form>
+
+        <div class="divider"><span>OR</span></div>
+
+        <button type="button" class="btn-google" id="googleBtn">
+          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z"/>
+            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
+            <path fill="#FBBC05" d="M5.28 14.27A7.18 7.18 0 0 1 4.9 12c0-.79.14-1.57.38-2.27V6.58H1.25A11.97 11.97 0 0 0 0 12c0 1.92.46 3.74 1.25 5.42l4.03-3.15z"/>
+            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+          </svg>
+          <span>Continue with Google</span>
+        </button>
+
+        <div class="card-footer">Don't have an account? <a href="registration.html">Create account</a></div>
+      </div>
+    </section>
+  </main>
+
+    <!-- Shared Integration Layer -->
+  <script src="js/app.js?v=3"></script>
+  <script>
+    const passwordInput = document.getElementById('password');
+    const eyeIcon = document.getElementById('eyeIcon');
+    const eyeOffIcon = document.getElementById('eyeOffIcon');
+
+    document.getElementById('togglePassword').addEventListener('click', () => {
+      const hidden = passwordInput.type === 'password';
+      passwordInput.type = hidden ? 'text' : 'password';
+      eyeIcon.style.display = hidden ? 'block' : 'none';
+      eyeOffIcon.style.display = hidden ? 'none' : 'block';
+    });
+
+    const emailInput = document.getElementById('email');
+    const submitBtn = document.getElementById('submitBtn');
+    const formMessage = document.getElementById('formMessage');
+    let hideTimer;
+
+    function showMessage(msg, type) {
+      clearTimeout(hideTimer);
+      formMessage.textContent = msg;
+      formMessage.className = 'form-message ' + type;
+      if (type !== 'error') {
+        hideTimer = setTimeout(() => { formMessage.className = 'form-message'; }, 4000);
+      }
+    }
+
+    const validateEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+
+    // Read URL parameters for registration confirmation or logout feedback
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('registered') === '1') {
+      const registeredEmail = urlParams.get('email');
+      if (registeredEmail) {
+        emailInput.value = registeredEmail;
+      }
+      showMessage('Account created successfully! Please sign in with your credentials.', 'success');
+    } else if (urlParams.get('loggedOut') === '1') {
+      showMessage('You have signed out successfully.', 'success');
+    }
+
+    // Forgot password handling
+    const forgotLink = document.querySelector('.forgot-password-link');
+    if (forgotLink) {
+      forgotLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        const email = emailInput.value.trim();
+        if (email && validateEmail(email)) {
+          showMessage('Password reset instructions sent to ' + email, 'success');
+        } else {
+          showMessage('Please enter your email above to receive password reset instructions.', 'error');
+          emailInput.focus();
+        }
+      });
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) return showMessage('Please enter both email and password.', 'error');
+      if (!validateEmail(email)) return showMessage('Please enter a valid email address.', 'error');
+
+      const originalHTML = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="animation: spin .8s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg><span>Signing in...</span>';
+      submitBtn.disabled = true;
+
+      setTimeout(() => {
+        // Authenticate user via demo store or fallback
+        let user = null;
+        if (window.EuodooApp) {
+          user = EuodooApp.findDemoUser(email);
+        }
+        if (!user) {
+          const namePart = email.split('@')[0];
+          const cleanName = namePart.replace(/[._]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+          user = {
+            name: cleanName || 'Kiran S',
+            firstName: cleanName.split(' ')[0] || 'Kiran',
+            lastName: cleanName.split(' ').slice(1).join(' ') || 'S',
+            email: email,
+            role: 'User'
+          };
+        }
+
+        if (window.EuodooApp) {
+          EuodooApp.setSession(user);
+        }
+
+        submitBtn.innerHTML = originalHTML;
+        submitBtn.disabled = false;
+        showMessage('Signed in successfully! Redirecting...', 'success');
+
+        setTimeout(() => {
+          window.location.href = 'dashboard.html';
+        }, 600);
+      }, 900);
+    });
+
+    document.getElementById('googleBtn').addEventListener('click', () => {
+      showMessage('Signing in with Google...', 'success');
+      if (window.EuodooApp) {
+        EuodooApp.setSession({
+          name: 'Kiran S',
+          firstName: 'Kiran',
+          lastName: 'S',
+          email: 'kiran.s@euodoo.com',
+          initials: 'KS',
+          role: 'User'
+        });
+      }
+      setTimeout(() => {
+        window.location.href = 'dashboard.html';
+      }, 600);
+    });
+  </script>
+</body>
+</html>

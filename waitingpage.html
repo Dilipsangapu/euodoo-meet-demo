@@ -1,0 +1,1876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Euodoo Meet - Waiting Room</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-body: #f4f7f9;
+      --text-main: #111827;
+      --text-muted: #64748b;
+      --brand-teal: #008779;
+      --brand-teal-light: #e0f2f1;
+      --brand-orange: #f26522;
+      --card-bg: #ffffff;
+      --border-color: #e2e8f0;
+
+      --video-bg-center: #0d3b44;
+      --video-bg-mid: #08272e;
+      --video-bg-edge: #051a1f;
+      --teal-primary: #00bfa5;
+      --red-alert: #f04438;
+      --red-hover: #dc2626;
+      --btn-dark: rgba(14, 52, 60, 0.85);
+      --btn-dark-hover: rgba(22, 75, 87, 0.95);
+
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+      --radius-lg: 24px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    [hidden] { display: none !important; }
+
+    body {
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    button { font-family: inherit; }
+
+    /* ---------- Header ---------- */
+    header {
+      background: #ffffff;
+      height: 70px;
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--brand-teal);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 20px;
+    }
+
+    .brand-text {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1e293b;
+      letter-spacing: -0.3px;
+    }
+
+    .brand-text span {
+      color: var(--brand-orange);
+      font-weight: 600;
+      margin-left: 3px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .need-help {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s ease;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .need-help:hover { color: var(--brand-teal); }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      text-align: left;
+    }
+
+    .avatar-sm {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--brand-teal);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .user-details {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+    .user-name { font-size: 13px; font-weight: 600; color: #1e293b; }
+    .user-status { font-size: 11px; color: #94a3b8; }
+
+    /* ---------- Main grid ---------- */
+    main {
+      flex: 1;
+      max-width: 1360px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 36px 40px;
+      display: grid;
+      grid-template-columns: 1.55fr 1fr;
+      gap: 36px;
+      align-items: start;
+    }
+
+    .preview-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    .video-card {
+      position: relative;
+      height: 440px;
+      border-radius: var(--radius-lg);
+      background: radial-gradient(circle at 50% 48%, var(--video-bg-center) 0%, var(--video-bg-mid) 55%, var(--video-bg-edge) 100%);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      user-select: none;
+    }
+
+    .video-top-tag {
+      position: absolute;
+      top: 18px;
+      left: 20px;
+      background: rgba(0, 0, 0, 0.42);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      padding: 6px 14px;
+      border-radius: 20px;
+      color: white;
+      font-size: 12.5px;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      z-index: 10;
+    }
+
+    .audio-indicator-pill {
+      position: absolute;
+      top: 18px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.42);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      padding: 6px 12px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      z-index: 10;
+      cursor: pointer;
+    }
+
+    .audio-bars {
+      display: flex;
+      align-items: center;
+      gap: 2.5px;
+      height: 14px;
+    }
+
+    .audio-bar {
+      width: 2.5px;
+      background-color: var(--teal-primary);
+      border-radius: 2px;
+      animation: soundWave 1.2s infinite ease-in-out;
+      box-shadow: 0 0 6px rgba(0, 191, 165, 0.4);
+    }
+    .audio-bar:nth-child(1) { height: 6px; animation-delay: 0.1s; }
+    .audio-bar:nth-child(2) { height: 13px; animation-delay: 0.35s; }
+    .audio-bar:nth-child(3) { height: 8px; animation-delay: 0.2s; }
+    .audio-bar:nth-child(4) { height: 14px; animation-delay: 0.45s; }
+
+    @keyframes soundWave {
+      0%, 100% { transform: scaleY(0.4); opacity: 0.6; }
+      50% { transform: scaleY(1.1); opacity: 1; }
+    }
+
+    /* Real mic level mode */
+    .audio-bars.live .audio-bar {
+      animation: none;
+      transform: none;
+      opacity: 1;
+      transition: height 0.08s linear;
+    }
+
+    .audio-indicator-pill.muted .audio-bar {
+      animation: none !important;
+      height: 3px !important;
+      transform: none;
+      background-color: #64748b;
+      box-shadow: none;
+    }
+    .audio-indicator-pill.muted svg { stroke: #94a3b8; }
+
+    /* Sonar */
+    .sonar-stage {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+    }
+
+    .static-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.055);
+    }
+    .ring-1 { width: 220px; height: 220px; }
+    .ring-2 { width: 360px; height: 360px; }
+    .ring-3 { width: 500px; height: 500px; }
+
+    .sonar-pulse {
+      position: absolute;
+      border-radius: 50%;
+      border: 1.5px solid rgba(0, 191, 165, 0.55);
+      background: radial-gradient(circle, rgba(0, 191, 165, 0.08) 0%, transparent 70%);
+      opacity: 0;
+      animation: sonarRadiate 4.8s cubic-bezier(0.2, 0.7, 0.3, 1) infinite;
+    }
+    .sonar-pulse:nth-child(5) { animation-delay: 0s; }
+    .sonar-pulse:nth-child(6) { animation-delay: 1.6s; }
+    .sonar-pulse:nth-child(7) { animation-delay: 3.2s; }
+
+    @keyframes sonarRadiate {
+      0% {
+        width: 90px; height: 90px; opacity: 0.85;
+        border-color: rgba(0, 191, 165, 0.7);
+        box-shadow: 0 0 18px rgba(0, 191, 165, 0.35);
+      }
+      50% { opacity: 0.45; border-color: rgba(0, 191, 165, 0.3); }
+      100% {
+        width: 520px; height: 520px; opacity: 0;
+        border-color: rgba(0, 191, 165, 0.02);
+      }
+    }
+
+    .video-card.is-muted .sonar-pulse:not(.burst) {
+      animation-play-state: paused;
+      opacity: 0;
+    }
+
+    .video-center {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      z-index: 4;
+      margin-top: -16px;
+    }
+
+    .avatar-halo {
+      position: relative;
+      width: 98px;
+      height: 98px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .avatar-glow {
+      position: absolute;
+      inset: -12px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--teal-primary) 0%, transparent 70%);
+      opacity: 0.38;
+      filter: blur(14px);
+      animation: breathGlow 3s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+
+    @keyframes breathGlow {
+      0% { transform: scale(0.92); opacity: 0.25; }
+      100% { transform: scale(1.15); opacity: 0.55; }
+    }
+
+    .avatar-lg {
+      position: relative;
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #02d4b8 0%, var(--teal-primary) 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      box-shadow: 0 10px 25px rgba(0, 191, 165, 0.32), inset 0 2px 4px rgba(255, 255, 255, 0.25);
+      cursor: pointer;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .avatar-lg:hover { transform: scale(1.06); }
+
+    .camera-status-text {
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.1px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    }
+
+    video#webcamStream {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+      transform: scaleX(-1);
+      z-index: 3;
+    }
+
+    .video-controls {
+      position: absolute;
+      bottom: 22px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      z-index: 10;
+    }
+
+    .ctrl-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s cubic-bezier(0.34, 1.4, 0.64, 1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.08);
+    }
+    .ctrl-btn:hover { transform: translateY(-2px) scale(1.05); }
+
+    .ctrl-btn.teal {
+      background: var(--btn-dark);
+      color: white;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .ctrl-btn.teal:hover {
+      background: var(--btn-dark-hover);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35), 0 0 10px rgba(0, 191, 165, 0.25);
+    }
+    .ctrl-btn.red { background: var(--red-alert); color: white; }
+    .ctrl-btn.red:hover {
+      background: var(--red-hover);
+      box-shadow: 0 6px 16px rgba(240, 68, 56, 0.4);
+    }
+    .ctrl-btn.active-fx { box-shadow: 0 0 0 2px var(--teal-primary), 0 4px 12px rgba(0,0,0,.25); }
+
+    .sparkle-burst {
+      position: absolute;
+      pointer-events: none;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      opacity: 0;
+      animation: sparkleFly 0.8s ease-out forwards;
+      z-index: 20;
+    }
+    @keyframes sparkleFly {
+      0% { transform: translate(0, 0) scale(1.2); opacity: 1; }
+      100% { transform: translate(var(--dx), var(--dy)) scale(0.1); opacity: 0; }
+    }
+
+    /* Background-effect (blur/tint) applied to the video */
+    video#webcamStream.fx { filter: saturate(1.25) contrast(1.05) hue-rotate(-8deg); }
+
+    /* ---------- Device selectors ---------- */
+    .device-selectors {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .device-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      min-width: 0;
+    }
+    .device-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .device-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    .device-icon {
+      color: var(--brand-teal);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .device-texts {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .device-type { font-size: 11px; color: #94a3b8; font-weight: 500; }
+    .device-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1e293b;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .device-arrow {
+      color: #94a3b8;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      margin-left: 6px;
+    }
+
+    .custom-select {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      z-index: 30;
+      overflow: hidden;
+      padding: 6px 0;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+    .custom-select.show { display: block; }
+
+    .dropdown-opt {
+      padding: 8px 14px;
+      font-size: 12.5px;
+      color: #334155;
+      cursor: pointer;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .dropdown-opt:hover { background: #f1f5f9; color: var(--brand-teal); }
+    .dropdown-opt.selected { color: var(--brand-teal); font-weight: 600; background: #f0fdfa; }
+
+    /* ---------- Waiting card ---------- */
+    .waiting-card {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 38px 32px 32px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid #f1f5f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .state-wrap {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fff7ed;
+      color: #ea580c;
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 11.5px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      border: 1px solid #ffedd5;
+    }
+    .status-pill.cancelled { background: #fef2f2; color: #dc2626; border-color: #fee2e2; }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      background-color: #ea580c;
+      border-radius: 50%;
+      animation: pulseDot 1.8s infinite;
+    }
+    .status-pill.cancelled .status-dot { background-color: #dc2626; animation: none; }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .ring-wrapper {
+      position: relative;
+      width: 72px;
+      height: 72px;
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ring-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .ring-bg { fill: none; stroke: #dcfce7; stroke-width: 4; }
+    .ring-progress {
+      fill: none;
+      stroke: #008779;
+      stroke-width: 4;
+      stroke-dasharray: 190;
+      stroke-dashoffset: 75;
+      stroke-linecap: round;
+      transform-origin: 36px 36px;
+      animation: spinProgress 2.2s linear infinite;
+    }
+    @keyframes spinProgress {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .ring-icon {
+      position: absolute;
+      color: #008779;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ring-wrapper.cancelled .ring-bg { stroke: #fee2e2; }
+    .ring-wrapper.cancelled .ring-icon { color: #dc2626; }
+
+    .waiting-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: -0.4px;
+      margin-bottom: 8px;
+    }
+
+    .waiting-subtitle {
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .wait-timer {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--brand-teal);
+      background: #e6f7f5;
+      padding: 3px 12px;
+      border-radius: 12px;
+      margin-bottom: 22px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .meeting-info-box {
+      width: 100%;
+      background: #f8fafc;
+      border: 1px solid #edf2f7;
+      border-radius: 14px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-align: left;
+      margin-bottom: 26px;
+    }
+
+    .meeting-badge-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: #ffedd5;
+      color: #ea580c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .meeting-meta { display: flex; flex-direction: column; gap: 2px; }
+    .meeting-name { font-size: 14px; font-weight: 600; color: #1e293b; }
+    .meeting-time { font-size: 12px; color: #94a3b8; font-weight: 500; }
+
+    .attendees-section { width: 100%; text-align: left; margin-bottom: 28px; }
+
+    .attendees-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .attendees-title { font-size: 13.5px; font-weight: 600; color: #334155; }
+    .attendees-count {
+      font-size: 12.5px;
+      color: var(--brand-teal);
+      font-weight: 600;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .attendees-count:hover { text-decoration: underline; }
+
+    .attendee-list { display: flex; flex-direction: column; gap: 12px; }
+
+    .attendee-item { display: flex; align-items: center; justify-content: space-between; }
+    .attendee-left { display: flex; align-items: center; gap: 10px; }
+
+    .avatar-mini {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      color: white;
+      font-size: 11.5px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .avatar-sn { background-color: #0d9488; }
+    .avatar-sb { background-color: #f97316; }
+    .avatar-ds { background-color: #3b82f6; }
+    .avatar-extra { background-color: #6366f1; }
+
+    .attendee-name { font-size: 13px; font-weight: 600; color: #1e293b; }
+
+    .host-pill {
+      background: #e6f7f5;
+      color: var(--brand-teal);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 12px;
+      margin-left: 6px;
+    }
+
+    .attendee-mic { color: #94a3b8; display: flex; align-items: center; }
+
+    .more-attendees-btn {
+      width: 100%;
+      text-align: center;
+      margin-top: 10px;
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color 0.15s ease;
+    }
+    .more-attendees-btn:hover { color: var(--brand-teal); }
+
+    .hidden-attendees {
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .hidden-attendees.expanded { display: flex; }
+
+    .card-actions { width: 100%; display: flex; flex-direction: column; gap: 16px; }
+
+    .cancel-btn, .primary-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .cancel-btn {
+      border: 1.5px solid #e2e8f0;
+      background: #ffffff;
+      color: #334155;
+    }
+    .cancel-btn:hover { border-color: #cbd5e1; background: #f8fafc; color: #0f172a; }
+
+    .primary-btn {
+      border: 1.5px solid var(--brand-teal);
+      background: var(--brand-teal);
+      color: #fff;
+    }
+    .primary-btn:hover { background: #006f64; border-color: #006f64; }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--brand-teal);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+      background: none;
+      border: none;
+    }
+    .back-link:hover { opacity: 0.85; text-decoration: underline; }
+
+    /* ---------- Dashboard view ---------- */
+    .dashboard {
+      flex: 1;
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 48px 40px;
+    }
+    .dashboard h2 { font-size: 28px; letter-spacing: -0.5px; margin-bottom: 6px; }
+    .dashboard p.sub { color: var(--text-muted); font-size: 14px; margin-bottom: 28px; }
+    .dash-card {
+      background: #fff;
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 18px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 14px;
+    }
+    .dash-card .meta { display: flex; flex-direction: column; gap: 3px; }
+    .dash-card .title { font-weight: 600; font-size: 15px; }
+    .dash-card .time { font-size: 12.5px; color: #94a3b8; }
+    .dash-card .primary-btn { width: auto; padding: 10px 22px; }
+    .dash-card .tag {
+      font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 12px;
+      background: #fff7ed; color: #ea580c; margin-left: 8px;
+    }
+
+    /* ---------- Modal ---------- */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    .modal {
+      background: #fff;
+      border-radius: 18px;
+      padding: 26px 26px 22px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+    .modal h3 { font-size: 18px; margin-bottom: 8px; letter-spacing: -0.2px; }
+    .modal .modal-body { font-size: 13.5px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
+    .modal .modal-body ul { padding-left: 18px; }
+    .modal .modal-body li { margin-bottom: 6px; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+    .modal-actions button {
+      padding: 10px 18px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1.5px solid #e2e8f0;
+      background: #fff;
+      color: #334155;
+    }
+    .modal-actions button.danger { background: var(--red-alert); border-color: var(--red-alert); color: #fff; }
+    .modal-actions button.danger:hover { background: var(--red-hover); }
+    .modal-actions button.primary { background: var(--brand-teal); border-color: var(--brand-teal); color: #fff; }
+
+    /* ---------- Toast ---------- */
+    .toast-msg {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #1e293b;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      pointer-events: none;
+      z-index: 2000;
+      max-width: calc(100vw - 48px);
+    }
+    .toast-msg.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 1024px) {
+      main { grid-template-columns: 1fr; padding: 24px; }
+      .device-selectors { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      header { padding: 0 20px; }
+      main { padding: 16px; }
+      .video-card { height: 340px; }
+      .user-details { display: none; }
+      .header-actions { gap: 16px; }
+      .dashboard { padding: 28px 18px; }
+      .dash-card { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+  <script src="js/app.js?v=3"></script>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <a href="#" class="brand" id="brandLink">
+      <div class="brand-icon">E</div>
+      <div class="brand-text">Euodoo<span>Meet</span></div>
+    </a>
+
+    <div class="header-actions">
+      <button class="need-help" id="helpBtn" type="button">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+        <span>Need help?</span>
+      </button>
+
+      <button class="user-profile" id="profileBtn" type="button" title="Signed in as Kiran S">
+        <div class="avatar-sm">KS</div>
+        <div class="user-details">
+          <div class="user-name">Kiran S</div>
+          <div class="user-status">Signed in</div>
+        </div>
+      </button>
+    </div>
+  </header>
+
+  <!-- Dashboard view (hidden by default) -->
+  <section class="dashboard" id="dashboardView" hidden>
+    <h2>Welcome back, Kiran</h2>
+    <p class="sub">Your upcoming meetings</p>
+
+    <div class="dash-card">
+      <div class="meta">
+        <div class="title">Project Discussion <span class="tag">Today</span></div>
+        <div class="time">10:00 - 10:30 AM &middot; Host: Rithu singh</div>
+      </div>
+      <button class="primary-btn" id="dashJoinBtn" type="button">Join</button>
+    </div>
+    <div class="dash-card">
+      <div class="meta">
+        <div class="title">Weekly Sync</div>
+        <div class="time">Tomorrow &middot; 11:00 - 11:30 AM &middot; Host: Dilip S</div>
+      </div>
+      <button class="cancel-btn" style="width:auto;padding:10px 22px" type="button" id="dashRemindBtn">Remind me</button>
+    </div>
+  </section>
+
+  <!-- Waiting room view -->
+  <main id="waitingView">
+
+    <!-- LEFT: Preview -->
+    <section class="preview-container">
+      <div class="video-card" id="videoCard">
+
+        <div class="video-top-tag">Kiran S</div>
+
+        <div class="audio-indicator-pill" id="badgeAudio" title="Microphone active (click to mute)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+            <line x1="12" y1="19" x2="12" y2="22"></line>
+          </svg>
+          <div class="audio-bars" id="audioBars">
+            <div class="audio-bar"></div>
+            <div class="audio-bar"></div>
+            <div class="audio-bar"></div>
+            <div class="audio-bar"></div>
+          </div>
+        </div>
+
+        <div class="sonar-stage" id="sonarStage">
+          <div class="static-ring ring-1"></div>
+          <div class="static-ring ring-2"></div>
+          <div class="static-ring ring-3"></div>
+          <div class="static-ring" style="display:none"></div>
+          <div class="sonar-pulse"></div>
+          <div class="sonar-pulse"></div>
+          <div class="sonar-pulse"></div>
+        </div>
+
+        <video id="webcamStream" autoplay playsinline muted></video>
+
+        <div class="video-center" id="avatarDisplay">
+          <div class="avatar-halo">
+            <div class="avatar-glow"></div>
+            <div class="avatar-lg" id="avatarCircle" title="Click to pulse sound wave">KS</div>
+          </div>
+          <div class="camera-status-text" id="cameraStatusText">Your camera is off</div>
+        </div>
+
+        <div class="video-controls">
+          <button class="ctrl-btn teal" id="micBtn" type="button" title="Toggle Microphone"></button>
+          <button class="ctrl-btn red" id="camBtn" type="button" title="Toggle Camera"></button>
+          <button class="ctrl-btn teal" id="effectsBtn" type="button" title="Apply Effects">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path>
+              <path d="M5 3v4"></path>
+              <path d="M19 17v4"></path>
+              <path d="M3 5h4"></path>
+              <path d="M17 19h4"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Device selectors -->
+      <div class="device-selectors">
+        <div class="device-card" id="micSelectCard">
+          <div class="device-info">
+            <div class="device-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                <line x1="12" y1="19" x2="12" y2="22"></line>
+              </svg>
+            </div>
+            <div class="device-texts">
+              <span class="device-type">Microphone</span>
+              <span class="device-name" id="currentMicText">Built-in microphone</span>
+            </div>
+          </div>
+          <div class="device-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </div>
+          <div class="custom-select" id="micMenu"></div>
+        </div>
+
+        <div class="device-card" id="speakerSelectCard">
+          <div class="device-info">
+            <div class="device-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+              </svg>
+            </div>
+            <div class="device-texts">
+              <span class="device-type">Speakers</span>
+              <span class="device-name" id="currentSpeakerText">Built-in speakers</span>
+            </div>
+          </div>
+          <div class="device-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </div>
+          <div class="custom-select" id="speakerMenu"></div>
+        </div>
+
+        <div class="device-card" id="camSelectCard">
+          <div class="device-info">
+            <div class="device-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m22 8-6 4 6 4V8Z"></path>
+                <rect x="2" y="6" width="14" height="12" rx="2"></rect>
+              </svg>
+            </div>
+            <div class="device-texts">
+              <span class="device-type">Camera</span>
+              <span class="device-name" id="currentCamText">HD webcam</span>
+            </div>
+          </div>
+          <div class="device-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </div>
+          <div class="custom-select" id="camMenu"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT: Waiting card -->
+    <aside class="waiting-card">
+
+      <!-- Waiting state -->
+      <div class="state-wrap" id="waitingState">
+        <div class="status-pill">
+          <span class="status-dot"></span>
+          Waiting for host
+        </div>
+
+        <div class="ring-wrapper">
+          <svg class="ring-svg" viewBox="0 0 72 72">
+            <circle class="ring-bg" cx="36" cy="36" r="30"></circle>
+            <circle class="ring-progress" cx="36" cy="36" r="30"></circle>
+          </svg>
+          <div class="ring-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m22 8-6 4 6 4V8Z"></path>
+              <rect x="2" y="6" width="14" height="12" rx="2"></rect>
+            </svg>
+          </div>
+        </div>
+
+        <h1 class="waiting-title">Waiting for the host to let you in</h1>
+        <p class="waiting-subtitle">
+          Your request has been sent. You'll join automatically when the host admits you.
+        </p>
+        <div class="wait-timer" id="waitTimer">Waiting 00:00</div>
+      </div>
+
+      <!-- Cancelled state -->
+      <div class="state-wrap" id="cancelledState" hidden>
+        <div class="status-pill cancelled">
+          <span class="status-dot"></span>
+          Request cancelled
+        </div>
+
+        <div class="ring-wrapper cancelled">
+          <svg class="ring-svg" viewBox="0 0 72 72">
+            <circle class="ring-bg" cx="36" cy="36" r="30"></circle>
+          </svg>
+          <div class="ring-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </div>
+        </div>
+
+        <h1 class="waiting-title">You left the waiting room</h1>
+        <p class="waiting-subtitle" style="margin-bottom:22px">
+          Your request to join was cancelled.<br />
+          You can ask to join again at any time.
+        </p>
+      </div>
+
+      <!-- Meeting details -->
+      <div class="meeting-info-box">
+        <div class="meeting-badge-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m22 8-6 4 6 4V8Z"></path>
+            <rect x="2" y="6" width="14" height="12" rx="2"></rect>
+          </svg>
+        </div>
+        <div class="meeting-meta">
+          <div class="meeting-name" id="meetingTitleDisplay">Project Discussion</div>
+          <div class="meeting-time" id="meetingTimeDisplay">Today &middot; 10:00 - 10:30 AM</div>
+          <div id="meetingCodeDisplay" style="font-size: 12px; font-weight: 700; color: var(--brand-teal); margin-top: 4px;">Meeting ID: <span id="meetingCodeVal">---</span></div>
+        </div>
+      </div>
+
+      <!-- Attendees -->
+      <div class="attendees-section">
+        <div class="attendees-header">
+          <span class="attendees-title">In the meeting</span>
+          <button class="attendees-count" id="countToggle" type="button">6 people</button>
+        </div>
+
+        <div class="attendee-list">
+          <div class="attendee-item">
+            <div class="attendee-left">
+              <div class="avatar-mini avatar-sn">RS</div>
+              <span class="attendee-name">Rithu Singh</span>
+              <span class="host-pill">Host</span>
+            </div>
+            <div class="attendee-mic" data-muted-icon></div>
+          </div>
+
+          <div class="attendee-item">
+            <div class="attendee-left">
+              <div class="avatar-mini avatar-sb">DS</div>
+              <span class="attendee-name">Dawan S</span>
+            </div>
+            <div class="attendee-mic" data-muted-icon></div>
+          </div>
+
+          <div class="attendee-item">
+            <div class="attendee-left">
+              <div class="avatar-mini avatar-ds">JK</div>
+              <span class="attendee-name">Jhanavi Kumari</span>
+            </div>
+            <div class="attendee-mic" data-muted-icon></div>
+          </div>
+
+          <div class="hidden-attendees" id="extraAttendees">
+            <div class="attendee-item">
+              <div class="attendee-left">
+                <div class="avatar-mini avatar-extra">RK</div>
+                <span class="attendee-name">Roshan kumar</span>
+              </div>
+              <div class="attendee-mic" data-muted-icon></div>
+            </div>
+            <div class="attendee-item">
+              <div class="attendee-left">
+                <div class="avatar-mini avatar-sn">AJ</div>
+                <span class="attendee-name">Ajay Tomar</span>
+              </div>
+              <div class="attendee-mic" data-muted-icon></div>
+            </div>
+            <div class="attendee-item">
+              <div class="attendee-left">
+                <div class="avatar-mini avatar-sb">RV</div>
+                <span class="attendee-name">Rahul Varma</span>
+              </div>
+              <div class="attendee-mic" data-muted-icon></div>
+            </div>
+          </div>
+        </div>
+
+        <button class="more-attendees-btn" id="moreBtn" type="button">+3 more</button>
+      </div>
+
+      <!-- Actions -->
+      <div class="card-actions">
+        <button class="cancel-btn" id="cancelRequestBtn" type="button">Cancel request</button>
+        <button class="primary-btn" id="rejoinBtn" type="button" hidden>Request to join again</button>
+        <button class="back-link" id="backDashboardBtn" type="button">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m12 19-7-7 7-7"></path>
+            <path d="M19 12H5"></path>
+          </svg>
+          Back to dashboard
+        </button>
+      </div>
+    </aside>
+  </main>
+
+  <div class="toast-msg" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      /* ---------- Icons ---------- */
+      const ICON_MIC = `
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+          <line x1="12" y1="19" x2="12" y2="22"></line>
+        </svg>`;
+      const ICON_MIC_OFF = `
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="2" y1="2" x2="22" y2="22"></line>
+          <path d="M18.89 13.23A7.12 7.12 0 0 0 19 12v-2"></path>
+          <path d="M5 10v2a7 7 0 0 0 12 5"></path>
+          <path d="M15 9.34V5a3 3 0 0 0-5.68-1.33"></path>
+          <path d="M9 9v3a3 3 0 0 0 5.12 2.12"></path>
+          <line x1="12" y1="19" x2="12" y2="22"></line>
+        </svg>`;
+      const ICON_CAM = `
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m22 8-6 4 6 4V8Z"></path>
+          <rect x="2" y="6" width="14" height="12" rx="2"></rect>
+        </svg>`;
+      const ICON_CAM_OFF = `
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="2" y1="2" x2="22" y2="22"></line>
+          <path d="M10.41 10.41a2 2 0 0 0 2.83 2.83"></path>
+          <path d="m16 16 5 3V8l-3.34 2"></path>
+          <path d="M2 7a2 2 0 0 1 2-2h3.17l2.83 2.83"></path>
+          <path d="M14 14.5V17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h.83"></path>
+        </svg>`;
+      const ICON_ATTENDEE_MUTED = ICON_MIC_OFF.replace('width="18" height="18"', 'width="16" height="16"');
+
+      /* ---------- Elements ---------- */
+      const $ = (id) => document.getElementById(id);
+      const videoCard = $('videoCard');
+      const micBtn = $('micBtn');
+      const camBtn = $('camBtn');
+      const effectsBtn = $('effectsBtn');
+      const badgeAudio = $('badgeAudio');
+      const audioBars = $('audioBars');
+      const avatarDisplay = $('avatarDisplay');
+      const avatarCircle = $('avatarCircle');
+      const cameraStatusText = $('cameraStatusText');
+      const webcamStream = $('webcamStream');
+      const moreBtn = $('moreBtn');
+      const countToggle = $('countToggle');
+      const extraAttendees = $('extraAttendees');
+      const toast = $('toast');
+      const waitingView = $('waitingView');
+      const waitingState = $('waitingState');
+      const cancelledState = $('cancelledState');
+      const cancelBtn = $('cancelRequestBtn');
+      const rejoinBtn = $('rejoinBtn');
+      const waitTimer = $('waitTimer');
+
+      document.querySelectorAll('[data-muted-icon]').forEach((el) => { el.innerHTML = ICON_ATTENDEE_MUTED; });
+
+      /* ---------- User & Meeting Resolution ---------- */
+      let currentUser = (window.EuodooApp && EuodooApp.getSession()) ? EuodooApp.getSession() : null;
+      const hadExplicitSession = !!currentUser; // demo auto-login (Kiran S) should not flip roles
+      if (!currentUser) {
+        if (window.EuodooApp) {
+          currentUser = EuodooApp.requireAuth('login.html', true);
+        } else {
+          currentUser = { name: 'Kiran S', firstName: 'Kiran', initials: 'KS', role: 'User' };
+        }
+      }
+
+      const urlParams = new URLSearchParams(window.location.search);
+      let currentMeetingId = urlParams.get('meetingId');
+      let currentMeetingTitle = urlParams.get('meetingTitle');
+
+      const storedMeeting = (window.EuodooApp && EuodooApp.getMeeting()) ? EuodooApp.getMeeting() : null;
+      if (!currentMeetingId && storedMeeting) {
+        currentMeetingId = storedMeeting.code || storedMeeting.id;
+        if (!currentMeetingTitle) currentMeetingTitle = storedMeeting.title;
+      }
+      if (!currentMeetingId) currentMeetingId = '982-451-032';
+      if (!currentMeetingTitle) currentMeetingTitle = 'Project Discussion';
+
+      // Update UI with participant and meeting identity
+      if (currentUser) {
+        const profileBtn = $('profileBtn');
+        if (profileBtn) {
+          profileBtn.title = 'Signed in as ' + currentUser.name;
+          const av = profileBtn.querySelector('.avatar-sm');
+          if (av) av.textContent = currentUser.initials;
+          const un = profileBtn.querySelector('.user-name');
+          if (un) un.textContent = currentUser.name;
+        }
+        const topTag = document.querySelector('.video-top-tag');
+        if (topTag) topTag.textContent = currentUser.name;
+        if (avatarCircle) avatarCircle.textContent = currentUser.initials;
+      }
+
+      const titleEl = $('meetingTitleDisplay');
+      if (titleEl) titleEl.textContent = currentMeetingTitle;
+      const codeVal = $('meetingCodeVal');
+      if (codeVal) codeVal.textContent = currentMeetingId;
+
+      /* ---------- Host guard for the demo role check ---------- */
+      /* If the current user is the designated host of this meeting, they never
+         wait for admission: the host enters the existing call page directly. */
+      if (window.EuodooApp && hadExplicitSession && currentMeetingId && EuodooApp.isHostForMeeting(currentMeetingId)) {
+        EuodooApp.goToCallPage(currentMeetingId, currentMeetingTitle);
+        return;
+      }
+
+      /* ---------- Multi-Tab Join Request Synchronization ---------- */
+      let activeRequest = null;
+      let stopRequestListener = null;
+      let stopEndedListener = null;
+      let endedHandled = false;
+
+      // If the host ended the meeting, the waiting room can never become the call page.
+      function showMeetingEndedState() {
+        endedHandled = true;
+        stopWaiting();
+        waitingState.hidden = true;
+        cancelledState.hidden = false;
+        const pill = cancelledState.querySelector('.status-pill');
+        if (pill) pill.innerHTML = '<span class="status-dot" style="background:#dc2626;"></span> Meeting ended';
+        const t = cancelledState.querySelector('.waiting-title');
+        if (t) t.textContent = 'The meeting has ended';
+        const s = cancelledState.querySelector('.waiting-subtitle');
+        if (s) s.innerHTML = 'The host ended this meeting.<br/>You can start or join another meeting from your dashboard.';
+        cancelBtn.hidden = true;
+        rejoinBtn.hidden = true;
+        if (stopRequestListener) stopRequestListener();
+      }
+
+      // Invalid/missing meeting IDs: same terminal state, no request ever sent.
+      function showMeetingNotFoundState() {
+        endedHandled = true;
+        stopWaiting();
+        waitingState.hidden = true;
+        cancelledState.hidden = false;
+        const pill = cancelledState.querySelector('.status-pill');
+        if (pill) pill.innerHTML = '<span class="status-dot" style="background:#dc2626;"></span> Meeting not found';
+        const t = cancelledState.querySelector('.waiting-title');
+        if (t) t.textContent = "We couldn't find this meeting";
+        const s = cancelledState.querySelector('.waiting-subtitle');
+        if (s) s.innerHTML = "There is no meeting with this ID.<br/>Check the meeting code and try again from your dashboard.";
+        cancelBtn.hidden = true;
+        rejoinBtn.hidden = true;
+        if (stopRequestListener) stopRequestListener();
+      }
+
+      function registerParticipantRequest() {
+        if (!window.EuodooApp) return;
+        // A meeting the host already ended never opens the waiting room; an
+        // unknown meeting ID has nothing to wait for either.
+        if (EuodooApp.getDemoMeeting) {
+          const record = EuodooApp.getDemoMeeting(currentMeetingId);
+          if (record && record.endedAt) {
+            showMeetingEndedState();
+            return;
+          }
+          if (!record) {
+            showMeetingNotFoundState();
+            return;
+          }
+        }
+        activeRequest = EuodooApp.createJoinRequest(currentMeetingId, currentMeetingTitle, currentUser);
+
+        if (stopRequestListener) stopRequestListener();
+        stopRequestListener = EuodooApp.listenToRequest(activeRequest.requestId, (status, req) => {
+          handleRequestStatusChange(status, req);
+        });
+      }
+
+      function handleRequestStatusChange(status, req) {
+        if (status === 'ADMITTED') {
+          stopWaiting();
+          showToast('The host has admitted you! Joining meeting...');
+
+          const title = waitingState.querySelector('.waiting-title');
+          if (title) title.textContent = "You've been admitted!";
+          const sub = waitingState.querySelector('.waiting-subtitle');
+          if (sub) sub.textContent = 'Connecting audio and video now...';
+
+          const pill = waitingState.querySelector('.status-pill');
+          if (pill) {
+            pill.style.background = '#e6f8f0';
+            pill.style.color = '#0b7c4b';
+            pill.innerHTML = '<span class="status-dot" style="background:#0b7c4b;"></span> Admitted by Host';
+          }
+
+          const ring = document.querySelector('.ring-progress');
+          if (ring) ring.style.stroke = 'var(--brand-teal)';
+
+          setTimeout(() => {
+            if (endedHandled) return; // the host ended the meeting in the meantime
+            if (window.EuodooApp) {
+              EuodooApp.goToMeetingPage(currentMeetingId);
+            } else {
+              window.location.href = 'Callpage.html?meetingId=' + encodeURIComponent(currentMeetingId);
+            }
+          }, 1100);
+        } else if (status === 'DECLINED') {
+          stopWaiting();
+          showToast('The host declined your request to join.');
+          showCancelledState(
+            'Request Declined by Host',
+            'The host is unable to admit you at this time. You can return to your dashboard or request to join again later.'
+          );
+        }
+      }
+
+      /* ---------- Media Controls ---------- */
+      let isMicMuted = false;
+      let isCamOn = false;
+      let fxOn = false;
+      let micStream = null;
+      let camStream = null;
+      let audioCtx = null;
+      let analyser = null;
+      let rafId = null;
+      let waitStart = Date.now();
+      let waitInterval = null;
+
+      const selected = { mic: null, speaker: null, cam: null };
+      const devices = { mic: [], speaker: [], cam: [] };
+      const fallbackDevices = {
+        mic: [{ id: null, label: 'Built-in microphone' }, { id: null, label: 'Headset Mic (Bluetooth)' }, { id: null, label: 'External USB Mic' }],
+        speaker: [{ id: null, label: 'Built-in speakers' }, { id: null, label: 'Bluetooth Headphones' }, { id: null, label: 'External Audio Output' }],
+        cam: [{ id: null, label: 'HD webcam' }, { id: null, label: 'Integrated Virtual Camera' }, { id: null, label: 'USB External Cam' }]
+      };
+      const textEls = { mic: $('currentMicText'), speaker: $('currentSpeakerText'), cam: $('currentCamText') };
+      const menuEls = { mic: $('micMenu'), speaker: $('speakerMenu'), cam: $('camMenu') };
+      const cardEls = { mic: $('micSelectCard'), speaker: $('speakerSelectCard'), cam: $('camSelectCard') };
+      const hasMedia = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+
+      let toastTimer = null;
+      function showToast(message) {
+        clearTimeout(toastTimer);
+        toast.textContent = message;
+        toast.classList.add('show');
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+      }
+
+      let activeModal = null;
+      function closeModal() {
+        if (activeModal) { activeModal.remove(); activeModal = null; }
+      }
+      function showModal({ title, bodyHTML, actions }) {
+        closeModal();
+        const backdrop = document.createElement('div');
+        backdrop.className = 'modal-backdrop';
+        backdrop.innerHTML = `
+          <div class="modal" role="dialog" aria-modal="true">
+            <h3></h3>
+            <div class="modal-body"></div>
+            <div class="modal-actions"></div>
+          </div>`;
+        backdrop.querySelector('h3').textContent = title;
+        backdrop.querySelector('.modal-body').innerHTML = bodyHTML;
+        const actionsEl = backdrop.querySelector('.modal-actions');
+        actions.forEach((a) => {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.textContent = a.label;
+          if (a.className) b.className = a.className;
+          b.addEventListener('click', () => { closeModal(); if (a.onClick) a.onClick(); });
+          actionsEl.appendChild(b);
+        });
+        backdrop.addEventListener('click', (e) => { if (e.target === backdrop) closeModal(); });
+        document.body.appendChild(backdrop);
+        activeModal = backdrop;
+        const first = actionsEl.lastElementChild;
+        if (first) first.focus();
+      }
+
+      function stopMeter() {
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = null;
+        audioBars.classList.remove('live');
+        audioBars.querySelectorAll('.audio-bar').forEach((b) => { b.style.height = ''; });
+      }
+
+      function startMeter() {
+        if (!analyser) return;
+        const data = new Uint8Array(analyser.frequencyBinCount);
+        const bars = audioBars.querySelectorAll('.audio-bar');
+        const ranges = [[1, 6], [6, 14], [14, 28], [28, 50]];
+        audioBars.classList.add('live');
+        const loop = () => {
+          rafId = requestAnimationFrame(loop);
+          if (isMicMuted) return;
+          analyser.getByteFrequencyData(data);
+          bars.forEach((bar, i) => {
+            const [from, to] = ranges[i];
+            let sum = 0;
+            for (let k = from; k < to; k++) sum += data[k] || 0;
+            const level = sum / (to - from) / 255;
+            bar.style.height = (3 + Math.min(1, level * 2.2) * 11) + 'px';
+          });
+        };
+        loop();
+      }
+
+      function teardownMic() {
+        stopMeter();
+        if (micStream) micStream.getTracks().forEach((t) => t.stop());
+        micStream = null;
+        if (audioCtx) { audioCtx.close().catch(() => {}); audioCtx = null; }
+        analyser = null;
+      }
+
+      async function startMic(deviceId) {
+        if (!hasMedia) return false;
+        teardownMic();
+        try {
+          micStream = await navigator.mediaDevices.getUserMedia({
+            audio: deviceId ? { deviceId: { exact: deviceId } } : true
+          });
+          micStream.getAudioTracks().forEach((t) => { t.enabled = !isMicMuted; });
+          const AC = window.AudioContext || window.webkitAudioContext;
+          if (AC) {
+            audioCtx = new AC();
+            const src = audioCtx.createMediaStreamSource(micStream);
+            analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 128;
+            src.connect(analyser);
+            if (audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
+            startMeter();
+          }
+          return true;
+        } catch (err) {
+          micStream = null;
+          return false;
+        }
+      }
+
+      async function startCam(deviceId) {
+        if (!hasMedia) return false;
+        if (camStream) camStream.getTracks().forEach((t) => t.stop());
+        camStream = null;
+        try {
+          camStream = await navigator.mediaDevices.getUserMedia({
+            video: deviceId ? { deviceId: { exact: deviceId } } : true
+          });
+          webcamStream.srcObject = camStream;
+          webcamStream.style.display = 'block';
+          avatarDisplay.style.display = 'none';
+          return true;
+        } catch (err) {
+          camStream = null;
+          return false;
+        }
+      }
+
+      function stopCam() {
+        if (camStream) camStream.getTracks().forEach((t) => t.stop());
+        camStream = null;
+        webcamStream.srcObject = null;
+        webcamStream.style.display = 'none';
+        avatarDisplay.style.display = 'flex';
+      }
+
+      function renderMicBtn() {
+        micBtn.innerHTML = isMicMuted ? ICON_MIC_OFF : ICON_MIC;
+        micBtn.classList.toggle('red', isMicMuted);
+        micBtn.classList.toggle('teal', !isMicMuted);
+        videoCard.classList.toggle('is-muted', isMicMuted);
+        badgeAudio.classList.toggle('muted', isMicMuted);
+        badgeAudio.title = isMicMuted ? 'Microphone muted (click to unmute)' : 'Microphone active (click to mute)';
+      }
+
+      function renderCamBtn() {
+        camBtn.innerHTML = isCamOn ? ICON_CAM : ICON_CAM_OFF;
+        camBtn.classList.toggle('red', !isCamOn);
+        camBtn.classList.toggle('teal', isCamOn);
+      }
+
+      async function toggleMic() {
+        isMicMuted = !isMicMuted;
+        if (micStream) {
+          micStream.getAudioTracks().forEach((t) => { t.enabled = !isMicMuted; });
+          if (isMicMuted) {
+            audioBars.querySelectorAll('.audio-bar').forEach((b) => { b.style.height = ''; });
+          }
+        } else if (!isMicMuted) {
+          const ok = await startMic(selected.mic);
+          if (!ok && hasMedia) showToast('Microphone unavailable - check browser permissions');
+        }
+        renderMicBtn();
+        showToast(isMicMuted ? 'Microphone muted' : 'Microphone unmuted');
+      }
+
+      micBtn.addEventListener('click', toggleMic);
+      badgeAudio.addEventListener('click', toggleMic);
+
+      camBtn.addEventListener('click', async () => {
+        if (!isCamOn) {
+          camBtn.disabled = true;
+          const ok = await startCam(selected.cam);
+          camBtn.disabled = false;
+          if (!ok) {
+            showToast(hasMedia ? 'Could not access camera - check browser permissions' : 'Camera is not supported in this browser');
+            return;
+          }
+          isCamOn = true;
+          renderCamBtn();
+          loadDevices();
+          showToast('Camera turned on');
+        } else {
+          isCamOn = false;
+          stopCam();
+          cameraStatusText.textContent = 'Your camera is off';
+          renderCamBtn();
+          showToast('Camera turned off');
+        }
+      });
+
+      effectsBtn.addEventListener('click', () => {
+        fxOn = !fxOn;
+        effectsBtn.classList.toggle('active-fx', fxOn);
+        webcamStream.classList.toggle('fx', fxOn);
+        showToast(fxOn ? 'Visual effects enabled' : 'Visual effects disabled');
+      });
+
+      avatarCircle.addEventListener('click', () => {
+        showToast('Voice pulse: 1, 2, 3...');
+      });
+
+      function toggleAttendees() {
+        const expanded = extraAttendees.classList.toggle('expanded');
+        moreBtn.textContent = expanded ? '- Show less' : '+3 more';
+      }
+      moreBtn.addEventListener('click', toggleAttendees);
+      countToggle.addEventListener('click', toggleAttendees);
+
+      function renderMenu(kind) {
+        const menu = menuEls[kind];
+        menu.innerHTML = '';
+        const list = devices[kind].length ? devices[kind] : fallbackDevices[kind];
+        list.forEach((dev) => {
+          const opt = document.createElement('div');
+          opt.className = 'dropdown-opt';
+          opt.textContent = dev.label;
+          opt.title = dev.label;
+          const isSel = dev.id ? dev.id === selected[kind] : textEls[kind].textContent === dev.label;
+          if (isSel) opt.classList.add('selected');
+          opt.addEventListener('click', (e) => {
+            e.stopPropagation();
+            menu.classList.remove('show');
+            selectDevice(kind, dev);
+          });
+          menu.appendChild(opt);
+        });
+      }
+
+      async function loadDevices() {
+        if (!(navigator.mediaDevices && navigator.mediaDevices.enumerateDevices)) {
+          Object.keys(menuEls).forEach(renderMenu);
+          return;
+        }
+        try {
+          const all = await navigator.mediaDevices.enumerateDevices();
+          const map = { audioinput: 'mic', audiooutput: 'speaker', videoinput: 'cam' };
+          const names = { mic: 'Microphone', speaker: 'Speaker', cam: 'Camera' };
+          const fresh = { mic: [], speaker: [], cam: [] };
+          all.forEach((d) => {
+            const kind = map[d.kind];
+            if (!kind || !d.deviceId) return;
+            fresh[kind].push({ id: d.deviceId, label: d.label || `${names[kind]} ${fresh[kind].length + 1}` });
+          });
+          Object.keys(fresh).forEach((kind) => {
+            if (fresh[kind].length) {
+              devices[kind] = fresh[kind];
+              const current = devices[kind].find((d) => d.id === selected[kind]) || devices[kind][0];
+              selected[kind] = current.id;
+              textEls[kind].textContent = current.label;
+            }
+          });
+        } catch (e) {}
+        Object.keys(menuEls).forEach(renderMenu);
+      }
+
+      async function selectDevice(kind, dev) {
+        textEls[kind].textContent = dev.label;
+        selected[kind] = dev.id;
+        renderMenu(kind);
+        if (kind === 'mic' && micStream && dev.id) await startMic(dev.id);
+        if (kind === 'cam' && isCamOn && dev.id) await startCam(dev.id);
+        showToast(`${kind.toUpperCase()} set to: ${dev.label}`);
+      }
+
+      function closeMenus() {
+        Object.values(menuEls).forEach((m) => m.classList.remove('show'));
+      }
+
+      Object.keys(cardEls).forEach((kind) => {
+        cardEls[kind].addEventListener('click', (e) => {
+          e.stopPropagation();
+          const menu = menuEls[kind];
+          const willShow = !menu.classList.contains('show');
+          closeMenus();
+          if (willShow) menu.classList.add('show');
+        });
+      });
+      document.addEventListener('click', closeMenus);
+
+      /* ---------- Timer ---------- */
+      function updateTimer() {
+        const s = Math.floor((Date.now() - waitStart) / 1000);
+        const mm = String(Math.floor(s / 60)).padStart(2, '0');
+        const ss = String(s % 60).padStart(2, '0');
+        waitTimer.textContent = `Waiting ${mm}:${ss}`;
+      }
+      function startWaiting() {
+        waitStart = Date.now();
+        updateTimer();
+        clearInterval(waitInterval);
+        waitInterval = setInterval(updateTimer, 1000);
+      }
+      function stopWaiting() {
+        clearInterval(waitInterval);
+        waitInterval = null;
+      }
+
+      /* ---------- Waiting / Cancelled UI ---------- */
+      function showWaitingState() {
+        waitingState.hidden = false;
+        cancelledState.hidden = true;
+        cancelBtn.hidden = false;
+        rejoinBtn.hidden = true;
+        startWaiting();
+      }
+
+      function showCancelledState(reasonTitle, reasonMsg) {
+        waitingState.hidden = true;
+        cancelledState.hidden = false;
+        if (reasonTitle) {
+          const t = cancelledState.querySelector('.waiting-title');
+          if (t) t.textContent = reasonTitle;
+        }
+        if (reasonMsg) {
+          const s = cancelledState.querySelector('.waiting-subtitle');
+          if (s) s.textContent = reasonMsg;
+        }
+        cancelBtn.hidden = true;
+        rejoinBtn.hidden = false;
+        stopWaiting();
+      }
+
+      function returnToDashboard() {
+        stopWaiting();
+        if (activeRequest && window.EuodooApp) {
+          EuodooApp.cancelJoinRequest(activeRequest.requestId);
+        }
+        teardownMic();
+        if (camStream) camStream.getTracks().forEach((t) => t.stop());
+        window.location.href = 'dashboard.html';
+      }
+
+      cancelBtn.addEventListener('click', () => {
+        showModal({
+          title: 'Cancel join request?',
+          bodyHTML: `Are you sure you want to cancel your request to join <strong>${currentMeetingTitle}</strong>?`,
+          actions: [
+            { label: 'Keep waiting' },
+            {
+              label: 'Cancel & Return to Dashboard',
+              className: 'danger',
+              onClick: returnToDashboard
+            },
+            {
+              label: 'Cancel Request',
+              onClick: () => {
+                if (activeRequest && window.EuodooApp) {
+                  EuodooApp.cancelJoinRequest(activeRequest.requestId);
+                }
+                showCancelledState('Request cancelled', "You've left the waiting room. You can request to join again at any time.");
+                showToast('Request cancelled');
+              }
+            }
+          ]
+        });
+      });
+
+      rejoinBtn.addEventListener('click', () => {
+        if (window.EuodooApp && activeRequest) {
+          activeRequest = EuodooApp.rejoinMeeting(activeRequest.requestId, currentMeetingId, currentMeetingTitle, currentUser);
+          if (stopRequestListener) stopRequestListener();
+          stopRequestListener = EuodooApp.listenToRequest(activeRequest.requestId, (status, req) => {
+            handleRequestStatusChange(status, req);
+          });
+        }
+        showWaitingState();
+        showToast('Request sent to host');
+      });
+
+      $('backDashboardBtn').addEventListener('click', returnToDashboard);
+      $('brandLink').addEventListener('click', (e) => { e.preventDefault(); returnToDashboard(); });
+
+      /* ---------- Header Buttons ---------- */
+      $('profileBtn').addEventListener('click', () => {
+        showToast('Signed in as ' + currentUser.name + ' (' + currentUser.email + ')');
+      });
+
+      $('helpBtn').addEventListener('click', () => {
+        showModal({
+          title: 'Waiting Room Help',
+          bodyHTML: `<ul>
+            <li>You are in the waiting room for <strong>${currentMeetingTitle}</strong> (ID: <code>${currentMeetingId}</code>).</li>
+            <li>Your join request has been sent to the host.</li>
+            <li>Once the host admits you from their host control panel, you will automatically enter the meeting page.</li>
+            <li>Use the left preview to test and configure your microphone and camera.</li>
+            <li>Click "Back to dashboard" or "Cancel request" if you need to leave.</li>
+          </ul>`,
+          actions: [{ label: 'Got it', className: 'primary' }]
+        });
+      });
+
+      /* ---------- Cleanup & Lifecycle ---------- */
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') { closeModal(); closeMenus(); }
+      });
+
+      window.addEventListener('pagehide', () => {
+        if (stopRequestListener) stopRequestListener();
+        if (stopEndedListener) stopEndedListener();
+        teardownMic();
+        if (camStream) camStream.getTracks().forEach((t) => t.stop());
+      });
+
+      /* ---------- Init ---------- */
+      renderMicBtn();
+      renderCamBtn();
+      renderMenu('mic'); renderMenu('speaker'); renderMenu('cam');
+      startWaiting();
+      registerParticipantRequest();
+      if (window.EuodooApp && window.EuodooApp.listenToMeetingRecord) {
+        stopEndedListener = EuodooApp.listenToMeetingRecord(currentMeetingId, (record) => {
+          if (record && record.endedAt && !endedHandled) showMeetingEndedState();
+        });
+      }
+
+      (async function init() {
+        if (hasMedia) {
+          const ok = await startMic(null);
+          if (!ok) showToast('Microphone access blocked - using demo audio indicator');
+        }
+        loadDevices();
+      })();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<!-- Thymeleaf-ready: rename to templates/dashboard.html and the th: attributes below activate. -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#F0F7F8">
+    <title>Dashboard Â· Euodoo Meet</title>
+
+    <!-- Spring Security CSRF token, read by js/dashboard.js for POST requests -->
+    <meta name="_csrf" content="" th:if="${_csrf != null}" th:content="${_csrf.token}">
+    <meta name="_csrf_header" content="X-CSRF-TOKEN" th:if="${_csrf != null}" th:content="${_csrf.headerName}">
+
+    <!-- Fail-safe for the entrance animation: content never stays hidden if GSAP fails to load -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (!reduce) {
+                root.classList.add('anim-pending');
+                setTimeout(function () {
+                    root.classList.remove('anim-pending');
+                }, 3000);
+            }
+        })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <!-- Tailwind (Play CDN keeps this project build-free; see README.md for the production build) -->
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                screens: {sm: '480px', md: '768px', lg: '1200px', xl: '1440px'},
+                extend: {
+                    fontFamily: {sans: ['"Plus Jakarta Sans"', 'Inter', 'ui-sans-serif', 'system-ui', 'sans-serif']},
+                    colors: {
+                        orange: {DEFAULT: '#F06422', dark: '#C8500F', pale: '#FFF1E6'},
+                        teal: {DEFAULT: '#0FA49A', dark: '#087F79', pale: '#DFF3F0'},
+                        canvas: '#F0F7F8',
+                        ink: '#17333D',
+                        muted: {DEFAULT: '#718893', strong: '#5B7380'},
+                        line: '#DCE7EA'
+                    },
+                    boxShadow: {card: '0 1px 2px rgba(23,51,61,.04), 0 10px 28px -14px rgba(23,51,61,.12)'}
+                }
+            }
+        };
+    </script>
+
+    <link rel="stylesheet" href="css/dashboard.css" th:href="@{/css/dashboard.css}">
+</head>
+
+<body class="bg-canvas font-sans text-[14px] text-ink antialiased">
+<a href="#main"
+   class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:font-semibold focus:shadow-card">Skip
+    to main content</a>
+
+<!-- Mobile drawer backdrop -->
+<div id="drawer-backdrop" class="drawer-backdrop md:hidden" data-open="false" aria-hidden="true"></div>
+
+<!-- ===================== Sidebar ===================== -->
+<aside id="sidebar" data-open="false" aria-label="Sidebar"
+       class="fixed inset-y-0 left-0 z-50 flex w-[280px] max-w-[86vw] -translate-x-full flex-col border-r border-line bg-white md:z-30 md:w-[216px] md:translate-x-0 lg:w-[248px]">
+    <div class="flex h-[72px] shrink-0 items-center justify-between gap-2 px-5 lg:h-[88px] lg:px-6"
+         style="padding-top:env(safe-area-inset-top)">
+        <a href="/dashboard" th:href="@{/dashboard}" data-nav="home"
+           class="flex min-w-0 items-center gap-2.5 rounded-lg" aria-label="Euodoo Meet home">
+            <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-teal text-[22px] font-extrabold text-white"
+                  aria-hidden="true">E</span>
+            <span class="truncate text-[20px] font-extrabold tracking-tight lg:text-[22px]">Euodoo <span
+                    class="text-orange">Meet</span></span>
+        </a>
+        <button id="drawer-close" type="button" class="icon-btn md:hidden" aria-label="Close navigation"><i
+                data-lucide="x" class="h-5 w-5"></i></button>
+    </div>
+
+    <nav class="flex-1 overflow-y-auto px-4 pb-4 lg:px-6" aria-label="Main">
+        <p class="mb-3 mt-3 px-1 text-[12px] font-semibold uppercase tracking-[0.14em] text-muted-strong">Workspace</p>
+        <ul class="space-y-1.5">
+            <li><a href="/dashboard" th:href="@{/dashboard}" data-nav="overview" aria-current="page"
+                   class="nav-link is-active"><i data-lucide="layout-dashboard" class="h-5 w-5"></i>Overview</a></li>
+            <li><a href="/meeting-history" th:href="@{/meeting-history}" data-nav="meeting-history" class="nav-link"><i data-lucide="history"
+                                                                                          class="h-5 w-5"></i>Meeting History</a>
+            </li>
+            <li><a href="/settings" th:href="@{/settings}" data-nav="settings" class="nav-link"><i data-lucide="settings"
+                                                                                                class="h-5 w-5"></i>Settings</a>
+            </li>
+            <li><a href="/help" th:href="@{/help}" data-nav="help" class="nav-link"><i data-lucide="circle-help"
+                                                                                                class="h-5 w-5"></i>Help &amp; Support</a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="shrink-0 p-4 lg:p-6" style="padding-bottom:max(1rem, env(safe-area-inset-bottom))">
+        <div class="flex items-center gap-3 rounded-2xl bg-canvas p-3">
+            <span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-teal text-sm font-bold text-white"
+                  aria-hidden="true" data-user-initials>KS</span>
+            <div class="min-w-0 flex-1">
+                <p class="truncate text-sm font-semibold leading-5" data-user-name>Kiran S</p>
+                <p class="text-xs leading-4 text-muted-strong" data-user-role>User</p>
+            </div>
+            <button id="sidebar-logout" type="button" data-action="logout" class="icon-btn-plain" aria-label="Sign out">
+                <i data-lucide="log-out" class="h-5 w-5"></i></button>
+        </div>
+    </div>
+</aside>
+
+<!-- Spring Security logout is a POST with CSRF -->
+<form id="logout-form" method="post" action="/logout" th:action="@{/logout}" hidden>
+    <input type="hidden" name="_csrf" value="" th:if="${_csrf != null}" th:value="${_csrf.token}">
+</form>
+
+<!-- ===================== Main shell ===================== -->
+<div class="md:pl-[216px] lg:pl-[248px]">
+
+    <!-- Top bar -->
+    <header class="app-header sticky top-0 z-30 border-b border-line bg-white">
+        <div class="flex h-[72px] items-center gap-2 px-4 sm:gap-3 md:px-6 lg:h-[88px] lg:px-8">
+            <button id="menu-btn" type="button" class="icon-btn -ml-1 md:hidden" aria-label="Open navigation"
+                    aria-controls="sidebar" aria-expanded="false">
+                <i data-lucide="menu" class="h-6 w-6"></i>
+            </button>
+
+            <!-- Search -->
+            <div id="search-root" class="relative min-w-0 flex-1 md:max-w-[480px]">
+                <label for="global-search" class="sr-only">Search meetings, people or recordings</label>
+                <i data-lucide="search"
+                   class="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-muted"
+                   aria-hidden="true"></i>
+                <input id="global-search" type="search" autocomplete="off" spellcheck="false"
+                       role="combobox" aria-expanded="false" aria-controls="search-results" aria-autocomplete="list"
+                       placeholder="Search meetings, people or recordings"
+                       class="h-12 w-full rounded-xl border border-transparent bg-[#E8F1F3] pl-11 pr-4 text-sm text-ink placeholder:text-muted focus:border-teal focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal/25 md:pr-20">
+                <kbd id="search-kbd"
+                     class="pointer-events-none absolute right-3 top-1/2 hidden -translate-y-1/2 rounded-md border border-line bg-white px-2 py-0.5 text-[11px] font-semibold text-muted-strong md:block">Ctrl
+                    K</kbd>
+                <div id="search-results" role="listbox" aria-label="Search results" hidden
+                     class="popover absolute left-0 top-full z-40 mt-2 max-h-[60vh] w-full min-w-[260px] overflow-y-auto p-2 md:w-[480px]"></div>
+            </div>
+
+            <div class="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
+                <!-- Date -->
+                <button id="date-btn" type="button" data-action="go-today"
+                        class="hidden h-11 items-center gap-2.5 rounded-xl border border-teal/30 bg-teal-pale px-3 text-[14px] font-semibold text-teal-dark transition-colors hover:border-teal/60 sm:inline-flex lg:px-4">
+                    <i data-lucide="calendar" class="h-[18px] w-[18px]"></i>
+                    <span id="date-long" class="hidden lg:inline">Monday, 26 October 2026</span>
+                    <span id="date-short" class="hidden md:inline lg:hidden">Mon, 26 Oct</span>
+                </button>
+
+                <!-- Theme toggle -->
+                <button id="theme-toggle-btn" type="button" data-action="toggle-theme"
+                        aria-label="Toggle dark mode"
+                        class="hidden h-11 w-11 sm:grid place-items-center rounded-full border border-line bg-white text-ink transition-colors hover:bg-canvas">
+                    <i data-lucide="sun" class="h-5 w-5" id="theme-toggle-icon"></i>
+                </button>
+
+                <!-- Notifications -->
+                <div class="relative" data-popover-root>
+                    <button id="notif-btn" type="button" aria-haspopup="true" aria-expanded="false"
+                            aria-controls="notif-popover" aria-label="Notifications"
+                            class="relative grid h-11 w-11 place-items-center rounded-full border border-line bg-white text-ink transition-colors hover:bg-canvas">
+                        <i data-lucide="bell" class="h-5 w-5"></i>
+                        <span id="notif-dot"
+                              class="absolute right-[11px] top-[10px] h-2 w-2 rounded-full bg-orange ring-2 ring-white"
+                              aria-hidden="true"></span>
+                    </button>
+                    <div id="notif-popover" hidden
+                         class="popover absolute right-0 top-full z-40 mt-2 w-[360px] max-w-[calc(100vw-32px)] p-2">
+                        <div class="flex items-center justify-between px-3 pb-1 pt-2">
+                            <h2 class="text-[15px] font-bold">Notifications</h2>
+                            <button id="notif-mark-read" type="button"
+                                    class="rounded-md text-[13px] font-semibold text-teal-dark hover:underline">Mark all
+                                as read
+                            </button>
+                        </div>
+                        <ul id="notif-list" class="max-h-[60vh] overflow-y-auto"></ul>
+                    </div>
+                </div>
+
+                <!-- Profile -->
+                <div class="relative hidden sm:block" data-popover-root>
+                    <button id="profile-btn" type="button" aria-haspopup="true" aria-expanded="false"
+                            aria-controls="profile-popover" aria-label="Account menu"
+                            class="grid h-11 w-11 place-items-center rounded-full bg-teal text-sm font-bold text-white transition-colors hover:bg-teal-dark">
+                        <span data-user-initials>KS</span>
+                    </button>
+                    <div id="profile-popover" hidden class="popover absolute right-0 top-full z-40 mt-2 w-[240px] p-2">
+                        <div class="px-3 pb-2 pt-2">
+                            <p class="text-sm font-bold leading-5" data-user-name>Kiran S</p>
+                            <p class="text-xs text-muted-strong" data-user-role>User</p>
+                        </div>
+                        <div class="border-t border-line pt-1">
+                            <button type="button" class="popover-item" data-action="open-profile"><i data-lucide="user"
+                                                                                                     class="h-[18px] w-[18px] text-muted-strong"></i>View
+                                profile
+                            </button>
+                            <button type="button" class="popover-item" data-action="logout"><i data-lucide="log-out"
+                                                                                               class="h-[18px] w-[18px] text-muted-strong"></i>Sign
+                                out
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===================== Content ===================== -->
+    <main id="main" class="px-4 pb-12 pt-6 md:px-6 lg:px-8 lg:pt-8">
+        <noscript><p class="mb-4 rounded-xl bg-white p-4 text-sm font-medium">JavaScript is needed to load your
+            meetings.</p></noscript>
+
+        <div class="mx-auto grid max-w-[1440px] gap-6 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_340px]">
+
+            <!-- Left / centre column -->
+            <div class="min-w-0 space-y-6">
+                <section aria-labelledby="greeting" data-animate>
+                    <h1 id="greeting"
+                        class="text-[26px] font-extrabold leading-9 tracking-tight md:text-[32px] md:leading-10">Good
+                        afternoon, Kiran</h1>
+                    <p id="greeting-sub" class="mt-1 text-[14px] text-muted-strong">You have 3 meetings today. Ready to
+                        jump in?</p>
+                </section>
+
+                <!-- Create + Join -->
+                <div class="actions-wrap">
+                    <div class="actions-grid">
+                        <section id="create-card" aria-labelledby="create-heading" data-animate data-hover-lift
+                                 class="create-card relative flex min-h-[220px] flex-col overflow-hidden rounded-3xl bg-orange p-6 text-white shadow-card">
+                            <span class="grid h-10 w-10 place-items-center rounded-full bg-white/20"><i
+                                    data-lucide="video" class="h-5 w-5"></i></span>
+                            <h2 id="create-heading" class="mt-5 text-2xl font-semibold leading-8">Create meeting</h2>
+                            <p class="mt-1 max-w-[30ch] text-[14px] font-medium leading-5 text-white">Start an instant
+                                meeting or schedule one for later.</p>
+                            <div class="relative z-10 mt-auto pt-5">
+                                <button id="new-meeting-btn" type="button" data-action="open-create" data-mode="instant"
+                                        class="btn btn-white btn-sm">
+                                    <i data-lucide="plus" class="h-4 w-4"></i>New meeting
+                                </button>
+                            </div>
+                        </section>
+
+                        <section id="join-card" aria-labelledby="join-heading" data-animate data-hover-lift
+                                 class="flex min-h-[220px] flex-col rounded-3xl border border-line bg-white p-6 shadow-card">
+                            <span class="grid h-10 w-10 place-items-center rounded-full bg-teal-pale text-teal"><i
+                                    data-lucide="link-2" class="h-5 w-5"></i></span>
+                            <h2 id="join-heading" class="mt-5 text-2xl font-semibold leading-8">Join meeting</h2>
+                            <p class="mt-1 text-[14px] leading-5 text-muted-strong">Enter a meeting code or paste an
+                                invite link.</p>
+                            <form id="join-form" class="mt-auto pt-5" novalidate>
+                                <div class="flex items-start gap-2">
+                                    <div id="join-field" class="relative min-w-0 flex-1">
+                                        <label for="join-input" class="sr-only">Meeting code or invite link</label>
+                                        <i data-lucide="video"
+                                           class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted"
+                                           aria-hidden="true"></i>
+                                        <input id="join-input" name="code" type="text" inputmode="url"
+                                               autocomplete="off" autocapitalize="off" spellcheck="false"
+                                               placeholder="abc-defg-hij" aria-describedby="join-error"
+                                               class="field !pl-10">
+                                    </div>
+                                    <button id="join-btn" type="submit" class="btn btn-teal h-[46px] shrink-0 px-5">
+                                        Join
+                                    </button>
+                                </div>
+                                <p id="join-error" class="field-error" role="alert" hidden></p>
+                            </form>
+                        </section>
+                    </div>
+                </div>
+
+                <!-- Calls -->
+                <section id="calls-card" aria-labelledby="calls-heading" data-animate
+                         class="calls-card rounded-3xl border border-line bg-white p-4 shadow-card md:p-6">
+                    <div class="flex flex-wrap items-end justify-between gap-x-4 gap-y-3">
+                        <div class="min-w-0">
+                            <h2 id="calls-heading" class="text-xl font-bold leading-7">Calls</h2>
+                            <p class="text-[13px] text-muted-strong">Your upcoming and recent meetings</p>
+                        </div>
+                        <div id="calls-tabs" class="tabs w-full sm:w-auto" role="tablist" aria-label="Meeting filter">
+                            <span id="calls-thumb" class="tabs-thumb" aria-hidden="true"></span>
+                            <button id="tab-upcoming" type="button" role="tab" data-tab="upcoming" aria-selected="true"
+                                    aria-controls="meeting-list" class="flex-1 sm:flex-none">Upcoming
+                            </button>
+                            <button id="tab-recent" type="button" role="tab" data-tab="recent" aria-selected="false"
+                                    tabindex="-1" aria-controls="meeting-list" class="flex-1 sm:flex-none">Recent
+                            </button>
+                            <button id="tab-missed" type="button" role="tab" data-tab="missed" aria-selected="false"
+                                    tabindex="-1" aria-controls="meeting-list" class="flex-1 sm:flex-none">Missed
+                            </button>
+                        </div>
+                    </div>
+                    <div id="meeting-list" role="tabpanel" aria-labelledby="tab-upcoming" aria-live="polite"
+                         class="mt-4"></div>
+                </section>
+            </div>
+
+            <!-- Right column -->
+            <aside class="grid min-w-0 content-start gap-6 md:grid-cols-2 lg:grid-cols-1"
+                   aria-label="Calendar and schedule">
+                <section id="calendar-card" aria-labelledby="cal-title" data-animate
+                         class="rounded-3xl border border-line bg-white p-5 shadow-card md:self-start">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <h2 id="cal-title" class="text-[22px] font-bold leading-7">October 2026</h2>
+                            <p id="cal-sub" class="mt-0.5 text-[13px] text-muted-strong" aria-live="polite">Today is
+                                Monday, 26</p>
+                        </div>
+                        <div class="flex shrink-0 gap-2">
+                            <button id="cal-prev" type="button"
+                                    class="grid h-9 w-9 place-items-center rounded-full border border-line text-ink transition-colors hover:bg-canvas"
+                                    aria-label="Previous month"><i data-lucide="chevron-left"
+                                                                   class="h-[18px] w-[18px]"></i></button>
+                            <button id="cal-next" type="button"
+                                    class="grid h-9 w-9 place-items-center rounded-full border border-line text-ink transition-colors hover:bg-canvas"
+                                    aria-label="Next month"><i data-lucide="chevron-right"
+                                                               class="h-[18px] w-[18px]"></i></button>
+                        </div>
+                    </div>
+                    <div class="mt-5 grid grid-cols-7 text-center text-[12.5px] font-semibold text-ink"
+                         aria-hidden="true">
+                        <span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span>
+                    </div>
+                    <div id="cal-grid" class="mt-2 grid grid-cols-7 gap-y-1" role="group"
+                         aria-label="October 2026"></div>
+                    <p class="mt-3 flex items-center gap-2 text-[12.5px] text-muted-strong"><span
+                            class="h-1.5 w-1.5 rounded-full bg-teal" aria-hidden="true"></span>Days with scheduled
+                        meetings</p>
+                </section>
+
+                <section id="schedule-card" aria-labelledby="schedule-title" data-animate
+                         class="rounded-3xl border border-line bg-white p-5 shadow-card md:self-start">
+                    <div class="flex items-center justify-between gap-3">
+                        <h2 id="schedule-title" class="min-w-0 truncate text-[18px] font-bold leading-6">Today&rsquo;s
+                            schedule</h2>
+                        <p id="schedule-count" class="shrink-0 text-[12.5px] font-semibold text-teal-dark">3
+                            meetings</p>
+                    </div>
+                    <ul id="schedule-list" class="mt-4 space-y-4"></ul>
+                </section>
+            </aside>
+        </div>
+    </main>
+
+    <!-- ===================== Meeting History Page ===================== -->
+    <div id="page-meeting-history" hidden class="px-4 pb-12 pt-6 md:px-6 lg:px-8 lg:pt-8">
+        <div class="mx-auto max-w-[1440px]">
+            <div class="mb-6">
+                <h1 class="text-[26px] font-extrabold leading-9 tracking-tight md:text-[32px]">Meeting History</h1>
+                <p class="mt-1 text-[14px] text-muted-strong">A record of all your past meetings.</p>
+            </div>
+            <section class="rounded-3xl border border-line bg-white p-4 shadow-card md:p-6">
+                <div class="flex flex-wrap items-end justify-between gap-x-4 gap-y-3 mb-4">
+                    <div class="tabs w-full sm:w-auto" role="tablist" aria-label="History filter" id="history-tabs">
+                        <span id="history-thumb" class="tabs-thumb" aria-hidden="true"></span>
+                        <button type="button" role="tab" data-htab="recent" aria-selected="true" class="flex-1 sm:flex-none">Recent</button>
+                        <button type="button" role="tab" data-htab="missed" aria-selected="false" tabindex="-1" class="flex-1 sm:flex-none">Missed</button>
+                    </div>
+                </div>
+                <div id="history-list" aria-live="polite"></div>
+            </section>
+        </div>
+    </div>
+
+    <!-- ===================== Settings Page ===================== -->
+    <div id="page-settings" hidden class="px-4 pb-12 pt-6 md:px-6 lg:px-8 lg:pt-8">
+        <div class="mx-auto max-w-[720px]">
+            <div class="mb-6">
+                <h1 class="text-[26px] font-extrabold leading-9 tracking-tight md:text-[32px]">Settings</h1>
+                <p class="mt-1 text-[14px] text-muted-strong">Manage your account and preferences.</p>
+            </div>
+
+            <!-- Profile -->
+            <section class="rounded-3xl border border-line bg-white p-6 shadow-card mb-5">
+                <h2 class="text-[18px] font-bold mb-5 flex items-center gap-2"><i data-lucide="user" class="h-5 w-5 text-teal"></i>Profile</h2>
+                <div class="flex items-center gap-4 mb-6">
+                    <span class="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-teal text-xl font-bold text-white" data-user-initials>KS</span>
+                    <div>
+                        <p class="text-[16px] font-bold" data-user-name>Kiran S</p>
+                        <p class="text-[13px] text-muted-strong" data-user-role>User</p>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label class="field-label">Display name</label>
+                        <input type="text" class="field" value="Kiran S" placeholder="Your name">
+                    </div>
+                    <div>
+                        <label class="field-label">Email address</label>
+                        <input type="email" class="field" value="kiran@euodoo.com" placeholder="you@example.com">
+                    </div>
+                    <div class="pt-1">
+                        <button type="button" class="btn btn-teal" onclick="window.EuodooDash&&window.EuodooDash.settingsSaved()">Save changes</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Notifications -->
+            <section class="rounded-3xl border border-line bg-white p-6 shadow-card mb-5">
+                <h2 class="text-[18px] font-bold mb-5 flex items-center gap-2"><i data-lucide="bell" class="h-5 w-5 text-teal"></i>Notifications</h2>
+                <div class="space-y-4">
+                    <label class="flex items-center justify-between gap-4 cursor-pointer">
+                        <div>
+                            <p class="text-[14px] font-semibold">Meeting reminders</p>
+                            <p class="text-[13px] text-muted-strong">Get notified 5 minutes before a meeting starts.</p>
+                        </div>
+                        <input type="checkbox" checked class="h-5 w-5 rounded accent-teal">
+                    </label>
+                    <hr class="border-line">
+                    <label class="flex items-center justify-between gap-4 cursor-pointer">
+                        <div>
+                            <p class="text-[14px] font-semibold">New meeting invites</p>
+                            <p class="text-[13px] text-muted-strong">Receive a notification when someone adds you to a meeting.</p>
+                        </div>
+                        <input type="checkbox" checked class="h-5 w-5 rounded accent-teal">
+                    </label>
+                    <hr class="border-line">
+                    <label class="flex items-center justify-between gap-4 cursor-pointer">
+                        <div>
+                            <p class="text-[14px] font-semibold">Email digest</p>
+                            <p class="text-[13px] text-muted-strong">Weekly summary of your meeting activity.</p>
+                        </div>
+                        <input type="checkbox" class="h-5 w-5 rounded accent-teal">
+                    </label>
+                </div>
+            </section>
+
+            <!-- Appearance -->
+            <section class="rounded-3xl border border-line bg-white p-6 shadow-card mb-5">
+                <h2 class="text-[18px] font-bold mb-5 flex items-center gap-2"><i data-lucide="sun" class="h-5 w-5 text-teal"></i>Appearance</h2>
+                <p class="field-label mb-3">Theme</p>
+                <div class="grid grid-cols-3 gap-3" id="theme-picker">
+                    <!-- Light -->
+                    <button type="button" data-theme="light"
+                            class="theme-card theme-card-active flex flex-col items-center gap-2.5 rounded-2xl border-2 p-4 transition-all">
+                        <span class="grid h-10 w-10 place-items-center rounded-xl bg-[#F0F7F8] border border-[#DCE7EA]">
+                            <i data-lucide="sun" class="h-5 w-5 text-orange"></i>
+                        </span>
+                        <span class="text-[13.5px] font-semibold">Light</span>
+                    </button>
+                    <!-- Dark -->
+                    <button type="button" data-theme="dark"
+                            class="theme-card flex flex-col items-center gap-2.5 rounded-2xl border-2 p-4 transition-all">
+                        <span class="grid h-10 w-10 place-items-center rounded-xl bg-[#17333D] border border-[#2a4a56]">
+                            <i data-lucide="moon" class="h-5 w-5 text-teal"></i>
+                        </span>
+                        <span class="text-[13.5px] font-semibold">Dark</span>
+                    </button>
+                    <!-- System -->
+                    <button type="button" data-theme="system"
+                            class="theme-card flex flex-col items-center gap-2.5 rounded-2xl border-2 p-4 transition-all">
+                        <span class="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-[#F0F7F8] to-[#17333D] border border-[#DCE7EA]">
+                            <i data-lucide="monitor" class="h-5 w-5 text-muted-strong"></i>
+                        </span>
+                        <span class="text-[13.5px] font-semibold">System</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Danger zone -->
+            <section class="rounded-3xl border border-[#F8D3B9] bg-white p-6 shadow-card">
+                <h2 class="text-[18px] font-bold mb-2 flex items-center gap-2 text-orange"><i data-lucide="triangle-alert" class="h-5 w-5"></i>Danger zone</h2>
+                <p class="text-[13px] text-muted-strong mb-4">These actions are permanent and cannot be undone.</p>
+                <button type="button" class="btn btn-outline text-danger border-danger/30 hover:bg-danger-pale">Delete my account</button>
+            </section>
+        </div>
+    </div>
+
+    <!-- ===================== Help & Support Page ===================== -->
+    <div id="page-help" hidden class="px-4 pb-12 pt-6 md:px-6 lg:px-8 lg:pt-8">
+        <div class="mx-auto max-w-[720px]">
+            <div class="mb-6">
+                <h1 class="text-[26px] font-extrabold leading-9 tracking-tight md:text-[32px]">Help &amp; Support</h1>
+                <p class="mt-1 text-[14px] text-muted-strong">Find answers and get help from our team.</p>
+            </div>
+
+            <!-- Quick links -->
+            <div class="grid gap-4 sm:grid-cols-3 mb-6">
+                <button type="button" class="rounded-2xl border border-line bg-white p-5 text-left shadow-card hover:border-teal/40 hover:bg-teal-pale transition-colors">
+                    <i data-lucide="book-open" class="h-6 w-6 text-teal mb-3"></i>
+                    <p class="font-bold text-[15px]">Documentation</p>
+                    <p class="text-[13px] text-muted-strong mt-0.5">Guides &amp; references</p>
+                </button>
+                <button type="button" class="rounded-2xl border border-line bg-white p-5 text-left shadow-card hover:border-teal/40 hover:bg-teal-pale transition-colors">
+                    <i data-lucide="message-circle" class="h-6 w-6 text-teal mb-3"></i>
+                    <p class="font-bold text-[15px]">Live Chat</p>
+                    <p class="text-[13px] text-muted-strong mt-0.5">Talk to our team</p>
+                </button>
+                <button type="button" class="rounded-2xl border border-line bg-white p-5 text-left shadow-card hover:border-teal/40 hover:bg-teal-pale transition-colors">
+                    <i data-lucide="mail" class="h-6 w-6 text-teal mb-3"></i>
+                    <p class="font-bold text-[15px]">Email Support</p>
+                    <p class="text-[13px] text-muted-strong mt-0.5">support@euodoo.com</p>
+                </button>
+            </div>
+
+            <!-- FAQ -->
+            <section class="rounded-3xl border border-line bg-white shadow-card overflow-hidden">
+                <div class="px-6 py-5 border-b border-line">
+                    <h2 class="text-[18px] font-bold">Frequently asked questions</h2>
+                </div>
+                <div class="divide-y divide-line">
+                    <details class="group px-6 py-4">
+                        <summary class="flex items-center justify-between cursor-pointer font-semibold text-[14.5px] list-none gap-3">
+                            How do I start an instant meeting?
+                            <i data-lucide="chevron-down" class="h-4 w-4 shrink-0 text-muted transition-transform group-open:rotate-180"></i>
+                        </summary>
+                        <p class="mt-3 text-[13.5px] text-muted-strong leading-5">Click the <strong>New meeting</strong> button on the Overview page. Choose "Start instant" to begin immediately, or "Schedule for later" to plan ahead.</p>
+                    </details>
+                    <details class="group px-6 py-4">
+                        <summary class="flex items-center justify-between cursor-pointer font-semibold text-[14.5px] list-none gap-3">
+                            How do I invite someone to a meeting?
+                            <i data-lucide="chevron-down" class="h-4 w-4 shrink-0 text-muted transition-transform group-open:rotate-180"></i>
+                        </summary>
+                        <p class="mt-3 text-[13.5px] text-muted-strong leading-5">After creating a meeting, click <strong>Copy invite link</strong> and share it. Anyone with the link can join directly — no account needed.</p>
+                    </details>
+                    <details class="group px-6 py-4">
+                        <summary class="flex items-center justify-between cursor-pointer font-semibold text-[14.5px] list-none gap-3">
+                            Where can I see past meetings?
+                            <i data-lucide="chevron-down" class="h-4 w-4 shrink-0 text-muted transition-transform group-open:rotate-180"></i>
+                        </summary>
+                        <p class="mt-3 text-[13.5px] text-muted-strong leading-5">Go to <strong>Meeting History</strong> in the sidebar. You'll find all your recent and missed meetings listed there.</p>
+                    </details>
+                    <details class="group px-6 py-4">
+                        <summary class="flex items-center justify-between cursor-pointer font-semibold text-[14.5px] list-none gap-3">
+                            How do I change my display name?
+                            <i data-lucide="chevron-down" class="h-4 w-4 shrink-0 text-muted transition-transform group-open:rotate-180"></i>
+                        </summary>
+                        <p class="mt-3 text-[13.5px] text-muted-strong leading-5">Head to <strong>Settings</strong> in the sidebar, update your Display name, and click <strong>Save changes</strong>.</p>
+                    </details>
+                </div>
+            </section>
+
+            <!-- Contact form -->
+            <section class="rounded-3xl border border-line bg-white p-6 shadow-card mt-5">
+                <h2 class="text-[18px] font-bold mb-4">Send us a message</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="field-label">Subject</label>
+                        <input type="text" class="field" placeholder="Briefly describe your issue">
+                    </div>
+                    <div>
+                        <label class="field-label">Message</label>
+                        <textarea class="field h-32 py-3" style="height:128px;resize:vertical" placeholder="Tell us more…"></textarea>
+                    </div>
+                    <button type="button" class="btn btn-teal" onclick="window.EuodooDash&&window.EuodooDash.helpSent()">Send message</button>
+                </div>
+            </section>
+        </div>
+    </div>
+
+</div>
+
+
+    <!-- ===================== Profile Page ===================== -->
+    <div id="page-profile" hidden class="px-4 pb-12 pt-6 md:px-6 lg:px-8 lg:pt-8">
+        <div class="mx-auto max-w-[640px]">
+
+            <!-- Back button -->
+            <button type="button" data-action="go-back"
+                    class="mb-6 inline-flex items-center gap-2 text-[13.5px] font-semibold text-muted-strong hover:text-ink transition-colors">
+                <i data-lucide="arrow-left" class="h-4 w-4"></i>Back
+            </button>
+
+            <!-- Avatar hero -->
+            <div class="flex flex-col items-center rounded-3xl border border-line bg-white px-6 py-10 shadow-card text-center mb-5">
+                <span class="grid h-24 w-24 place-items-center rounded-full bg-teal text-3xl font-extrabold text-white mb-4"
+                      data-user-initials>KS</span>
+                <h1 class="text-[24px] font-extrabold tracking-tight" data-user-name>Kiran S</h1>
+                <p class="mt-1 text-[14px] text-muted-strong" data-user-role>User</p>
+                <span class="mt-3 inline-flex items-center gap-1.5 rounded-full bg-teal-pale px-3 py-1 text-[12.5px] font-semibold text-teal-dark">
+                    <span class="h-1.5 w-1.5 rounded-full bg-teal"></span>Active
+                </span>
+            </div>
+
+            <!-- Edit profile form -->
+            <section class="rounded-3xl border border-line bg-white p-6 shadow-card mb-5">
+                <h2 class="text-[17px] font-bold mb-5 flex items-center gap-2">
+                    <i data-lucide="pencil" class="h-4 w-4 text-teal"></i>Edit profile
+                </h2>
+                <div class="space-y-4">
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <div>
+                            <label class="field-label">First name</label>
+                            <input type="text" class="field" value="Kiran" placeholder="First name">
+                        </div>
+                        <div>
+                            <label class="field-label">Last name</label>
+                            <input type="text" class="field" value="S" placeholder="Last name">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="field-label">Email address</label>
+                        <input type="email" class="field" value="kiran@euodoo.com" placeholder="you@example.com">
+                    </div>
+                    <div>
+                        <label class="field-label">Role / Job title</label>
+                        <input type="text" class="field" value="User" placeholder="e.g. Product Manager">
+                    </div>
+                    <div>
+                        <label class="field-label">Bio <span class="font-normal text-muted-strong">(optional)</span></label>
+                        <textarea class="field py-3" style="height:90px;resize:vertical"
+                                  placeholder="A short description about yourself..."></textarea>
+                    </div>
+                    <div class="pt-1 flex gap-3">
+                        <button type="button" class="btn btn-teal"
+                                onclick="window.EuodooDash&&window.EuodooDash.settingsSaved()">
+                            Save changes
+                        </button>
+                        <button type="button" class="btn btn-outline" data-action="go-back">Cancel</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Account info -->
+            <section class="rounded-3xl border border-line bg-white p-6 shadow-card mb-5">
+                <h2 class="text-[17px] font-bold mb-4 flex items-center gap-2">
+                    <i data-lucide="shield" class="h-4 w-4 text-teal"></i>Account
+                </h2>
+                <dl class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <dt class="text-[13px] font-semibold uppercase tracking-[0.06em] text-muted-strong">Member since</dt>
+                            <dd class="mt-0.5 text-[14.5px] font-semibold">October 2026</dd>
+                        </div>
+                    </div>
+                    <hr class="border-line">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <dt class="text-[13px] font-semibold uppercase tracking-[0.06em] text-muted-strong">Total meetings</dt>
+                            <dd class="mt-0.5 text-[14.5px] font-semibold" id="profile-total-meetings">11</dd>
+                        </div>
+                    </div>
+                    <hr class="border-line">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <dt class="text-[13px] font-semibold uppercase tracking-[0.06em] text-muted-strong">Password</dt>
+                            <dd class="mt-0.5 text-[14px] text-muted-strong">Last changed never</dd>
+                        </div>
+                        <button type="button" class="btn btn-outline btn-sm">Change</button>
+                    </div>
+                </dl>
+            </section>
+
+            <!-- Sign out -->
+            <section class="rounded-3xl border border-line bg-white p-6 shadow-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-[17px] font-bold">Sign out</h2>
+                        <p class="text-[13px] text-muted-strong mt-0.5">Sign out of your Euodoo Meet account.</p>
+                    </div>
+                    <button type="button" class="btn btn-outline" data-action="logout">
+                        <i data-lucide="log-out" class="h-4 w-4"></i>Sign out
+                    </button>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+<!-- ===================== Create meeting dialog ===================== -->
+<dialog id="create-dialog" class="app-dialog" aria-labelledby="create-title">
+    <div class="dialog-panel">
+        <div class="flex items-start justify-between gap-4">
+            <div>
+                <h2 id="create-title" class="text-xl font-bold leading-7">New meeting</h2>
+                <p class="mt-0.5 text-sm text-muted-strong">Start right away or plan something for later.</p>
+            </div>
+            <button type="button" class="icon-btn -mr-2 -mt-1" data-close aria-label="Close dialog"><i data-lucide="x"
+                                                                                                       class="h-5 w-5"></i>
+            </button>
+        </div>
+
+        <div id="create-body">
+            <div id="create-mode" class="tabs tabs--static mt-5 w-full" role="tablist" aria-label="Meeting type">
+                <button id="mode-instant" type="button" role="tab" data-mode="instant" aria-selected="true"
+                        aria-controls="instant-form" class="flex-1">Start instant
+                </button>
+                <button id="mode-schedule" type="button" role="tab" data-mode="schedule" aria-selected="false"
+                        tabindex="-1" aria-controls="schedule-form" class="flex-1">Schedule for later
+                </button>
+            </div>
+
+            <form id="instant-form" role="tabpanel" aria-labelledby="mode-instant" class="mt-5" novalidate>
+                <label for="instant-title" class="field-label">Meeting title <span
+                        class="font-normal text-muted-strong">(optional)</span></label>
+                <input id="instant-title" name="title" type="text" maxlength="80" autocomplete="off"
+                       placeholder="e.g. Quick sync" class="field">
+                <p class="mt-3 text-[13px] leading-5 text-muted-strong">We&rsquo;ll create a meeting link you can copy
+                    and share. You can join straight away.</p>
+                <p id="instant-error" class="field-error" role="alert" hidden></p>
+                <div class="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                    <button type="button" class="btn btn-outline" data-close>Cancel</button>
+                    <button id="instant-submit" type="submit" class="btn btn-orange"><i data-lucide="video"
+                                                                                        class="h-4 w-4"></i>Start
+                        meeting
+                    </button>
+                </div>
+            </form>
+
+            <form id="schedule-form" role="tabpanel" aria-labelledby="mode-schedule" class="mt-5 space-y-4" novalidate
+                  hidden>
+                <div>
+                    <label for="sch-title" class="field-label">Title</label>
+                    <input id="sch-title" name="title" type="text" maxlength="80" autocomplete="off"
+                           placeholder="e.g. Design review" aria-describedby="sch-title-error" class="field">
+                    <p id="sch-title-error" class="field-error" hidden></p>
+                </div>
+                <div class="grid gap-4 sm:grid-cols-2">
+                    <div>
+                        <label for="sch-date" class="field-label">Date</label>
+                        <input id="sch-date" name="date" type="date" aria-describedby="sch-date-error" class="field">
+                        <p id="sch-date-error" class="field-error" hidden></p>
+                    </div>
+                    <div>
+                        <label for="sch-time" class="field-label">Start time</label>
+                        <input id="sch-time" name="start" type="time" aria-describedby="sch-time-error" class="field">
+                        <p id="sch-time-error" class="field-error" hidden></p>
+                    </div>
+                </div>
+                <div class="grid gap-4 sm:grid-cols-2">
+                    <div>
+                        <label for="sch-duration" class="field-label">Duration</label>
+                        <select id="sch-duration" name="durationMin" class="field">
+                            <option value="15">15 min</option>
+                            <option value="30" selected>30 min</option>
+                            <option value="45">45 min</option>
+                            <option value="60">1 hr</option>
+                            <option value="90">1 hr 30 min</option>
+                            <option value="120">2 hr</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="sch-team" class="field-label">Team <span class="font-normal text-muted-strong">(optional)</span></label>
+                        <input id="sch-team" name="team" type="text" maxlength="40" autocomplete="off"
+                               placeholder="e.g. Dev team" class="field">
+                    </div>
+                </div>
+                <p id="schedule-error" class="field-error" role="alert" hidden></p>
+                <div class="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end">
+                    <button type="button" class="btn btn-outline" data-close>Cancel</button>
+                    <button id="schedule-submit" type="submit" class="btn btn-orange"><i data-lucide="calendar"
+                                                                                         class="h-4 w-4"></i>Schedule
+                        meeting
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div id="create-success" hidden class="mt-6">
+            <div class="rounded-2xl bg-teal-pale p-4">
+                <p class="text-[13px] font-semibold text-teal-dark">Your meeting is ready</p>
+                <p id="created-title" class="mt-0.5 text-[17px] font-bold leading-6"></p>
+                <p id="created-code" class="mt-2 font-mono text-[15px] font-semibold tracking-wide text-ink"></p>
+                <p id="created-when" class="mt-1 text-[13px] text-muted-strong"></p>
+            </div>
+            <div class="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                <button id="created-copy" type="button" class="btn btn-outline"><i data-lucide="copy"
+                                                                                   class="h-4 w-4"></i>Copy invite link
+                </button>
+                <button id="created-done" type="button" class="btn btn-outline" data-close>Done</button>
+                <button id="created-enter" type="button" class="btn btn-orange"><i data-lucide="video"
+                                                                                   class="h-4 w-4"></i>Enter meeting
+                </button>
+            </div>
+        </div>
+    </div>
+</dialog>
+
+<!-- ===================== Meeting details dialog ===================== -->
+<dialog id="details-dialog" class="app-dialog" aria-labelledby="details-title">
+    <div id="details-body" class="dialog-panel"></div>
+</dialog>
+
+<!-- Toasts -->
+<div id="toast-region" class="toast-region" role="region" aria-label="Notifications"></div>
+
+<!-- Scripts: libraries first, then the app (config and demo data are at the top of dashboard.js) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"
+        th:src="@{https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js}"></script>
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<script src="js/app.js?v=3" th:src="@{/js/app.js}"></script>
+<script src="js/dashboard.js?v=3" th:src="@{/js/dashboard.js}"></script>
+</body>
+</html>

@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Euodoo Meet - Create your account</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary-teal: #08504d;
+      --accent-orange: #e85924;
+      --accent-orange-hover: #d24a18;
+      --tile-teal: #139f97;
+      --tile-orange: #e7602b;
+      --tile-dark: #0a4744;
+      --text-dark: #111827;
+      --text-muted: #6b7280;
+      --input-bg: #f3f8f7;
+      --input-border: #dae7e5;
+      --font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    html { height: 100%; }
+
+    body {
+      font-family: var(--font-family);
+      background: #fff;
+      color: var(--text-dark);
+      min-height: 100%;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* FIX: width:100% instead of 100vw (100vw ignores the scrollbar and causes sideways scroll) */
+    .signup-container {
+      display: flex;
+      width: 100%;
+      min-height: 100vh;
+      min-height: 100dvh;
+    }
+
+    /* ---------- LEFT HERO ---------- */
+    .hero-section {
+      flex: 5 1 0;              /* FIX: equal basis so the ratio is exact (5:6) */
+      min-width: 0;
+      background: var(--primary-teal);
+      position: relative;
+      overflow: hidden;
+      padding: clamp(28px, 5vh, 56px) clamp(24px, 4vw, 64px);
+      display: flex;
+      color: #fff;
+    }
+
+    .bg-shape { position: absolute; pointer-events: none; border-radius: 50%; z-index: 1; }
+    .orange-circle {
+      width: clamp(260px, 32vw, 460px);
+      aspect-ratio: 1;
+      background: var(--accent-orange);
+      top: -28%;
+      right: -22%;
+    }
+    .teal-blob {
+      width: clamp(300px, 38vw, 540px);
+      aspect-ratio: 1;
+      background: radial-gradient(circle, rgba(6,68,65,.95) 0%, rgba(5,59,57,.4) 75%);
+      bottom: -30%;
+      left: -15%;
+    }
+
+    /* FIX: flex:1 fills the full height (height:100% did nothing inside a flex parent) */
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      flex: 1;
+      width: 100%;
+      max-width: 520px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: clamp(20px, 4vh, 40px);
+    }
+
+    .brand-logo { display: flex; align-items: center; gap: 12px; }
+    .logo-icon {
+      width: 38px; height: 38px;
+      background: #0d9488;
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 20px; color: #fff;
+      box-shadow: 0 4px 10px rgba(0,0,0,.1);
+    }
+    .logo-text { font-size: 24px; font-weight: 700; letter-spacing: -.02em; }
+
+    .hero-text-block { margin: 0; }
+    .hero-title {
+      font-size: clamp(28px, 3.2vw, 44px);   /* FIX: fluid type */
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -.025em;
+      margin-bottom: 16px;
+    }
+    .hero-subtitle {
+      font-size: clamp(15px, 1.2vw, 17px);
+      line-height: 1.55;
+      color: rgba(255,255,255,.82);
+      max-width: 460px;
+    }
+
+    .preview-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: 0 24px 48px -12px rgba(3,35,33,.45);
+      width: 100%;
+      max-width: 420px;
+    }
+    .video-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+    .video-tile {
+      aspect-ratio: 1 / 1;          /* FIX: tiles scale with the card instead of fixed 110px */
+      max-height: 120px;
+      width: 100%;
+      border-radius: 12px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .tile-teal { background: var(--tile-teal); }
+    .tile-orange { background: var(--tile-orange); }
+    .tile-dark { background: var(--tile-dark); }
+    .avatar-circle {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 17px;
+      box-shadow: 0 3px 8px rgba(0,0,0,.12);
+    }
+    .tile-teal .avatar-circle { color: var(--tile-teal); }
+    .tile-orange .avatar-circle { color: var(--tile-orange); }
+    .tile-dark .avatar-circle { color: var(--tile-dark); }
+    .tile-bar {
+      position: absolute; bottom: 10px;
+      width: 50%; height: 12px;
+      background: rgba(255,255,255,.24);
+      border-radius: 9999px;
+    }
+    .preview-footer { display: flex; align-items: center; justify-content: space-between; }
+    .control-dots { display: flex; gap: 10px; }
+    .dot-btn {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: #e5f3f1; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background-color .2s;
+    }
+    .dot-btn:hover { background: #cce9e5; }
+    .dot-center { width: 6px; height: 6px; border-radius: 50%; background: #08504d; }
+    .join-btn {
+      background: var(--accent-orange); color: #fff; border: none;
+      border-radius: 9999px; padding: 10px 22px;
+      font: 700 14px var(--font-family); cursor: pointer;
+      box-shadow: 0 4px 12px rgba(232,89,36,.35);
+      transition: background-color .2s;
+    }
+    .join-btn:hover { background: var(--accent-orange-hover); }
+
+    /* ---------- RIGHT FORM ---------- */
+    .form-section {
+      flex: 6 1 0;
+      min-width: 0;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(24px, 4vh, 48px) clamp(20px, 4vw, 40px);
+    }
+    .form-wrapper { width: 100%; max-width: 440px; }
+
+    .form-header { margin-bottom: 18px; }
+    .form-title { font-size: clamp(26px, 2.4vw, 32px); font-weight: 800; letter-spacing: -.03em; margin-bottom: 6px; }
+    .form-desc { font-size: 15px; color: var(--text-muted); line-height: 1.45; }
+
+    .google-btn {
+      width: 100%;
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      background: #fff;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 11px 20px;
+      font: 600 15px var(--font-family);
+      color: #374151;
+      cursor: pointer;
+      transition: background-color .2s, border-color .2s;
+    }
+    .google-btn:hover { background: #f9fafb; border-color: #d1d5db; }
+
+    .divider { display: flex; align-items: center; margin: 16px 0; }
+    .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid #e5e7eb; }
+    .divider span { padding: 0 14px; font-size: 13px; font-weight: 500; color: #9ca3af; white-space: nowrap; }
+
+    .form-row.two-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 13.5px; font-weight: 600; color: #374151; margin-bottom: 5px; }
+    .form-group input[type="text"],
+    .form-group input[type="email"],
+    .form-group input[type="password"] {
+      width: 100%;
+      height: 46px;
+      background: var(--input-bg);
+      border: 1.5px solid var(--input-border);
+      border-radius: 9px;
+      padding: 0 16px;
+      font: 15px var(--font-family);
+      color: var(--text-dark);
+      outline: none;
+      transition: border-color .2s, box-shadow .2s, background-color .2s;
+    }
+    .form-group input::placeholder { color: #9aa8a6; }
+    .form-group input:focus {
+      background: #fff;
+      border-color: #0d9488;
+      box-shadow: 0 0 0 3px rgba(13,148,136,.15);
+    }
+    .form-group.has-error input { border-color: #ef4444; background: #fef2f2; }
+    .error-msg { display: none; font-size: 12px; color: #ef4444; margin-top: 4px; font-weight: 500; }
+    .form-group.has-error .error-msg { display: block; }
+
+    .input-with-icon { position: relative; }
+    .input-with-icon input { padding-right: 48px !important; }
+    .toggle-password {
+      position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer; color: #0f766e;
+      padding: 6px; display: flex; border-radius: 6px;
+    }
+    .toggle-password:hover { color: #0d9488; }
+    .hidden { display: none !important; }
+
+    .terms-group { margin: 14px 0 16px; }
+    .custom-checkbox-container {
+      display: flex; align-items: center; position: relative;
+      cursor: pointer; user-select: none;
+      font-size: 13.5px; line-height: 1.4; color: #4b5563;
+    }
+    .custom-checkbox-container input { position: absolute; opacity: 0; height: 0; width: 0; }
+    .checkmark {
+      width: 20px; height: 20px; min-width: 20px;
+      background: #e5e7eb; border-radius: 5px; margin-right: 12px;
+      display: flex; align-items: center; justify-content: center; color: #fff;
+      transition: background-color .2s;
+    }
+    .custom-checkbox-container input:checked ~ .checkmark { background: var(--accent-orange); }
+    .custom-checkbox-container input:focus-visible ~ .checkmark { outline: 2px solid #0d9488; outline-offset: 2px; }
+    .checkmark svg { display: none; }
+    .custom-checkbox-container input:checked ~ .checkmark svg { display: block; }
+    .legal-link { color: #c2410c; font-weight: 700; text-decoration: none; }
+    .legal-link:hover { text-decoration: underline; }
+
+    .submit-btn {
+      width: 100%; height: 50px;
+      background: var(--accent-orange); color: #fff; border: none;
+      border-radius: 10px;
+      font: 700 16px var(--font-family);
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(232,89,36,.35);
+      transition: background-color .2s;
+    }
+    .submit-btn:hover { background: var(--accent-orange-hover); }
+    .submit-btn:disabled { opacity: .7; cursor: not-allowed; }
+
+    .signin-footer { text-align: center; margin-top: 16px; font-size: 14px; color: #6b7280; }
+    .login-link { color: #0f766e; font-weight: 700; text-decoration: none; margin-left: 4px; }
+    .login-link:hover { text-decoration: underline; }
+
+    /* ---------- RESPONSIVE ---------- */
+    /* Short laptop screens: tighten the hero so nothing gets cramped */
+    @media (max-height: 760px) and (min-width: 861px) {
+      .preview-card { padding: 12px; }
+      .video-tile { max-height: 84px; }
+      .hero-subtitle { display: none; }
+    }
+
+    @media (max-width: 860px) {
+      .signup-container { flex-direction: column; }
+      .hero-section { flex: none; padding: 32px 24px; }
+      .hero-content { max-width: none; gap: 24px; }
+      .preview-card { max-width: 100%; }
+      .orange-circle { top: -120px; right: -90px; width: 260px; }
+      .form-section { flex: none; padding: 32px 24px 48px; }
+      .form-wrapper { max-width: 480px; }
+    }
+
+    @media (max-width: 480px) {
+      .form-row.two-cols { grid-template-columns: 1fr; gap: 0; }
+      .video-tile { max-height: 84px; }
+      .preview-card { padding: 12px; }
+      .form-group input[type="text"],
+      .form-group input[type="email"],
+      .form-group input[type="password"] { font-size: 16px; } /* stops iOS zoom on focus */
+    }
+  </style>
+</head>
+<body>
+  <div class="signup-container">
+    <!-- Left Hero -->
+    <div class="hero-section">
+      <div class="bg-shape orange-circle"></div>
+      <div class="bg-shape teal-blob"></div>
+
+      <div class="hero-content">
+        <a href="login.html" class="brand-logo" style="text-decoration:none; color:inherit;">
+          <div class="logo-icon">E</div>
+          <span class="logo-text">Euodoo Meet</span>
+        </a>
+
+        <div class="hero-text-block">
+          <h1 class="hero-title">Meet, talk and collaborate — from anywhere.</h1>
+          <p class="hero-subtitle">Create your free account and start HD video meetings with your team in seconds.</p>
+        </div>
+
+        <div class="preview-card">
+          <div class="video-grid">
+            <div class="video-tile tile-teal"><div class="avatar-circle">K</div><div class="tile-bar"></div></div>
+            <div class="video-tile tile-orange"><div class="avatar-circle">J</div><div class="tile-bar"></div></div>
+            <div class="video-tile tile-dark"><div class="avatar-circle">D</div><div class="tile-bar"></div></div>
+          </div>
+          <div class="preview-footer">
+            <div class="control-dots">
+              <button class="dot-btn" aria-label="Microphone settings"><span class="dot-center"></span></button>
+              <button class="dot-btn" aria-label="Camera settings"><span class="dot-center"></span></button>
+              <button class="dot-btn" aria-label="Device settings"><span class="dot-center"></span></button>
+            </div>
+            <button class="join-btn" id="previewJoinBtn">Join now</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Form -->
+    <div class="form-section">
+      <div class="form-wrapper">
+        <header class="form-header">
+          <h2 class="form-title">Create your account</h2>
+          <p class="form-desc">Join Euodoo Meet and host or join meetings instantly.</p>
+        </header>
+
+        <button type="button" class="google-btn" id="googleSignInBtn">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.51h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.34z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+          <span>Continue with Google</span>
+        </button>
+
+        <div class="divider"><span>or sign up with email</span></div>
+
+        <form id="signupForm" novalidate>
+          <div class="form-row two-cols">
+            <div class="form-group">
+              <label for="firstName">First name</label>
+              <input type="text" id="firstName" name="firstName" placeholder="Kiran" autocomplete="given-name" required>
+              <div class="error-msg">Please enter your first name</div>
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last name</label>
+              <input type="text" id="lastName" name="lastName" placeholder="S" autocomplete="family-name" required>
+              <div class="error-msg">Please enter your last name</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email address</label>
+            <input type="email" id="email" name="email" placeholder="kiran.s@gmail.com" autocomplete="email" required>
+            <div class="error-msg">Please enter a valid email address</div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-with-icon">
+              <input type="password" id="password" name="password" placeholder="At least 8 characters" minlength="8" autocomplete="new-password" required>
+              <button type="button" class="toggle-password" data-target="password" aria-label="Toggle password visibility">
+                <svg class="eye-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <svg class="eye-off-icon hidden" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+              </button>
+            </div>
+            <div class="error-msg">Password must be at least 8 characters</div>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword">Confirm password</label>
+            <div class="input-with-icon">
+              <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Re-enter your password" autocomplete="new-password" required>
+              <button type="button" class="toggle-password" data-target="confirmPassword" aria-label="Toggle confirm password visibility">
+                <svg class="eye-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <svg class="eye-off-icon hidden" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+              </button>
+            </div>
+            <div class="error-msg">Passwords do not match</div>
+          </div>
+
+          <div class="terms-group">
+            <label class="custom-checkbox-container">
+              <input type="checkbox" id="termsCheckbox" required>
+              <span class="checkmark">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </span>
+              <span>I agree to the <a href="#terms" class="legal-link">Terms of Service</a> and <a href="#privacy" class="legal-link">Privacy Policy</a></span>
+            </label>
+          </div>
+
+          <button type="submit" class="submit-btn" id="submitBtn">Create account</button>
+
+          <p class="signin-footer">Already have an account? <a href="login.html" class="login-link">Log in</a></p>
+        </form>
+      </div>
+    </div>
+  </div>
+
+    <!-- Shared Integration Layer -->
+  <script src="js/app.js?v=3"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.toggle-password').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const input = document.getElementById(btn.dataset.target);
+          const show = input.type === 'password';
+          input.type = show ? 'text' : 'password';
+          btn.querySelector('.eye-icon').classList.toggle('hidden', show);
+          btn.querySelector('.eye-off-icon').classList.toggle('hidden', !show);
+        });
+      });
+
+      const form = document.getElementById('signupForm');
+      const formMessage = document.getElementById('formMessage');
+      const f = {
+        firstName: document.getElementById('firstName'),
+        lastName: document.getElementById('lastName'),
+        email: document.getElementById('email'),
+        password: document.getElementById('password'),
+        confirmPassword: document.getElementById('confirmPassword')
+      };
+      const terms = document.getElementById('termsCheckbox');
+      const submitBtn = document.getElementById('submitBtn');
+
+      function showFormMessage(msg, type) {
+        if (!formMessage) return;
+        formMessage.textContent = msg;
+        if (type === 'error') {
+          formMessage.style.cssText = 'display:block; padding:10px 14px; border-radius:10px; margin-bottom:16px; font-size:13.5px; font-weight:600; text-align:center; background:#fef2f2; color:#dc2626; border:1px solid #fecaca;';
+        } else {
+          formMessage.style.cssText = 'display:block; padding:10px 14px; border-radius:10px; margin-bottom:16px; font-size:13.5px; font-weight:600; text-align:center; background:#e6f8f0; color:#0b7c4b; border:1px solid #b7ecd3;';
+        }
+      }
+
+      const setError = (el, on) => el.closest('.form-group').classList.toggle('has-error', on);
+      Object.values(f).forEach((el) => el.addEventListener('input', () => {
+        setError(el, false);
+        if (formMessage) formMessage.style.display = 'none';
+      }));
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const checks = {
+          firstName: !!f.firstName.value.trim(),
+          lastName: !!f.lastName.value.trim(),
+          email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.value.trim()),
+          password: f.password.value.length >= 8,
+          confirmPassword: !!f.confirmPassword.value && f.confirmPassword.value === f.password.value
+        };
+        let valid = true;
+        for (const k in checks) {
+          setError(f[k], !checks[k]);
+          if (!checks[k]) valid = false;
+        }
+
+        if (!valid) {
+          showFormMessage('Please review and correct the highlighted fields above.', 'error');
+          return;
+        }
+
+        if (!terms.checked) {
+          showFormMessage('Please agree to the Terms of Service and Privacy Policy to continue.', 'error');
+          terms.focus();
+          return;
+        }
+
+        const original = submitBtn.textContent;
+        submitBtn.textContent = 'Creating account...';
+        submitBtn.disabled = true;
+
+        setTimeout(() => {
+          const userObj = {
+            firstName: f.firstName.value.trim(),
+            lastName: f.lastName.value.trim(),
+            email: f.email.value.trim().toLowerCase(),
+            role: 'User'
+          };
+
+          if (window.EuodooApp) {
+            EuodooApp.registerDemoUser(userObj);
+            EuodooApp.setSession(userObj);
+          }
+
+          submitBtn.textContent = original;
+          submitBtn.disabled = false;
+          showFormMessage('Account created successfully! Redirecting to sign in...', 'success');
+
+          setTimeout(() => {
+            window.location.href = 'login.html?registered=1&email=' + encodeURIComponent(userObj.email);
+          }, 800);
+        }, 900);
+      });
+
+      document.getElementById('googleSignInBtn').addEventListener('click', () => {
+        if (window.EuodooApp) {
+          EuodooApp.setSession({
+            name: 'Kiran S',
+            firstName: 'Kiran',
+            lastName: 'S',
+            email: 'kiran.s@euodoo.com',
+            initials: 'KS',
+            role: 'User'
+          });
+        }
+        window.location.href = 'dashboard.html';
+      });
+
+      document.getElementById('previewJoinBtn').addEventListener('click', () => {
+        window.location.href = 'login.html';
+      });
+    });
+  </script>
+</body>
+</html>
