@@ -159,11 +159,11 @@
     .join-btn {
       background: var(--accent-orange); color: #fff; border: none;
       border-radius: 9999px; padding: 10px 22px;
-      font: 700 14px var(--font-family); cursor: pointer;
+      font: 700 14px var(--font-family); cursor: default;
       box-shadow: 0 4px 12px rgba(232,89,36,.35);
-      transition: background-color .2s;
     }
-    .join-btn:hover { background: var(--accent-orange-hover); }
+    /* Decorative preview element: no pointer affordance, no hover effect. */
+    .join-btn:hover { background: var(--accent-orange); }
 
     /* ---------- RIGHT FORM ---------- */
     .form-section {
@@ -330,7 +330,7 @@
               <button class="dot-btn" aria-label="Camera settings"><span class="dot-center"></span></button>
               <button class="dot-btn" aria-label="Device settings"><span class="dot-center"></span></button>
             </div>
-            <button class="join-btn" id="previewJoinBtn">Join now</button>
+            <button type="button" class="join-btn" id="previewJoinBtn" aria-hidden="true" tabindex="-1">Join now</button>
           </div>
         </div>
       </div>
@@ -527,9 +527,7 @@
         window.location.href = 'dashboard.html';
       });
 
-      document.getElementById('previewJoinBtn').addEventListener('click', () => {
-        window.location.href = 'login.html';
-      });
+      // The preview "Join now" chip is decorative on this page: no action.
     });
   </script>
 </body>
