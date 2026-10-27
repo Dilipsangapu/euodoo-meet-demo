@@ -206,9 +206,10 @@ input[type="search"]::-webkit-search-cancel-button {
 .sidebar-toggle {
     display: none;
     position: absolute;
-    /* Aligned with the brand/header row near the top of the sidebar; anchored
-       to the top so the placement is identical whatever the sidebar height. */
-    top: 22px;
+    /* Sat just below the brand/header row (72px at md, 88px at lg): inside
+       the header band the sticky top bar paints over the protruding half of
+       the button, so it is anchored under the header instead. */
+    top: 82px;
     right: -14px;
     width: 28px;
     height: 28px;
@@ -307,9 +308,9 @@ html[data-theme="dark"] .sidebar-toggle {
         --sidebar-w: 248px;
     }
 
-    /* Header row is 88px tall at lg: keep the toggle centered on it. */
+    /* Header row is 88px tall at lg: keep the toggle just below it. */
     .sidebar-toggle {
-        top: 30px;
+        top: 98px;
     }
 }
 
