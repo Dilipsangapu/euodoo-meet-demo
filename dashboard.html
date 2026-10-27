@@ -66,13 +66,13 @@
 <!-- ===================== Sidebar ===================== -->
 <aside id="sidebar" data-open="false" aria-label="Sidebar"
        class="fixed inset-y-0 left-0 z-50 flex w-[280px] max-w-[86vw] -translate-x-full flex-col border-r border-line bg-white md:z-30 md:w-[216px] md:translate-x-0 lg:w-[248px]">
-    <div class="flex h-[72px] shrink-0 items-center justify-between gap-2 px-5 lg:h-[88px] lg:px-6"
+    <div class="brand-row flex h-[72px] shrink-0 items-center justify-between gap-2 px-5 lg:h-[88px] lg:px-6"
          style="padding-top:env(safe-area-inset-top)">
         <a href="/dashboard" th:href="@{/dashboard}" data-nav="home"
            class="flex min-w-0 items-center gap-2.5 rounded-lg" aria-label="Euodoo Meet home">
             <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-teal text-[22px] font-extrabold text-white"
                   aria-hidden="true">E</span>
-            <span class="truncate text-[20px] font-extrabold tracking-tight lg:text-[22px]">Euodoo <span
+            <span class="t-label truncate text-[20px] font-extrabold tracking-tight lg:text-[22px]">Euodoo <span
                     class="text-orange">Meet</span></span>
         </a>
         <button id="drawer-close" type="button" class="icon-btn md:hidden" aria-label="Close navigation"><i
@@ -80,27 +80,27 @@
     </div>
 
     <nav class="flex-1 overflow-y-auto px-4 pb-4 lg:px-6" aria-label="Main">
-        <p class="mb-3 mt-3 px-1 text-[12px] font-semibold uppercase tracking-[0.14em] text-muted-strong">Workspace</p>
+        <p class="t-label-cap mb-3 mt-3 px-1 text-[12px] font-semibold uppercase tracking-[0.14em] text-muted-strong">Workspace</p>
         <ul class="space-y-1.5">
             <li><a href="/dashboard" th:href="@{/dashboard}" data-nav="overview" aria-current="page"
-                   class="nav-link is-active"><i data-lucide="layout-dashboard" class="h-5 w-5"></i>Overview</a></li>
+                   class="nav-link is-active"><i data-lucide="layout-dashboard" class="h-5 w-5"></i><span class="t-label">Overview</span></a></li>
             <li><a href="/meeting-history" th:href="@{/meeting-history}" data-nav="meeting-history" class="nav-link"><i data-lucide="history"
-                                                                                          class="h-5 w-5"></i>Meeting History</a>
+                                                                                          class="h-5 w-5"></i><span class="t-label">Meeting History</span></a>
             </li>
             <li><a href="/settings" th:href="@{/settings}" data-nav="settings" class="nav-link"><i data-lucide="settings"
-                                                                                                class="h-5 w-5"></i>Settings</a>
+                                                                                                class="h-5 w-5"></i><span class="t-label">Settings</span></a>
             </li>
             <li><a href="/help" th:href="@{/help}" data-nav="help" class="nav-link"><i data-lucide="circle-help"
-                                                                                                class="h-5 w-5"></i>Help &amp; Support</a>
+                                                                                                class="h-5 w-5"></i><span class="t-label">Help &amp; Support</span></a>
             </li>
         </ul>
     </nav>
 
     <div class="shrink-0 p-4 lg:p-6" style="padding-bottom:max(1rem, env(safe-area-inset-bottom))">
-        <div class="flex items-center gap-3 rounded-2xl bg-canvas p-3">
+        <div class="t-user-row flex items-center gap-3 rounded-2xl bg-canvas p-3">
             <span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-teal text-sm font-bold text-white"
                   aria-hidden="true" data-user-initials>KS</span>
-            <div class="min-w-0 flex-1">
+            <div class="t-label min-w-0 flex-1">
                 <p class="truncate text-sm font-semibold leading-5" data-user-name>Kiran S</p>
                 <p class="text-xs leading-4 text-muted-strong" data-user-role>User</p>
             </div>
@@ -108,6 +108,12 @@
                 <i data-lucide="log-out" class="h-5 w-5"></i></button>
         </div>
     </div>
+
+    <!-- Desktop collapse/expand toggle (attached to the sidebar edge) -->
+    <button id="sidebar-toggle" type="button" class="sidebar-toggle"
+            aria-expanded="true" aria-controls="sidebar" aria-label="Collapse sidebar">
+        <i data-lucide="chevron-left" class="h-4 w-4"></i>
+    </button>
 </aside>
 
 <!-- Spring Security logout is a POST with CSRF -->
@@ -116,7 +122,7 @@
 </form>
 
 <!-- ===================== Main shell ===================== -->
-<div class="md:pl-[216px] lg:pl-[248px]">
+<div class="t-sidebar-pad">
 
     <!-- Top bar -->
     <header class="app-header sticky top-0 z-30 border-b border-line bg-white">
@@ -304,31 +310,31 @@
             <aside class="grid min-w-0 content-start gap-6 md:grid-cols-2 lg:grid-cols-1"
                    aria-label="Calendar and schedule">
                 <section id="calendar-card" aria-labelledby="cal-title" data-animate
-                         class="rounded-3xl border border-line bg-white p-5 shadow-card md:self-start">
-                    <div class="flex items-start justify-between gap-3">
+                         class="rounded-3xl border border-line bg-white px-4 py-4 shadow-card md:self-start">
+                    <div class="flex items-start justify-between gap-2">
                         <div class="min-w-0">
-                            <h2 id="cal-title" class="text-[22px] font-bold leading-7">October 2026</h2>
-                            <p id="cal-sub" class="mt-0.5 text-[13px] text-muted-strong" aria-live="polite">Today is
+                            <h2 id="cal-title" class="text-[16px] font-bold leading-5">October 2026</h2>
+                            <p id="cal-sub" class="mt-0.5 text-[12px] text-muted-strong" aria-live="polite">Today is
                                 Monday, 26</p>
                         </div>
-                        <div class="flex shrink-0 gap-2">
+                        <div class="flex shrink-0 gap-1.5">
                             <button id="cal-prev" type="button"
-                                    class="grid h-9 w-9 place-items-center rounded-full border border-line text-ink transition-colors hover:bg-canvas"
+                                    class="grid h-8 w-8 place-items-center rounded-full border border-line text-ink transition-colors hover:bg-canvas"
                                     aria-label="Previous month"><i data-lucide="chevron-left"
-                                                                   class="h-[18px] w-[18px]"></i></button>
+                                                                   class="h-4 w-4"></i></button>
                             <button id="cal-next" type="button"
-                                    class="grid h-9 w-9 place-items-center rounded-full border border-line text-ink transition-colors hover:bg-canvas"
+                                    class="grid h-8 w-8 place-items-center rounded-full border border-line text-ink transition-colors hover:bg-canvas"
                                     aria-label="Next month"><i data-lucide="chevron-right"
-                                                               class="h-[18px] w-[18px]"></i></button>
+                                                               class="h-4 w-4"></i></button>
                         </div>
                     </div>
-                    <div class="mt-5 grid grid-cols-7 text-center text-[12.5px] font-semibold text-ink"
+                    <div class="mt-3 grid grid-cols-7 text-center text-[11px] font-semibold text-ink"
                          aria-hidden="true">
                         <span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span>
                     </div>
-                    <div id="cal-grid" class="mt-2 grid grid-cols-7 gap-y-1" role="group"
+                    <div id="cal-grid" class="mt-1.5 grid grid-cols-7 gap-y-0.5" role="group"
                          aria-label="October 2026"></div>
-                    <p class="mt-3 flex items-center gap-2 text-[12.5px] text-muted-strong"><span
+                    <p class="mt-2 flex items-center gap-2 text-[11.5px] text-muted-strong"><span
                             class="h-1.5 w-1.5 rounded-full bg-teal" aria-hidden="true"></span>Days with scheduled
                         meetings</p>
                 </section>

@@ -1522,6 +1522,60 @@ window.EuodooDemoData = {
     const desktopMq = window.matchMedia('(min-width: 768px)');
     let drawerOpen = false;
 
+    /* ======================================================================
+       Sidebar collapse/expand (desktop)
+       ====================================================================== */
+    // One <html> class drives the rail width, the main-content padding and the
+    // label visibility, so all three animate together without layout jumps.
+    const SIDEBAR_STATE_KEY = 'euodoo_sidebar_collapsed';
+    // (els is initialised further below in this IIFE, so query directly here.)
+    const sidebarToggleBtn = $('#sidebar-toggle');
+    const sidebarEl = $('#sidebar');
+
+    function isSidebarCollapsed() {
+        return document.documentElement.classList.contains('sidebar-collapsed');
+    }
+
+    function syncSidebarToggle() {
+        const collapsed = isSidebarCollapsed();
+        sidebarToggleBtn.setAttribute('aria-expanded', String(!collapsed));
+        // Tooltips stand in for the hidden labels while collapsed; they must
+        // not distract in the expanded state.
+        $$('a[data-nav]', sidebarEl).forEach((a) => {
+            if (collapsed) a.title = (a.getAttribute('aria-label') || a.textContent).trim().replace(/\s+/g, ' ');
+            else a.removeAttribute('title');
+        });
+        const logoutBtn = $('#sidebar-logout');
+        if (collapsed && logoutBtn) logoutBtn.title = 'Sign out';
+        else if (logoutBtn) logoutBtn.removeAttribute('title');
+    }
+
+    function setSidebarCollapsed(collapsed) {
+        document.documentElement.classList.toggle('sidebar-collapsed', collapsed);
+        try {
+            localStorage.setItem(SIDEBAR_STATE_KEY, collapsed ? '1' : '0');
+        } catch (err) { /* storage unavailable: state simply won't persist */ }
+        // aria/roles/tooltip sync after the class change
+        sidebarToggleBtn.setAttribute('aria-expanded', String(!collapsed));
+        sidebarToggleBtn.setAttribute('aria-label', collapsed ? 'Expand sidebar' : 'Collapse sidebar');
+        syncSidebarToggle();
+    }
+
+    sidebarToggleBtn.addEventListener('click', () => setSidebarCollapsed(!isSidebarCollapsed()));
+    desktopMq.addEventListener('change', syncSidebarToggle);
+    (function initSidebarState() {
+        let saved = null;
+        try {
+            saved = localStorage.getItem(SIDEBAR_STATE_KEY);
+        } catch (err) { /* ignore */ }
+        if (saved === '1' && desktopMq.matches) {
+            document.documentElement.classList.add('sidebar-collapsed');
+        }
+        sidebarToggleBtn.setAttribute('aria-expanded', String(!isSidebarCollapsed()));
+        sidebarToggleBtn.setAttribute('aria-label', isSidebarCollapsed() ? 'Expand sidebar' : 'Collapse sidebar');
+        syncSidebarToggle();
+    })();
+
     function syncSidebarA11y() {
         // Off-canvas links must not be focusable while the drawer is closed.
         els.sidebar.inert = !desktopMq.matches && !drawerOpen;

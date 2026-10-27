@@ -199,6 +199,114 @@ input[type="search"]::-webkit-search-cancel-button {
     box-shadow: 0 0 40px rgba(23, 51, 61, .2);
 }
 
+/* Desktop collapse/expand -----------------------------------------------------
+   The collapsible sidebar is driven by one -sidebar-w CSS variable on <html>
+   (216px / 248px expanded, 76px collapsed), so the rail width and the main
+   content padding always move together and can animate smoothly. */
+.sidebar-toggle {
+    display: none;
+    position: absolute;
+    top: 50%;
+    right: -14px;
+    width: 28px;
+    height: 28px;
+    margin-top: -14px;
+    z-index: 10;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--ink);
+    box-shadow: 0 2px 8px rgba(23, 51, 61, .12);
+    cursor: pointer;
+    transition: background-color .18s ease, color .18s ease;
+}
+
+.sidebar-toggle:hover {
+    background: var(--canvas);
+}
+
+.sidebar-toggle:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 2px;
+}
+
+/* Match the app's dark-theme surfaces */
+html[data-theme="dark"] .sidebar-toggle {
+    background-color: #162530 !important;
+    border-color: var(--line) !important;
+    color: var(--ink);
+}
+
+.sidebar-toggle svg {
+    transition: transform .3s cubic-bezier(.22, .8, .3, 1);
+}
+
+@media (min-width: 768px) {
+    html {
+        --sidebar-w: 216px;
+    }
+
+    html.sidebar-collapsed {
+        --sidebar-w: 76px;
+    }
+
+    #sidebar {
+        width: var(--sidebar-w);
+        max-width: none;
+        overflow: visible;
+        transition: transform .3s cubic-bezier(.22, .8, .3, 1),
+                    width .3s cubic-bezier(.22, .8, .3, 1);
+    }
+
+    .sidebar-toggle {
+        display: flex;
+    }
+
+    .t-sidebar-pad {
+        padding-left: var(--sidebar-w);
+        transition: padding-left .3s cubic-bezier(.22, .8, .3, 1);
+    }
+
+    /* Collapsed rail: hide text, keep icons centered and tappable. */
+    html.sidebar-collapsed #sidebar .t-label,
+    html.sidebar-collapsed #sidebar .t-label-cap {
+        display: none;
+    }
+
+    html.sidebar-collapsed #sidebar .brand-row,
+    html.sidebar-collapsed #sidebar .nav-link,
+    html.sidebar-collapsed #sidebar .t-user-row {
+        justify-content: center;
+        gap: 0;
+    }
+
+    html.sidebar-collapsed #sidebar .nav-link {
+        padding: 0 12px;
+    }
+
+    html.sidebar-collapsed #sidebar .t-user-row {
+        padding: 0;
+        background: transparent;
+    }
+
+    html.sidebar-collapsed #sidebar .nav-link.is-active::before {
+        left: -12px;
+    }
+
+    /* chevron points right in the collapsed state (expand action) */
+    html.sidebar-collapsed .sidebar-toggle svg {
+        transform: rotate(180deg);
+    }
+}
+
+@media (min-width: 1024px) {
+    html {
+        --sidebar-w: 248px;
+    }
+}
+
 @media (min-width: 768px) {
     #sidebar {
         transform: none;
@@ -758,13 +866,13 @@ input[type="search"]::-webkit-search-cancel-button {
     align-items: center;
     justify-content: center;
     width: 100%;
-    max-width: 44px;
-    height: 50px;
+    max-width: 38px;
+    height: 34px;
     margin: 0 auto;
-    border-radius: 12px;
-    font-size: 14px;
+    border-radius: 9px;
+    font-size: 13px;
     font-weight: 500;
-    line-height: 20px;
+    line-height: 16px;
     color: var(--ink);
     transition: background-color .15s, color .15s;
 }
@@ -797,7 +905,7 @@ input[type="search"]::-webkit-search-cancel-button {
 .cal-dot {
     width: 4px;
     height: 4px;
-    margin-top: 3px;
+    margin-top: 2px;
     border-radius: 999px;
     background: transparent;
 }
@@ -811,7 +919,8 @@ input[type="search"]::-webkit-search-cancel-button {
 }
 
 #cal-grid {
-    min-height: 254px;
+    /* Stabilises months with 5 vs 6 visible weeks during navigation. */
+    min-height: 214px;
 }
 
 /* ---------- Schedule ------------------------------------------------------- */
