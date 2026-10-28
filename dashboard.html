@@ -800,7 +800,10 @@
                 <p id="created-code" class="mt-2 font-mono text-[15px] font-semibold tracking-wide text-ink"></p>
                 <p id="created-when" class="mt-1 text-[13px] text-muted-strong"></p>
             </div>
-            <div class="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            <!-- flex-wrap: with 4 action buttons this row used to overflow the
+                 dialog horizontally at laptop widths (Copy invite link was
+                 clipped off the left edge under sm:justify-end). -->
+            <div class="mt-5 flex flex-col-reverse flex-wrap gap-2 sm:flex-row sm:flex-wrap sm:justify-end">
                 <button id="created-copy" type="button" class="btn btn-outline"><i data-lucide="copy"
                                                                                    class="h-4 w-4"></i>Copy invite
                     link
