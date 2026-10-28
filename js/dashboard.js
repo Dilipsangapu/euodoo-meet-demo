@@ -523,7 +523,9 @@ window.EuodooDemoData = {
             extra: raw.extra != null ? Math.max(0, Number(raw.extra) || 0) : Math.max(0, all.length - 3),
             code: String(raw.code || ''),
             tone: TONES.includes(raw.tone) ? raw.tone : 'teal',
-            icon: String(raw.icon || 'video').replace(/[^a-z0-9-]/gi, '')
+            icon: String(raw.icon || 'video').replace(/[^a-z0-9-]/gi, ''),
+            recurrence: ['none', 'daily', 'weekly', 'monthly'].includes(raw.recurrence) ? raw.recurrence : 'none',
+            repeatUntil: String(raw.repeatUntil || '')
         };
     }
 
@@ -594,7 +596,9 @@ window.EuodooDemoData = {
                     id: 'local-' + Date.now(), code: U.generateMeetingCode(), title: payload.title,
                     date: payload.date, start: payload.start, durationMin: payload.durationMin, team: payload.team,
                     status: payload.instant ? 'live' : 'upcoming', participants: [state.user.initials], extra: 0,
-                    tone: payload.instant ? 'orange' : 'teal', icon: 'video'
+                    tone: payload.instant ? 'orange' : 'teal', icon: 'video',
+                    recurrence: ['none', 'daily', 'weekly', 'monthly'].includes(payload.recurrence) ? payload.recurrence : 'none',
+                    repeatUntil: payload.repeatUntil || ''
                 };
                 // Store the creator as the demo host for this meeting ID (shared, localStorage)
                 if (window.EuodooApp) {
@@ -723,6 +727,41 @@ window.EuodooDemoData = {
 
     function inviteUrl(code) {
         return new URL(routes.meetingRoom(code), window.location.href).href;
+    }
+
+    /** Full invitation text (Phase 2): everything a teammate needs in a calendar note. */
+    function buildInvitationText(m) {
+        const base = m.date ? U.fromKey(m.date) : new Date();
+        const startStr = m.start ? m.start : '09:00';
+        const dayTxt = base.toLocaleDateString(undefined, {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
+        const rangeTxt = U.formatRange(startStr, m.durationMin || 30);
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'local time';
+        const repeatBits = {
+            daily: 'This meeting repeats daily',
+            weekly: 'This meeting repeats every week at the same time',
+            monthly: `This meeting repeats monthly (day ${base.getDate()})`
+        }[m.recurrence || 'none'];
+        const repeatLine = repeatBits ? (repeatBits + (m.repeatUntil ? ` until ${U.fromKey(m.repeatUntil).toLocaleDateString(undefined, {day: 'numeric', month: 'short', year: 'numeric'})}.` : '.')) : '';
+        return [
+            `You're invited: ${m.title || 'Euodoo Meet'}`,
+            m.team ? `Team: ${m.team}` : '',
+            `${dayTxt} at ${rangeTxt} (${tz})`,
+            repeatLine,
+            `Join link: ${inviteUrl(m.code)}`,
+            `Meeting ID: ${m.code || ''}`,
+            '— Sent from Euodoo Meet'
+        ].filter(Boolean).join('\n');
+    }
+
+    async function copyInviteText() {
+        const m = createdMeeting;
+        if (!m || !m.code) {
+            toast('Create the meeting first to invite people.', {type: 'error'});
+            return;
+        }
+        const ok = await copyText(buildInvitationText(m));
+        toast(ok ? 'Invitation text copied — paste it in an email or chat.' : "Couldn't copy automatically.",
+            {type: ok ? 'success' : 'error'});
     }
 
     async function copyInvite(code) {
@@ -1261,6 +1300,13 @@ window.EuodooDemoData = {
         $('#sch-date').min = state.todayKey;
         $('#sch-time').value = U.pad((now.getHours() + 1) % 24) + ':00';
         $('#sch-duration').value = '30';
+        // Recurrence resets back to "Does not repeat".
+        $('#sch-recurrence').value = 'none';
+        $('#sch-repeat-until-wrap').hidden = true;
+        $('#sch-repeat-until').value = '';
+        $('#sch-repeat-until').min = U.toKey(state.selected);
+        $('#sch-recurrence-summary').hidden = true;
+        setFieldError('sch-repeat-until', 'sch-recurrence-error', '');
         setBusy(els.instantSubmit, false);
         setBusy(els.scheduleSubmit, false);
     }
@@ -1284,7 +1330,8 @@ window.EuodooDemoData = {
         els.createSuccess.hidden = false;
         $('#created-title').textContent = m.title;
         $('#created-code').textContent = m.code;
-        $('#created-when').textContent = whenText;
+        const repeatSuffix = {daily: ' • Repeats daily', weekly: ' • Repeats weekly', monthly: ' • Repeats monthly'}[m.recurrence] || '';
+        $('#created-when').textContent = whenText + repeatSuffix;
         $('#create-title').textContent = 'Meeting created';
         pulse($('.rounded-2xl', els.createSuccess));
         refreshIcons();
@@ -1335,6 +1382,26 @@ window.EuodooDemoData = {
         }
     }
 
+    function updateRecurrenceUi() {
+        const mode = $('#sch-recurrence').value;
+        $('#sch-repeat-until-wrap').hidden = mode === 'none';
+        const summary = $('#sch-recurrence-summary');
+        if (mode === 'none') {
+            summary.hidden = true;
+            return;
+        }
+        const parts = [];
+        const dateKey = $('#sch-date').value;
+        const base = dateKey ? U.fromKey(dateKey) : new Date();
+        if (mode === 'daily') parts.push('Repeats every day');
+        else if (mode === 'weekly') parts.push(`Repeats every ${base.toLocaleDateString(undefined, {weekday: 'long'})}`);
+        else parts.push(`Repeats monthly on the ${base.getDate()}`);
+        const until = $('#sch-repeat-until').value;
+        parts.push(until ? `until ${new Date(until + 'T00:00:00').toLocaleDateString(undefined, {day: 'numeric', month: 'short', year: 'numeric'})}` : 'until you cancel it');
+        summary.textContent = parts.join(', ') + '.';
+        summary.hidden = false;
+    }
+
     function validateSchedule(values) {
         const errors = {};
         if (!values.title) errors.title = 'Give your meeting a title.';
@@ -1342,6 +1409,14 @@ window.EuodooDemoData = {
         if (!values.date) errors.date = 'Pick a date.';
         else if (values.date < state.todayKey) errors.date = 'Choose today or a future date.';
         if (!values.start) errors.start = 'Pick a start time.';
+        if (values.recurrence !== 'none' && values.repeatUntil) {
+            if (values.repeatUntil < values.date) {
+                errors.recurrence = '"Repeat until" can\'t be before the meeting date.';
+            } else if (values.recurrence === 'monthly' && values.repeatUntil.length === 10) {
+                const ym = (d) => d.slice(0, 7);
+                if (ym(values.repeatUntil) === ym(values.date)) errors.recurrence = 'A monthly repeat needs an "until" date at least one month later.';
+            }
+        }
         return errors;
     }
 
@@ -1349,16 +1424,18 @@ window.EuodooDemoData = {
         e.preventDefault();
         const values = {
             title: $('#sch-title').value.trim(), date: $('#sch-date').value, start: $('#sch-time').value,
-            durationMin: Number($('#sch-duration').value) || 30, team: $('#sch-team').value.trim(), instant: false
+            durationMin: Number($('#sch-duration').value) || 30, team: $('#sch-team').value.trim(),
+            recurrence: $('#sch-recurrence').value, repeatUntil: $('#sch-repeat-until').value, instant: false
         };
         const errors = validateSchedule(values);
         setFieldError('sch-title', 'sch-title-error', errors.title);
         setFieldError('sch-date', 'sch-date-error', errors.date);
         setFieldError('sch-time', 'sch-time-error', errors.start);
+        setFieldError('sch-repeat-until', 'sch-recurrence-error', errors.recurrence);
         els.scheduleError.hidden = true;
-        const firstBad = ['title', 'date', 'start'].find((k) => errors[k]);
+        const firstBad = [{k: 'title', el: '#sch-title'}, {k: 'date', el: '#sch-date'}, {k: 'start', el: '#sch-time'}, {k: 'recurrence', el: '#sch-repeat-until'}].find((x) => errors[x.k]);
         if (firstBad) {
-            $({title: '#sch-title', date: '#sch-date', start: '#sch-time'}[firstBad]).focus();
+            $(firstBad.el).focus();
             shake(els.scheduleSubmit);
             return;
         }
@@ -1782,6 +1859,12 @@ window.EuodooDemoData = {
     function onNavClick(e) {
         const link = e.target.closest('a[data-nav]');
         if (!link) return;
+        // Admin Analytics is a separate page (admin.html), not an SPA section:
+        // let the browser follow the link instead of intercepting it as a route.
+        if (link.dataset.nav === 'analytics') {
+            if (!desktopMq.matches) setDrawer(false, {restoreFocus: false});
+            return;
+        }
         if (!desktopMq.matches) setDrawer(false, {restoreFocus: false});
         e.preventDefault();
         if (!Cfg.demoMode) {
@@ -1998,7 +2081,16 @@ window.EuodooDemoData = {
         $('#sch-title').addEventListener('input', () => setFieldError('sch-title', 'sch-title-error', ''));
         $('#sch-date').addEventListener('input', () => setFieldError('sch-date', 'sch-date-error', ''));
         $('#sch-time').addEventListener('input', () => setFieldError('sch-time', 'sch-time-error', ''));
+        $('#sch-recurrence').addEventListener('change', () => {
+            setFieldError('sch-repeat-until', 'sch-recurrence-error', '');
+            updateRecurrenceUi();
+        });
+        $('#sch-repeat-until').addEventListener('input', () => {
+            setFieldError('sch-repeat-until', 'sch-recurrence-error', '');
+            updateRecurrenceUi();
+        });
         els.createdCopy.addEventListener('click', () => createdMeeting && copyInvite(createdMeeting.code));
+        $('#created-copy-invite').addEventListener('click', copyInviteText);
         els.createdEnter.addEventListener('click', () => {
             const m = createdMeeting;
             closeDialog(els.createDlg);

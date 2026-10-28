@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Admin analytics &middot; EuodooMeet</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+    <style>
+        :root {
+            --teal: #00817a;
+            --teal-pale: #e2f2f0;
+            --orange: #F06422;
+            --orange-pale: #FEF0E8;
+            --canvas: #f7f8fa;
+            --card: #ffffff;
+            --ink: #17333d;
+            --muted: #718893;
+            --muted-strong: #5b7380;
+            --line: #dce7ea;
+            --line-strong: #ccd9dd;
+            --r-md: 12px;
+            --r-sm: 8px;
+            --green: #1a7f4e;
+            --green-pale: #e6f5ee;
+            --red: #d43d3d;
+            --red-pale: #fdecec;
+            --shadow-card: 0 1px 2px rgba(23, 51, 61, .04), 0 10px 28px -14px rgba(23, 51, 61, .12);
+        }
+
+        * { box-sizing: border-box; }
+
+        html { height: 100%; }
+
+        body {
+            margin: 0;
+            min-height: 100%;
+            background: var(--canvas);
+            color: var(--ink);
+            font-family: 'Plus Jakarta Sans', Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            font-size: 14px;
+            line-height: 1.45;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        [hidden] { display: none !important; }
+
+        :where(a, button, select, input, [tabindex]):focus-visible {
+            outline: 2px solid var(--teal);
+            outline-offset: 2px;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0 0 0 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* ---------- Sticky topbar ---------- */
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 30;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            min-height: 64px;
+            padding: 10px 20px;
+            padding-top: max(10px, env(safe-area-inset-top));
+            background: var(--card);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--ink);
+            border-radius: var(--r-sm);
+        }
+
+        .brand-chip {
+            display: grid;
+            place-items: center;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--r-md);
+            background: var(--teal);
+            color: #fff;
+            font-size: 22px;
+            font-weight: 800;
+            flex: 0 0 auto;
+        }
+
+        .brand-name {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            white-space: nowrap;
+        }
+
+        .brand-name .accent { color: var(--orange); }
+
+        .topbar-link {
+            display: inline-flex;
+            align-items: center;
+            height: 40px;
+            padding: 0 16px;
+            border: 1px solid var(--line-strong);
+            border-radius: var(--r-sm);
+            background: var(--card);
+            color: var(--ink);
+            font-weight: 700;
+            text-decoration: none;
+            white-space: nowrap;
+            transition: background .15s ease;
+        }
+
+        .topbar-link:hover { background: var(--canvas); }
+
+        /* ---------- Layout ---------- */
+        .container {
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 28px 20px 40px;
+        }
+
+        .page-head { margin-bottom: 20px; }
+
+        .page-head h1 {
+            margin: 0 0 10px;
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .demo-banner {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            border: 1px solid var(--orange);
+            background: var(--orange-pale);
+            color: #8a3c13;
+            border-radius: 999px;
+            font-size: 12.5px;
+            font-weight: 600;
+        }
+
+        .demo-banner .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--orange);
+            flex: 0 0 auto;
+        }
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .field { display: flex; flex-direction: column; gap: 5px; }
+
+        .field label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--muted-strong);
+        }
+
+        .field select,
+        .field input {
+            height: 42px;
+            min-width: 0;
+            padding: 0 12px;
+            border: 1px solid var(--line-strong);
+            border-radius: var(--r-sm);
+            background: var(--card);
+            color: var(--ink);
+            font: inherit;
+            font-weight: 600;
+        }
+
+        .field select { cursor: pointer; }
+        .field input { width: 260px; }
+
+        .field select:hover,
+        .field input:hover { background: var(--canvas); }
+
+        /* ---------- KPI cards ---------- */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+
+        .kpi-card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: var(--r-md);
+            box-shadow: var(--shadow-card);
+            padding: 16px 18px;
+        }
+
+        .kpi-label {
+            margin: 0 0 6px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--muted-strong);
+        }
+
+        .kpi-value {
+            margin: 0;
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .kpi-value .unit {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--muted-strong);
+            margin-left: 3px;
+        }
+
+        /* ---------- Charts ---------- */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+
+        .chart-card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: var(--r-md);
+            box-shadow: var(--shadow-card);
+            padding: 18px;
+            min-width: 0;
+        }
+
+        .chart-card h2 {
+            margin: 0 0 12px;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .chart-svg { display: block; width: 100%; height: auto; }
+
+        .chart-svg text {
+            font-family: inherit;
+            font-size: 10px;
+            fill: var(--muted-strong);
+        }
+
+        .chart-svg .bar { transition: opacity .15s ease; }
+        .chart-svg .bar:hover { opacity: .82; }
+
+        /* ---------- Table ---------- */
+        .table-card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: var(--r-md);
+            box-shadow: var(--shadow-card);
+            overflow: hidden;
+            margin-bottom: 26px;
+        }
+
+        .table-scroll { overflow-x: auto; }
+
+        .table-scroll table {
+            width: 100%;
+            min-width: 760px;
+            border-collapse: collapse;
+        }
+
+        .table-scroll thead th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: var(--muted-strong);
+            background: var(--canvas);
+            border-bottom: 1px solid var(--line);
+            white-space: nowrap;
+        }
+
+        .table-scroll tbody td {
+            padding: 13px 16px;
+            border-bottom: 1px solid var(--line);
+            font-variant-numeric: tabular-nums;
+            vertical-align: middle;
+        }
+
+        .table-scroll tbody tr:last-child td { border-bottom: 0; }
+        .table-scroll tbody tr:hover td { background: #fbfdfd; }
+
+        .cell-meeting { min-width: 0; }
+
+        .cell-meeting .m-title {
+            font-weight: 700;
+            color: var(--ink);
+        }
+
+        .cell-meeting .m-code {
+            font-size: 11.5px;
+            color: var(--muted);
+            font-weight: 600;
+            letter-spacing: .03em;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .status-pill::before {
+            content: '';
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+            flex: 0 0 auto;
+        }
+
+        .status-active { background: var(--green-pale); color: var(--green); }
+        .status-completed { background: var(--teal-pale); color: #066a64; }
+        .status-missed { background: var(--red-pale); color: var(--red); }
+
+        .table-empty td {
+            text-align: center;
+            padding: 34px 16px;
+            color: var(--muted-strong);
+            font-weight: 600;
+        }
+
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 12px 16px;
+            border-top: 1px solid var(--line);
+            background: var(--card);
+        }
+
+        .page-info {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--muted-strong);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .page-btn {
+            height: 34px;
+            padding: 0 14px;
+            border: 1px solid var(--line-strong);
+            border-radius: var(--r-sm);
+            background: var(--card);
+            color: var(--ink);
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background .15s ease;
+        }
+
+        .page-btn:hover:not(:disabled) { background: var(--canvas); }
+        .page-btn:disabled { opacity: .45; cursor: default; }
+
+        /* ---------- Access denied ---------- */
+        .denied-wrap {
+            max-width: 460px;
+            margin: 12vh auto 0;
+            padding: 0 20px;
+        }
+
+        .denied-card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: var(--r-md);
+            box-shadow: var(--shadow-card);
+            padding: 32px 28px;
+            text-align: center;
+        }
+
+        .denied-icon {
+            display: grid;
+            place-items: center;
+            width: 52px;
+            height: 52px;
+            margin: 0 auto 16px;
+            border-radius: 50%;
+            background: var(--orange-pale);
+            color: var(--orange);
+        }
+
+        .denied-card h1 { margin: 0 0 8px; font-size: 22px; font-weight: 800; }
+        .denied-card p { margin: 0 0 20px; color: var(--muted-strong); }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            height: 42px;
+            padding: 0 20px;
+            border: 0;
+            border-radius: var(--r-sm);
+            background: var(--teal);
+            color: #fff;
+            font: inherit;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background .15s ease;
+        }
+
+        .btn-primary:hover { background: #07625d; }
+
+        .footer-note {
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+            padding-bottom: 12px;
+        }
+
+        /* ---------- Responsive ---------- */
+        @media (max-width: 900px) {
+            .charts-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 640px) {
+            .container { padding: 20px 14px 32px; }
+            .field input { width: 100%; }
+            .filters .field { flex: 1 1 140px; }
+        }
+    </style>
+</head>
+<!-- NOTE: the admin gate below is a UI-level demo check only. The backend MUST
+     enforce authorization on the analytics API (e.g. GET /api/admin/analytics)
+     before serving admin usage data. Client-side gating is not security. -->
+<body>
+
+<!-- ===================== Sticky topbar ===================== -->
+<header class="topbar">
+    <a class="brand" href="dashboard.html">
+        <span class="brand-chip" aria-hidden="true">E</span>
+        <span class="brand-name">Euodoo<span class="accent">Meet</span></span>
+    </a>
+    <nav aria-label="Top navigation">
+        <a class="topbar-link" href="dashboard.html">Dashboard</a>
+    </nav>
+</header>
+
+<!-- ===================== Access denied (non-admin users) ===================== -->
+<div id="denied-view" hidden>
+    <div class="denied-wrap">
+        <div class="denied-card">
+            <span class="denied-icon" aria-hidden="true">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                    <rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+            </span>
+            <h1>Access denied</h1>
+            <p>Your account doesn't have admin access. Sign in with an administrator account.</p>
+            <a class="btn-primary" href="dashboard.html">Back to dashboard</a>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== Admin analytics (demo data) ===================== -->
+<div id="app-view" hidden>
+    <main class="container">
+
+        <!-- 1. Header row -->
+        <div class="page-head">
+            <h1>Admin analytics</h1>
+            <span class="demo-banner"><span class="dot" aria-hidden="true"></span>Demo data &mdash; when connected, this page computes real usage from the backend analytics API.</span>
+            <div class="filters">
+                <div class="field">
+                    <label for="range-select">Date range</label>
+                    <select id="range-select">
+                        <option value="7">Last 7 days</option>
+                        <option value="30" selected>Last 30 days</option>
+                        <option value="90">Last 90 days</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="meeting-search">Search</label>
+                    <input id="meeting-search" type="search" autocomplete="off" spellcheck="false"
+                           placeholder="Search meeting title or host">
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. KPI cards -->
+        <section class="kpi-grid" aria-label="Usage summary">
+            <div class="kpi-card">
+                <p class="kpi-label">Total meetings</p>
+                <p class="kpi-value" id="kpi-total">0</p>
+            </div>
+            <div class="kpi-card">
+                <p class="kpi-label">Active now</p>
+                <p class="kpi-value" id="kpi-active">0</p>
+            </div>
+            <div class="kpi-card">
+                <p class="kpi-label">Completed</p>
+                <p class="kpi-value" id="kpi-completed">0</p>
+            </div>
+            <div class="kpi-card">
+                <p class="kpi-label">Avg duration</p>
+                <p class="kpi-value"><span id="kpi-avg">0</span><span class="unit">min</span></p>
+            </div>
+            <div class="kpi-card">
+                <p class="kpi-label">Total participants</p>
+                <p class="kpi-value" id="kpi-participants">0</p>
+            </div>
+        </section>
+
+        <!-- 3. Charts -->
+        <section class="charts-grid" aria-label="Usage charts">
+            <div class="chart-card">
+                <h2 id="week-chart-title">Meetings per week</h2>
+                <svg id="week-chart" class="chart-svg" role="img" aria-labelledby="week-chart-title" viewBox="0 0 760 250"></svg>
+            </div>
+            <div class="chart-card">
+                <h2 id="participants-chart-title">Participants by meeting</h2>
+                <svg id="participants-chart" class="chart-svg" role="img" aria-labelledby="participants-chart-title" viewBox="0 0 760 250"></svg>
+            </div>
+        </section>
+
+        <!-- 4. Meetings table -->
+        <section class="table-card" aria-label="Meetings list">
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                    <tr>
+                        <th scope="col">Meeting</th>
+                        <th scope="col">Host</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Participants</th>
+                        <th scope="col">Duration</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                    </thead>
+                    <tbody id="meetings-tbody"></tbody>
+                </table>
+            </div>
+            <div class="pagination">
+                <span class="page-info" id="page-info">Page 1 of 1</span>
+                <button type="button" class="page-btn" id="page-prev">&larr; Prev</button>
+                <button type="button" class="page-btn" id="page-next">Next &rarr;</button>
+            </div>
+        </section>
+
+        <!-- 5. Footer note -->
+        <p class="footer-note">Sample analytics shown as demo data. Connect the Spring Boot analytics endpoint (GET /api/admin/analytics) to display real usage.</p>
+    </main>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+(function () {
+    'use strict';
+
+    /* ---------------------------------------------------------------
+       Helpers: DOM + escaping (same practice as Callpage.html's esc())
+       --------------------------------------------------------------- */
+    var $ = function (id) { return document.getElementById(id); };
+
+    // Escapes any string injected into innerHTML: replaces & < > " '
+    var esc = function (s) {
+        return String(s == null ? '' : s).replace(/[&<>"']/g, function (m) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+        });
+    };
+
+    var DAY_MS = 86400000;
+    var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    function fmtDate(ts) {
+        var d = new Date(ts);
+        var h = d.getHours(), ampm = h >= 12 ? 'PM' : 'AM', h12 = h % 12 || 12;
+        var m = d.getMinutes();
+        return d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear() + ', ' +
+            h12 + ':' + (m < 10 ? '0' : '') + m + ' ' + ampm;
+    }
+
+    function fmtShort(ts) {
+        var d = new Date(ts);
+        return d.getDate() + ' ' + MONTHS[d.getMonth()];
+    }
+
+    /* ---------------------------------------------------------------
+       1. Auth + admin gate (UI-level demo check only)
+       --------------------------------------------------------------- */
+    var app = window.EuodooApp || null;
+    var session = app && typeof app.requireAuth === 'function'
+        ? app.requireAuth('login.html', false)
+        : null;
+    if (!session) return; // requireAuth redirected to login.html
+
+    // Demo allow-list only; real authorization must live server-side.
+    var ADMIN_EMAILS = ['kiran.s@euodoo.com'];
+
+    var sessionEmail = session && session.email ? String(session.email).toLowerCase().trim() : '';
+    var isAdmin = ADMIN_EMAILS.indexOf(sessionEmail) !== -1;
+
+    var deniedView = $('denied-view');
+    var appView = $('app-view');
+    if (!deniedView || !appView) return;
+
+    if (!isAdmin) {
+        // Non-admin: show ONLY the denied card; everything else stays hidden.
+        deniedView.hidden = false;
+        appView.hidden = true;
+        return;
+    }
+
+    deniedView.hidden = true;
+    appView.hidden = false;
+
+    /* ---------------------------------------------------------------
+       2. Deterministic demo dataset
+       ---------------------------------------------------------------
+       Values are seeded from the meeting code strings so every reload
+       of the page shows the SAME numbers (no Math.random noise).      */
+
+    // Small FNV-1a style hash -> 32-bit unsigned int.
+    function hashStr(s) {
+        var h = 2166136261;
+        for (var i = 0; i < s.length; i++) {
+            h ^= s.charCodeAt(i);
+            h = Math.imul(h, 16777619) >>> 0;
+        }
+        return h >>> 0;
+    }
+
+    // Mulberry32 PRNG seeded from the hash.
+    function rngFor(seed) {
+        var a = seed >>> 0;
+        return function () {
+            a = (a + 0x6D2B79F5) | 0;
+            var t = Math.imul(a ^ (a >>> 15), 1 | a);
+            t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+            return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+    }
+
+    var MEETING_SEEDS = [
+        { code: 'fpl-qtxr-mhs', title: 'Frontend Planning',   host: 'Kiran S' },
+        { code: 'skf-lndw-zoa', title: 'Sprint Kickoff',      host: 'Rithu Singh' },
+        { code: 'dcr-ypeh-vbi', title: 'Design Critique',     host: 'Dawan S' },
+        { code: 'cld-mxfa-gkt', title: 'Client Demo',         host: 'Kiran S' },
+        { code: 'bsy-owtc-rje', title: 'Backend Sync',        host: 'Jhanavi Kumari' },
+        { code: 'rrt-qzia-nhu', title: 'Release Retro',       host: 'Kiran S' },
+        { code: 'spl-rdvb-wyk', title: 'Sprint Planning',     host: 'Rithu Singh' },
+        { code: 'adc-mkv-plg',  title: 'Architecture Review', host: 'Dawan S' }
+    ];
+
+    function buildDemoData() {
+        var now = new Date();
+        var rows = MEETING_SEEDS.map(function (seed) {
+            var r = rngFor(hashStr(seed.code));
+            var daysAgo = Math.floor(r() * 90);            // spread over last 90 days
+            var hour = 8 + Math.floor(r() * 10);           // 08:00 .. 17:59
+            var minute = Math.floor(r() * 60);
+            var started = new Date(now.getFullYear(), now.getMonth(), now.getDate() - daysAgo, hour, minute, 0);
+            // Never place a meeting in the future (same-day early-morning visits).
+            while (started.getTime() > now.getTime()) {
+                started = new Date(started.getTime() - 3600000);
+            }
+            return {
+                code: seed.code,
+                title: seed.title,
+                host: seed.host,
+                startedAt: started.getTime(),
+                durationMin: 15 + Math.floor(r() * 81),    // 15..95
+                participantCount: 2 + Math.floor(r() * 11),// 2..12
+                status: r() < 0.22 ? 'missed' : 'completed',
+                daysAgo: daysAgo
+            };
+        });
+
+        // At most ONE active meeting: deterministically the most recent one,
+        // shifted into the last few hours so it is always "live" today.
+        var active = rows.reduce(function (best, m) {
+            return m.startedAt > best.startedAt ? m : best;
+        }, rows[0]);
+        var liveR = rngFor(hashStr(active.code + ':live'));
+        active.startedAt = now.getTime() - (2 * 3600000 + Math.floor(liveR() * 4 * 3600000));
+        active.status = 'active';
+        return rows;
+    }
+
+    var DATA = buildDemoData();
+
+    var state = {
+        rangeDays: 30,
+        query: '',
+        page: 1
+    };
+    var PAGE_SIZE = 5;
+
+    function meetingsInRange() {
+        var cutoff = Date.now() - state.rangeDays * DAY_MS;
+        var limit = Date.now() + 60000; // exclude anything in the future
+        return DATA.filter(function (m) {
+            return m.startedAt >= cutoff && m.startedAt <= limit;
+        });
+    }
+
+    function filteredMeetings() {
+        var q = state.query.trim().toLowerCase();
+        return meetingsInRange().filter(function (m) {
+            if (!q) return true;
+            return m.title.toLowerCase().indexOf(q) !== -1 ||
+                m.host.toLowerCase().indexOf(q) !== -1;
+        }).sort(function (a, b) { return b.startedAt - a.startedAt; });
+    }
+
+    /* ---------------------------------------------------------------
+       3. KPI cards
+       --------------------------------------------------------------- */
+    function setText(id, value) {
+        var el = $(id);
+        if (el) el.textContent = String(value);
+    }
+
+    function renderKpis(list) {
+        var activeCount = 0, completedCount = 0, durSum = 0, participantSum = 0;
+        list.forEach(function (m) {
+            if (m.status === 'active') activeCount++;
+            else if (m.status === 'completed') completedCount++;
+            durSum += m.durationMin;
+            participantSum += m.participantCount;
+        });
+        setText('kpi-total', list.length);
+        setText('kpi-active', activeCount);
+        setText('kpi-completed', completedCount);
+        setText('kpi-avg', list.length ? Math.round(durSum / list.length) : 0);
+        setText('kpi-participants', participantSum);
+    }
+
+    /* ---------------------------------------------------------------
+       4a. "Meetings per week" — inline SVG bar chart
+       --------------------------------------------------------------- */
+    function weekBucketCount(rangeDays) {
+        return rangeDays === 7 ? 1 : rangeDays === 30 ? 4 : 13;
+    }
+
+    function renderWeekChart(list) {
+        var svg = $('week-chart');
+        if (!svg) return;
+        var weeks = weekBucketCount(state.rangeDays);
+        var nowT = Date.now();
+
+        var buckets = [];
+        for (var i = 0; i < weeks; i++) buckets.push(0);
+        list.forEach(function (m) {
+            var diffDays = (nowT - m.startedAt) / DAY_MS;
+            var idx = weeks === 1 ? 0 : Math.min(weeks - 1, Math.floor(diffDays / 7));
+            if (idx >= 0 && idx < weeks) buckets[idx] += 1;
+        });
+
+        var W = 760, H = 250, padL = 26, padR = 10, padT = 26, padB = 38;
+        var areaW = W - padL - padR, areaH = H - padT - padB;
+        var max = Math.max.apply(null, buckets.concat([1]));
+        var step = areaW / weeks;
+        var barW = Math.min(64, step * 0.5);
+
+        var parts = '';
+        // Gridlines (decorative, aria-hidden by nature inside role="img" svg).
+        [0.25, 0.5, 0.75].forEach(function (f) {
+            var y = padT + areaH * f;
+            parts += '<line x1="' + padL + '" y1="' + y + '" x2="' + (W - padR) + '" y2="' + y +
+                '" stroke="#eef3f5" stroke-width="1"/>';
+        });
+        parts += '<line x1="' + padL + '" y1="' + (padT + areaH) + '" x2="' + (W - padR) +
+            '" y2="' + (padT + areaH) + '" stroke="' + '#dce7ea' + '" stroke-width="1"/>';
+
+        buckets.forEach(function (count, i) {
+            var h = Math.max(count > 0 ? 5 : 0, (count / max) * areaH);
+            var x = padL + i * step + (step - barW) / 2;
+            var y = padT + areaH - h;
+            var bucketStart = fmtShort(nowT - (i * 7 + (weeks > 8 ? 6 : 0)) * DAY_MS);
+            parts +=
+                '<rect class="bar" x="' + x + '" y="' + y + '" width="' + barW + '" height="' + h +
+                '" rx="5" fill="#00817a">' +
+                '<title>' + bucketStart + ': ' + count + ' meeting' + (count === 1 ? '' : 's') + '</title></rect>';
+            if (count > 0) {
+                parts += '<text x="' + (x + barW / 2) + '" y="' + (y - 7) +
+                    '" text-anchor="middle" font-weight="700" fill="#17333d">' + count + '</text>';
+            }
+            // X labels: thin out for the 13-week view.
+            if (weeks <= 4 || i % 2 === weeks % 2) {
+                parts += '<text x="' + (x + barW / 2) + '" y="' + (H - 12) +
+                    '" text-anchor="middle">' + bucketStart + '</text>';
+            }
+        });
+
+        if (!list.length) {
+            parts += '<text x="' + (W / 2) + '" y="' + (padT + areaH / 2) +
+                '" text-anchor="middle" font-size="13" fill="#718893">No meetings in this range</text>';
+        }
+
+        svg.setAttribute('aria-label',
+            'Meetings per week bar chart, ' + weeks + ' week' + (weeks === 1 ? '' : 's') +
+            ': ' + buckets.join(', '));
+        svg.innerHTML = parts; // internal data only (escaped/numeric), never user input
+    }
+
+    /* ---------------------------------------------------------------
+       4b. "Participants by meeting" — horizontal SVG bars
+       --------------------------------------------------------------- */
+    function renderParticipantsChart(list) {
+        var svg = $('participants-chart');
+        if (!svg) return;
+
+        var top = list.slice()
+            .sort(function (a, b) { return b.participantCount - a.participantCount; })
+            .slice(0, 6);
+        var W = 760, H = 250, padL = 200, padR = 54, padT = 16, padB = 14;
+        var areaW = W - padL - padR;
+        var rowH = 34, gap = 6;
+        var max = top.reduce(function (best, m) { return Math.max(best, m.participantCount); }, 1);
+        var colors = ['#00817a', '#F06422'];
+
+        var parts = '<line x1="' + padL + '" y1="' + padT + '" x2="' + padL + '" y2="' +
+            (padT + top.length * (rowH)) + '" stroke="#dce7ea" stroke-width="1"/>';
+
+        top.forEach(function (m, i) {
+            var y = padT + i * rowH;
+            var bw = Math.max(4, (m.participantCount / max) * areaW);
+            var label = m.title.length > 26 ? m.title.slice(0, 25) + '\u2026' : m.title;
+            parts += '<text x="' + (padL - 10) + '" y="' + (y + rowH / 2 + 8) +
+                '" text-anchor="end" font-size="11.5" fill="#17333d" font-weight="600"><title>' +
+                esc(m.title) + '</title>' + esc(label) + '</text>';
+            parts += '<rect class="bar" x="' + padL + '" y="' + y + '" width="' + bw + '" height="' +
+                (rowH - gap) + '" rx="5" fill="' + colors[i % 2] + '"><title>' + esc(m.title) +
+                ': ' + m.participantCount + ' participants</title></rect>';
+            parts += '<text x="' + (padL + bw + 8) + '" y="' + (y + rowH / 2 + 8) +
+                '" font-weight="700" fill="#17333d">' + m.participantCount + '</text>';
+        });
+
+        if (!top.length) {
+            parts += '<text x="' + (W / 2) + '" y="' + (H / 2) +
+                '" text-anchor="middle" font-size="13" fill="#718893">No meetings in this range</text>';
+        }
+
+        svg.setAttribute('aria-label', 'Participants by meeting, top ' + top.length + ' meetings: ' +
+            top.map(function (m) { return m.title + ' ' + m.participantCount; }).join(', '));
+        svg.innerHTML = parts;
+    }
+
+    /* ---------------------------------------------------------------
+       5. Meetings table + pagination
+       --------------------------------------------------------------- */
+    var STATUS_META = {
+        active:    { cls: 'status-active',    label: 'Active' },
+        completed: { cls: 'status-completed', label: 'Completed' },
+        missed:    { cls: 'status-missed',    label: 'Missed' }
+    };
+
+    function renderTable(list) {
+        var tbody = $('meetings-tbody');
+        var prev = $('page-prev'), next = $('page-next'), info = $('page-info');
+        if (!tbody) return;
+
+        var totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+        state.page = Math.min(state.page, totalPages);
+
+        var start = (state.page - 1) * PAGE_SIZE;
+        var slice = list.slice(start, start + PAGE_SIZE);
+
+        if (!slice.length) {
+            tbody.innerHTML = '<tr class="table-empty"><td colspan="6">No meetings match your filters for this range. Try a wider date range or clear the search.</td></tr>';
+        } else {
+            tbody.innerHTML = slice.map(function (m) {
+                var meta = STATUS_META[m.status] || STATUS_META.completed;
+                return '<tr>' +
+                    '<td class="cell-meeting"><div class="m-title">' + esc(m.title) + '</div>' +
+                    '<div class="m-code">' + esc(m.code) + '</div></td>' +
+                    '<td>' + esc(m.host) + '</td>' +
+                    '<td>' + fmtDate(m.startedAt) + '</td>' +
+                    '<td>' + m.participantCount + '</td>' +
+                    '<td>' + m.durationMin + ' min</td>' +
+                    '<td><span class="status-pill ' + meta.cls + '">' + meta.label + '</span></td>' +
+                    '</tr>';
+            }).join('');
+        }
+
+        if (info) {
+            info.textContent = list.length
+                ? 'Page ' + state.page + ' of ' + totalPages
+                : 'Page 1 of 1';
+        }
+        if (prev) prev.disabled = state.page <= 1;
+        if (next) next.disabled = state.page >= totalPages;
+    }
+
+    /* ---------------------------------------------------------------
+       6. Render orchestration
+       --------------------------------------------------------------- */
+    function render() {
+        var list = filteredMeetings();
+        renderKpis(list);
+        renderWeekChart(list);
+        renderParticipantsChart(list);
+        renderTable(list);
+    }
+
+    function bindListeners() {
+        var rangeSelect = $('range-select');
+        var searchInput = $('meeting-search');
+        var prev = $('page-prev'), next = $('page-next');
+
+        if (rangeSelect) {
+            rangeSelect.addEventListener('change', function () {
+                var d = parseInt(rangeSelect.value, 10);
+                state.rangeDays = isNaN(d) ? 30 : d;
+                state.page = 1;
+                render();
+            });
+        }
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                state.query = searchInput.value;
+                state.page = 1;
+                render();
+            });
+        }
+        if (prev) {
+            prev.addEventListener('click', function () {
+                if (state.page > 1) { state.page--; renderTable(filteredMeetings()); }
+            });
+        }
+        if (next) {
+            next.addEventListener('click', function () {
+                var totalPages = Math.max(1, Math.ceil(filteredMeetings().length / PAGE_SIZE));
+                if (state.page < totalPages) { state.page++; renderTable(filteredMeetings()); }
+            });
+        }
+    }
+
+    bindListeners();
+    render();
+})();
+</script>
+<!-- Admin analytics is demo data only; requires backend analytics integration (Section 6F of the scope). -->
+</body>
+</html>
