@@ -1987,6 +1987,769 @@
                 transition: none !important
             }
         }
+
+        /* ============================================================
+           NEW FEATURE PANELS: polls, Q&A, shared notes, AV settings,
+           breakout rooms, security dialog, "More" menu, chat attachments
+           ============================================================ */
+        .panel-body-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .panel-note {
+            font-size: 11.5px;
+            line-height: 1.55;
+            color: #64748b;
+            background: #f8fafc;
+            border: 1px solid var(--border, #e2e8f0);
+            border-radius: 10px;
+            padding: 8px 10px;
+        }
+
+        .panel-note.warn {
+            background: #fff7ed;
+            color: #9a3412;
+            border-color: #fed7aa;
+        }
+
+        .host-only-rule {
+            display: block;
+        }
+
+        body.role-participant .host-only-rule {
+            display: none;
+        }
+
+        /* Polls */
+        .poll-card {
+            border: 1px solid var(--border, #e2e8f0);
+            border-radius: 12px;
+            padding: 12px;
+            background: #fff
+        }
+
+        .poll-question {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--ink, #17333d);
+            margin: 0 0 8px
+        }
+
+        .poll-option-row {
+            position: relative;
+            display: flex;
+            align-items: center;
+            border: 1px solid #e2e8f0;
+            border-radius: 9px;
+            margin-bottom: 6px;
+            overflow: hidden
+        }
+
+        .poll-option-row.voted {
+            border-color: #0FA49A
+        }
+
+        .poll-option-fill {
+            position: absolute;
+            inset: 0 auto 0 0;
+            background: rgba(15, 164, 154, .12);
+            z-index: 0;
+            transition: width .25s ease
+        }
+
+        .poll-option-btn {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            padding: 9px 34px 9px 12px;
+            font-size: 12.5px;
+            color: var(--ink, #17333d);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .poll-option-btn:hover {
+            background: rgba(15, 164, 154, .06)
+        }
+
+        .poll-option-pct {
+            position: relative;
+            z-index: 1;
+            margin-left: auto;
+            padding-right: 12px;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: #475569
+        }
+
+        .poll-meta {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 6px
+        }
+
+        .poll-closed-pill {
+            display: inline-block;
+            font-size: 10.5px;
+            font-weight: 700;
+            color: #9a3412;
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            border-radius: 999px;
+            padding: 2px 8px;
+            margin-left: 6px
+        }
+
+        .panel-input-caps input[type="text"] {
+            display: block;
+            width: 100%;
+            border: 1px solid #e2e8f0;
+            border-radius: 9px;
+            padding: 9px 11px;
+            font-size: 13px;
+            margin-bottom: 8px
+        }
+
+        .panel-input-caps input[type="text"]:focus {
+            outline: 2px solid #0FA49A;
+            outline-offset: 1px
+        }
+
+        .poll-create-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 8px
+        }
+
+        .btn-panel-primary {
+            background: #0FA49A;
+            color: #fff;
+            border: none;
+            border-radius: 9px;
+            padding: 9px 14px;
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer
+        }
+
+        .btn-panel-primary:hover {
+            background: #0b8a4d
+        }
+
+        .btn-panel-ghost {
+            background: #fff;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+            border-radius: 9px;
+            padding: 9px 14px;
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer
+        }
+
+        .btn-panel-ghost:hover {
+            background: #f8fafc
+        }
+
+        .privacy-control-note {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 8px
+        }
+
+        .toggle-control-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12.5px;
+            color: var(--ink, #17333d)
+        }
+
+        .toggle-control-label .switch-toggle {
+            margin: 0
+        }
+
+        /* Q&A */
+        .qa-header-row {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .qa-sort-btn {
+            flex: 1;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 9px;
+            padding: 6px 10px;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: #475569;
+            cursor: pointer
+        }
+
+        .qa-sort-btn.active {
+            border-color: #0FA49A;
+            color: #0b6d67;
+            background: rgba(15, 164, 154, .07)
+        }
+
+        .qa-item {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 10px 12px;
+            background: #fff
+        }
+
+        .qa-item.answered {
+            opacity: .65;
+            border-color: #bbf7d0;
+            background: #f4fdf8
+        }
+
+        .qa-item-top {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px
+        }
+
+        .qa-upvote-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1px;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 9px;
+            min-width: 40px;
+            padding: 5px 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            color: #475569
+        }
+
+        .qa-upvote-btn.voted {
+            border-color: #F06422;
+            color: #d9480f;
+            background: #fff4ec
+        }
+
+        .qa-body {
+            min-width: 0;
+            flex: 1
+        }
+
+        .qa-author {
+            font-size: 11.5px;
+            color: #64748b;
+        }
+
+        .qa-text {
+            font-size: 13px;
+            color: var(--ink, #17333d);
+            margin: 3px 0 0;
+            line-height: 1.45
+        }
+
+        .qa-body-text {
+            font-size: 12.5px;
+            color: #334155;
+            background: #f8fafc;
+            border-left: 3px solid #0FA49A;
+            border-radius: 6px;
+            padding: 6px 9px;
+            margin: 8px 0 0;
+            line-height: 1.4
+        }
+
+        .qa-mark-btn {
+            border: none;
+            background: #f1f5f9;
+            color: #475569;
+            border-radius: 8px;
+            padding: 5px 10px;
+            font-size: 11.5px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px
+        }
+
+        .qa-answered-pill {
+            font-size: 10.5px;
+            font-weight: 700;
+            color: #0b7c4b;
+            background: #e6f8f0;
+            border: 1px solid #b7ecd3;
+            border-radius: 999px;
+            padding: 2px 8px;
+        }
+
+        /* Shared notes */
+        .notes-saved-state {
+            font-size: 11.5px;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 6px
+        }
+
+        .notes-saved-state.saved {
+            color: #0b7c4b
+        }
+
+        .notes-area {
+            width: 100%;
+            min-height: 260px;
+            flex: 1;
+            resize: vertical;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 11px;
+            font-size: 13px;
+            line-height: 1.55;
+            font-family: inherit;
+            color: var(--ink, #17333d)
+        }
+
+        .notes-area:focus {
+            outline: 2px solid #0FA49A;
+            outline-offset: 1px
+        }
+
+        /* AV settings */
+        .av-note-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px
+        }
+
+        .av-note-row+.av-note-row,
+        .av-note-row+.av-sep {
+            margin-top: 12px
+        }
+
+        .av-sep {
+            border-top: 1px solid #eef2f7;
+        }
+
+        .av-note-text {
+            font-size: 12.5px;
+            color: var(--ink, #17333d);
+            min-width: 0
+        }
+
+        .av-note-text small {
+            display: block;
+            color: #64748b;
+            font-size: 11px;
+            margin-top: 2px;
+            line-height: 1.45
+        }
+
+        .av-select {
+            width: 100%;
+            border: 1px solid #e2e8f0;
+            border-radius: 9px;
+            padding: 8px 10px;
+            font-size: 12.5px;
+            background: #fff;
+            color: var(--ink, #17333d);
+            margin-top: 6px
+        }
+
+        .av-level-track {
+            height: 7px;
+            border-radius: 999px;
+            background: #eef2f7;
+            overflow: hidden;
+            margin-top: 8px
+        }
+
+        .av-level-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #22c55e, #F06422);
+            transition: width .08s linear
+        }
+
+        /* Breakout rooms */
+        .breakout-room-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 10px 12px;
+            background: #fff
+        }
+
+        .breakout-room-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--ink, #17333d)
+        }
+
+        .breakout-room-state {
+            font-size: 10.5px;
+            font-weight: 700;
+            border-radius: 999px;
+            padding: 2px 8px
+        }
+
+        .breakout-room-state.closed {
+            background: #f1f5f9;
+            color: #475569
+        }
+
+        .breakout-room-state.open {
+            background: #e6f8f0;
+            color: #0b7c4b
+        }
+
+        .breakout-members {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px
+        }
+
+        .breakout-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            border-radius: 999px;
+            padding: 3px 9px;
+            font-size: 11.5px;
+            color: #334155
+        }
+
+        .breakout-chip .chip-x {
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 12px;
+            line-height: 1;
+            color: #94a3b8;
+            padding: 0
+        }
+
+        .breakout-chip .chip-x:hover {
+            color: #e11d48
+        }
+
+        .breakout-move-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px
+        }
+
+        .breakout-move-row select {
+            flex: 1;
+            border: 1px solid #e2e8f0;
+            border-radius: 9px;
+            padding: 7px 9px;
+            font-size: 12px
+        }
+
+        .breakout-banner {
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 84px;
+            z-index: 60;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            background: #17333d;
+            color: #fff;
+            border-radius: 999px;
+            padding: 8px 10px 8px 16px;
+            font-size: 12.5px;
+            font-weight: 600;
+            box-shadow: 0 8px 24px rgba(23, 51, 61, .25)
+        }
+
+        .breakout-banner.show {
+            display: flex
+        }
+
+        .breakout-banner .btn-panel-ghost {
+            padding: 4px 12px;
+            border-color: rgba(255, 255, 255, .35);
+            color: #fff;
+            background: transparent;
+            border-radius: 999px
+        }
+
+        /* Security (E2EE) dialog */
+        .security-dialog {
+            max-width: 430px;
+            width: calc(100% - 40px)
+        }
+
+        .security-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 0;
+            border-top: 1px solid #eef2f7
+        }
+
+        .security-row:first-of-type {
+            border-top: none
+        }
+
+        .security-icon {
+            flex: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .security-icon.t {
+            background: #e6f8f0;
+            color: #0b7c4b
+        }
+
+        .security-icon.n {
+            background: #fff7ed;
+            color: #9a3412
+        }
+
+        .security-row-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--ink, #17333d)
+        }
+
+        .security-row-desc {
+            font-size: 12px;
+            color: #64748b;
+            line-height: 1.5;
+            margin-top: 2px
+        }
+
+        /* "More" bottom-bar menu */
+        .more-menu {
+            position: fixed;
+            bottom: 92px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 70;
+            background: #fff;
+            border: 1px solid var(--border, #e2e8f0);
+            border-radius: 14px;
+            box-shadow: 0 14px 40px rgba(23, 51, 61, .18);
+            padding: 6px;
+            display: none;
+            grid-template-columns: 1fr;
+            min-width: 210px
+        }
+
+        .more-menu.show {
+            display: grid
+        }
+
+        .more-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            border-radius: 10px;
+            padding: 9px 11px;
+            font-size: 12.5px;
+            font-weight: 500;
+            color: #334155;
+            cursor: pointer
+        }
+
+        .more-menu-item:hover {
+            background: #f1f5f9
+        }
+
+        .more-menu-item:disabled {
+            opacity: .5;
+            cursor: default;
+        }
+
+        .more-menu-item:disabled:hover {
+            background: none
+        }
+
+        .more-menu-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .08em;
+            color: #94a3b8;
+            padding: 7px 11px 3px
+        }
+
+        /* Chat attachments */
+        .attach-preview-bar {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 8px 10px;
+            margin-bottom: 8px
+        }
+
+        .attach-preview-bar.show {
+            display: flex
+        }
+
+        .attach-file-icon {
+            flex: none;
+            width: 34px;
+            height: 34px;
+            border-radius: 9px;
+            background: #e6f8f0;
+            color: #0b6d67;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .attach-meta {
+            min-width: 0;
+            flex: 1
+        }
+
+        .attach-name {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--ink, #17333d);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis
+        }
+
+        .attach-size {
+            font-size: 11px;
+            color: #64748b
+        }
+
+        .attach-progress {
+            height: 4px;
+            border-radius: 999px;
+            background: #eef2f7;
+            overflow: hidden;
+            margin-top: 5px
+        }
+
+        .attach-progress-fill {
+            height: 100%;
+            width: 0%;
+            background: #0FA49A;
+            border-radius: 999px
+        }
+
+        .attach-cancel-btn {
+            flex: none;
+            border: none;
+            background: none;
+            color: #94a3b8;
+            cursor: pointer;
+            padding: 4px
+        }
+
+        .attach-cancel-btn:hover {
+            color: #e11d48
+        }
+
+        .msg-attachment-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 8px;
+            margin-top: 4px;
+            background: #fff
+        }
+
+        .chat-msg-content.outgoing-file .msg-attachment-box {
+            border-color: rgba(255, 255, 255, .4);
+            background: rgba(255, 255, 255, .12)
+        }
+
+        .link-download {
+            display: inline-flex;
+            align-items: center
+        }
+
+        .link-download:visited {
+            color: inherit
+        }
+
+        /* Lock badge in header (when the host locks the meeting) */
+        .badge-locked {
+            background: #fff7ed !important;
+            color: #9a3412;
+        }
+
+        /* Captions language menu (demo languages) */
+        .caption-menu {
+            position: absolute;
+            right: 0;
+            bottom: 56px;
+            z-index: 65;
+            background: #fff;
+            border: 1px solid var(--border, #e2e8f0);
+            border-radius: 12px;
+            box-shadow: 0 12px 32px rgba(23, 51, 61, .16);
+            padding: 6px;
+            display: none;
+            min-width: 190px
+        }
+
+        .caption-menu.show {
+            display: block
+        }
+
+        .caption-menu .more-menu-item span.lang-sub {
+            font-size: 10.5px;
+            color: #94a3b8;
+            margin-left: auto;
+        }
+
+        /* Host-only remove button in the People panel */
+        .p-remove-btn {
+            flex: none;
+            border: none;
+            background: none;
+            color: #94a3b8;
+            cursor: pointer;
+            padding: 2px;
+        }
+
+        .p-remove-btn:hover {
+            color: #e11d48;
+        }
     </style>
 </head>
 <body>
@@ -1997,7 +2760,11 @@
         <div class="brand-info"><h1>Euodoo Meet</h1><span>Meeting ID: <span id="headerMeetingId">--</span></span></div>
     </div>
     <div class="meeting-badges">
-        <div class="badge-pill badge-encrypted"><i data-ic="lock" data-s="14"></i><span>Encrypted</span></div>
+        <button class="badge-pill badge-encrypted" id="securityBadge" title="Meeting security — encryption, roles"
+                aria-haspopup="dialog" style="cursor:pointer;border:none"><i data-ic="lock" data-s="14"></i><span
+                id="securityBadgeLabel">Encrypted</span></button>
+        <div class="badge-pill badge-locked hidden" id="lockedBadge" title="Meeting locked by the host"><i
+                data-ic="lock" data-s="14"></i><span>Locked</span></div>
     </div>
     <div class="top-actions">
         <button class="record-toggle-btn recording" id="btnRecordToggle" title="Stop recording" aria-pressed="true">
@@ -2143,10 +2910,19 @@
         </div>
         <div class="chat-messages-scroll" id="chatMessagesScroll"></div>
         <div class="typing-indicator-bar" id="typingIndicator" style="visibility:hidden">Rithu Singh is typing...</div>
+        <div class="attach-preview-bar" id="attachPreviewBar" aria-live="polite">
+            <div class="attach-file-icon" id="attachFileIcon"><i data-ic="doc" data-s="18"></i></div>
+            <div class="attach-meta">
+                <div class="attach-name" id="attachFileName">file.pdf</div>
+                <div class="attach-size" id="attachFileSize"></div>
+                <div class="attach-progress"><div class="attach-progress-fill" id="attachProgressFill"></div></div>
+            </div>
+            <button type="button" class="attach-cancel-btn" id="btnCancelAttachment" aria-label="Cancel attachment"><i data-ic="x" data-s="16"></i></button>
+        </div>
         <div class="chat-input-bar">
             <input type="text" class="chat-input-field" id="chatInputField" placeholder="Type a message..."
                    autocomplete="off" aria-label="Message">
-            <button class="btn-attach" title="Attach file" aria-label="Attach file">+</button>
+            <button class="btn-attach" id="btnAttachFile" title="Attach file" aria-label="Attach file">+</button>
             <button class="btn-send-chat" id="btnSendChatMessage" title="Send" aria-label="Send message"><i data-ic="up"
                                                                                                             data-s="18"></i>
             </button>
@@ -2180,6 +2956,178 @@
         </div>
     </aside>
 
+    <aside class="side-panel-drawer hidden" id="pollsPanel">
+        <div class="panel-header">
+            <div class="panel-title-wrap"><span class="panel-title">Polls</span><span class="panel-counter-badge"
+                                                                                     id="pollsCounterBadge">0</span>
+            </div>
+            <button class="panel-close-btn" id="btnClosePollsPanel" title="Close" aria-label="Close polls panel"><i
+                    data-ic="x" data-s="18"></i></button>
+        </div>
+        <div class="panel-body-scroll">
+            <div class="host-only-rule" id="pollsCreateSection">
+                <div class="panel-note"><b>Create a poll.</b> Participants vote in real time; results update live in
+                    this demo (no backend required until LiveKit integration).</div>
+                <div class="panel-input-caps" style="margin-top:10px">
+                    <input type="text" id="pollQuestionInput" placeholder="Poll question" aria-label="Poll question"
+                           maxlength="140">
+                    <div id="pollOptionInputs"></div>
+                    <div style="display:flex;gap:8px">
+                        <button type="button" class="btn-panel-ghost" id="btnAddPollOption">Add option</button>
+                    </div>
+                    <div style="margin-top:10px">
+                        <button type="button" class="btn-panel-primary" id="btnPublishPoll" style="width:100%">Launch
+                            poll
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="people-section-title">POLLS</div>
+            <div id="pollsList" aria-live="polite"></div>
+        </div>
+    </aside>
+
+    <aside class="side-panel-drawer hidden" id="qnaPanel">
+        <div class="panel-header">
+            <div class="panel-title-wrap"><span class="panel-title">Q&amp;A</span><span class="panel-counter-badge"
+                                                                                       id="qnaCounterBadge">0</span>
+            </div>
+            <button class="panel-close-btn" id="btnCloseQnaPanel" title="Close" aria-label="Close questions panel"><i
+                    data-ic="x" data-s="18"></i></button>
+        </div>
+        <div class="panel-body-scroll">
+            <div class="panel-input-caps">
+                <input type="text" id="qaInput" placeholder="Ask a question..." aria-label="Ask a question"
+                       maxlength="280">
+                <button type="button" class="btn-panel-primary" id="btnAskQuestion" style="width:100%">Ask question
+                </button>
+            </div>
+            <div class="qa-header-row" role="group" aria-label="Sort questions">
+                <button type="button" class="qa-sort-btn active" id="qaSortTop">Popular</button>
+                <button type="button" class="qa-sort-btn" id="qaSortNew">Newest</button>
+            </div>
+            <div class="people-section-title" style="padding:0">QUESTIONS</div>
+            <div id="qnaList" aria-live="polite"></div>
+        </div>
+    </aside>
+
+    <aside class="side-panel-drawer hidden" id="notesPanel">
+        <div class="panel-header">
+            <div class="panel-title-wrap"><span class="panel-title">Shared notes</span><span class="panel-counter-badge"
+                                                                                            id="notesCounterBadge"
+                                                                                            title="Notes contributor count">1</span>
+            </div>
+            <button class="panel-close-btn" id="btnCloseNotesPanel" title="Close" aria-label="Close shared notes panel"><i data-ic="x" data-s="18"></i></button>
+        </div>
+        <div class="panel-body-scroll" style="padding-bottom:10px">
+            <div class="panel-note warn"><b>Demo scope:</b> notes sync between tabs of this browser. Real
+                multi-user notes are stored and broadcast by the backend (Spring Boot + STOMP)</div>
+            <textarea class="notes-area" id="notesArea" placeholder="Write meeting notes here..." aria-label="Shared notes"></textarea>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                <span class="notes-saved-state" id="notesSaveState">Ready</span>
+                <div style="display:flex;gap:8px">
+                    <button type="button" class="btn-panel-ghost" id="btnDownloadNotes">
+                        &nbsp;&nbsp;Download&nbsp;</button>
+                    <button type="button" class="btn-panel-ghost" id="btnClearNotes">Clear</button>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <aside class="side-panel-drawer hidden" id="avPanel">
+        <div class="panel-header">
+            <div class="panel-title-wrap"><span class="panel-title">Audio &amp; video settings</span></div>
+            <button class="panel-close-btn" id="btnCloseAvPanel" title="Close" aria-label="Close audio and video settings"><i data-ic="x" data-s="18"></i></button>
+        </div>
+        <div class="panel-body-scroll">
+            <div class="av-note-row">
+                <div class="av-note-text">Microphone device
+                    <select class="av-select" id="micDeviceSelect" aria-label="Microphone device">
+                        <option value="">Default — system device</option>
+                    </select>
+                    <div class="av-level-track" aria-hidden="true"><div class="av-level-fill" id="avMlevelFill"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="av-note-row">
+                <div class="av-note-text">Speaker device
+                    <select class="av-select" id="speakerDeviceSelect" aria-label="Speaker device">
+                        <option value="">Default — system device</option>
+                    </select>
+                    <small>Output routing works where the browser allows device selection (Chrome). Other browsers
+                        use the system default.</small>
+                </div>
+            </div>
+            <div class="av-sep"></div>
+            <div class="av-note-row">
+                <div class="av-note-text">Noise suppression<small>Applies browser noise-suppression + echo-cancellation
+                    constraints when the microphone is used.</small></div>
+                <label class="switch-toggle" style="margin:0"><input type="checkbox" id="toggleNoiseSupp"
+                                                                     aria-label="Noise suppression"><span
+                        class="switch-slider"></span></label>
+            </div>
+            <div class="av-note-row">
+                <div class="av-note-text">Audio-only mode<small>Video is released when enabled — network-friendly
+                    demo mode.</small></div>
+                <label class="switch-toggle" style="margin:0"><input type="checkbox" id="toggleAudioOnly"
+                                                                     aria-label="Audio-only mode"><span
+                        class="switch-slider"></span></label>
+            </div>
+            <div class="av-note-row">
+                <div class="av-note-text">Video quality<small>Applied when the camera starts; live tracks are adjusted
+                    where the browser supports it.</small></div>
+                <div class="av-note-text">
+                    <select class="av-select" id="qualitySelect" aria-label="Video quality">
+                        <option value="auto">Auto (720p max)</option>
+                        <option value="sd">Data saver (480p max)</option>
+                        <option value="hd">High detail (1080p max)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="panel-note">Device lists, level metering and constraint switches run on your browser's real
+                media stack. Multi-party sending happens through LiveKit once the backend integration is connected —
+                these settings only tune your local hardware.</div>
+        </div>
+    </aside>
+
+    <aside class="side-panel-drawer hidden host-only" id="breakoutPanel">
+        <div class="panel-header">
+            <div class="panel-title-wrap"><span class="panel-title">Breakout rooms</span><span
+                    class="panel-counter-badge" style="background: var(--or)" id="breakoutBadge"></span></div>
+            <button class="panel-close-btn" id="btnCloseBreakoutPanel" title="Close" aria-label="Close breakout rooms"><i data-ic="x" data-s="18"></i></button>
+        </div>
+        <div class="panel-body-scroll">
+            <div class="panel-note" id="breakoutSetupSection">
+                <b>Set up rooms.</b> Participants are assigned in this demo (roster + sample people). Room membership
+                syncs to every tab through the shared meeting state.
+            </div>
+            <div class="host-only-rule" id="breakoutCreateRow">
+                <div class="breakout-move-row">
+                    <select id="breakoutRoomCount" aria-label="Number of rooms">
+                        <option value="2">2 rooms</option>
+                        <option value="3">3 rooms</option>
+                        <option value="4">4 rooms</option>
+                    </select>
+                    <button type="button" class="btn-panel-primary" id="btnCreateRooms">Create rooms</button>
+                </div>
+                <div style="display:flex;gap:8px;margin-top:8px">
+                    <button type="button" class="btn-panel-primary" id="btnOpenRooms" style="flex:1">Open rooms</button>
+                    <button type="button" class="btn-panel-ghost" id="btnCloseRooms" style="flex:1">Close rooms
+                    </button>
+                </div>
+            </div>
+            <div class="people-section-title">ROOMS</div>
+            <div id="breakoutRoomsList"></div>
+            <div class="panel-note" id="breakoutReturnNote" style="display:none">Participants see the room opens in
+                their UI banner; the demo doesn't move actual media streams, which is a LiveKit capability.</div>
+        </div>
+    </aside>
+
+    <div class="breakout-banner" id="breakoutBanner" role="status">
+        <span id="breakoutBannerText"></span>
+        <button type="button" class="btn-panel-ghost" id="btnLeaveBreakout">Return to main</button>
+    </div>
+
     <div class="host-tools-card host-only" id="hostToolsModal">
         <div class="host-tools-header">
             <div class="host-tools-title"><span><i data-ic="shield" data-s="20"></i></span><span>Host tools</span></div>
@@ -2197,10 +3145,22 @@
     <div class="captions-content">
         <div class="cc-icon-pill">CC</div>
         <div class="caption-text-block"><span class="caption-speaker-name" id="captionSpeaker">Rithu Singh</span><span
-                class="caption-speech-text" id="captionSpeech">We will discuss it tomorrow</span></div>
+                class="caption-speech-text" id="captionSpeech">We will discuss it tomorrow</span>
+            <span id="captionDemoChip" style="font-size:9.5px;font-weight:700;letter-spacing:.06em;color:#94a3b8;text-transform:uppercase;margin-left:6px" title="Demo captions: scripted sample text. Real speech recognition and translation run through the backend transcription service.">demo</span>
+        </div>
     </div>
-    <button class="caption-lang-btn" title="Caption language"><span>English</span><i data-ic="down" data-s="12"></i>
+    <button class="caption-lang-btn" id="captionLangBtn" title="Caption language" aria-haspopup="true" aria-expanded="false"><span id="captionLangLabel">English</span><i data-ic="down" data-s="12"></i>
     </button>
+    <div class="caption-menu" id="captionLangMenu" role="menu" aria-label="Caption language">
+        <button type="button" class="more-menu-item" data-lang="en" role="menuitem">English<span
+                class="lang-sub">demo</span></button>
+        <button type="button" class="more-menu-item" data-lang="te" role="menuitem">Telugu — తెలుగు<span
+                class="lang-sub">demo</span></button>
+        <button type="button" class="more-menu-item" data-lang="hi" role="menuitem">Hindi — हिन्दी<span
+                class="lang-sub">demo</span></button>
+        <button type="button" class="more-menu-item" data-lang="ta" role="menuitem">Tamil — தமிழ்<span
+                class="lang-sub">demo</span></button>
+    </div>
 </div>
 
 <div class="reactions-floating-palette hidden" id="reactionsPalette">
@@ -2213,8 +3173,17 @@
 </div>
 <div id="reactionParticlesContainer"></div>
 
+<div class="more-menu" id="moreMenu" role="menu" aria-label="More meeting features">
+    <button type="button" class="more-menu-item" data-action="polls" role="menuitem"><i data-ic="chart" data-s="18"></i>Polls</button>
+    <button type="button" class="more-menu-item" data-action="qna" role="menuitem"><i data-ic="qa" data-s="18"></i>Q&amp;A</button>
+    <button type="button" class="more-menu-item" data-action="notes" role="menuitem"><i data-ic="doc" data-s="18"></i>Shared notes</button>
+    <button type="button" class="more-menu-item" data-action="av" role="menuitem"><i data-ic="sliders" data-s="18"></i>Audio &amp; video settings</button>
+    <button type="button" class="more-menu-item host-only-rule" data-action="breakout" role="menuitem"><i data-ic="grid" data-s="18"></i>Breakout rooms</button>
+    <button type="button" class="more-menu-item" data-action="security" role="menuitem"><i data-ic="shield" data-s="18"></i>Meeting security</button>
+</div>
+
 <footer class="bottom-control-bar">
-    <div class="connection-status">
+    <div class="connection-status" id="connectionStatus" title="Demo quality indicator — real uplink/downlink stats arrive with the LiveKit connection.">
         <div class="connection-dot"></div>
         <span>Excellent connection</span></div>
     <div class="primary-controls-cluster" id="controls"></div>
@@ -2222,6 +3191,40 @@
                                                                                      data-s="17"></i><span>Leave</span>
     </button>
 </footer>
+
+<div class="dialog-backdrop" id="securityDialog">
+    <div class="dialog-card security-dialog" role="dialog" aria-modal="true" aria-labelledby="securityTitle">
+        <h3 class="dialog-title" id="securityTitle">Meeting security</h3>
+        <p class="dialog-desc" style="margin-bottom:6px">How this meeting protects your media and messages.</p>
+        <div class="security-row">
+            <div class="security-icon t"><i data-ic="lock" data-s="16"></i></div>
+            <div><div class="security-row-title">Connection encryption — active</div>
+                <div class="security-row-desc">Your browser connects over TLS (HTTPS/WSS). Media and signalling are
+                    encrypted in transit.</div></div>
+        </div>
+        <div class="security-row">
+            <div class="security-icon n"><i data-ic="shield" data-s="16"></i></div>
+            <div><div class="security-row-title">End-to-end encryption — requires integration</div>
+                <div class="security-row-desc">E2EE encrypts media so even the meeting server cannot read it. It needs
+                    key distribution by the backend and LiveKit E2EE. The toggle below stays off until that
+                    integration is live, so this demo never falsely claims E2EE.</div>
+                <label class="switch-toggle" style="margin-top:8px" title="Available after LiveKit E2EE integration"><input
+                        type="checkbox" disabled aria-label="End-to-end encryption (unavailable)"><span
+                        class="switch-slider" style="opacity:.45"></span></label>
+            </div>
+        </div>
+        <div class="security-row">
+            <div class="security-icon t"><i data-ic="users" data-s="16"></i></div>
+            <div><div class="security-row-title">Roles &amp; authorization</div>
+                <div class="security-row-desc">Host permissions are demonstrated in the UI. A real deployment must
+                    enforce every permission server-side — hiding buttons in the client is never authorization.</div>
+            </div>
+        </div>
+        <div class="dialog-actions">
+            <button class="dialog-btn dialog-btn-leave" id="btnSecurityClose" style="background:#00817a">Got it</button>
+        </div>
+    </div>
+</div>
 
 <div class="dialog-backdrop" id="leaveDialog">
     <div class="dialog-card" role="dialog" aria-modal="true" aria-labelledby="leaveTitle">
@@ -2275,7 +3278,12 @@
             arrow: '<path d="M5 19 18 6"/><path d="M13 6h5v5"/>',
             trash: '<path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/>',
             undoic: '<path d="M3 7v6h6"/><path d="M3 13a9 9 0 1 0 3-7.7L3 7"/>',
-            redoic: '<path d="M21 7v6h-6"/><path d="M21 13a9 9 0 1 1-3-7.7L21 7"/>'
+            redoic: '<path d="M21 7v6h-6"/><path d="M21 13a9 9 0 1 1-3-7.7L21 7"/>',
+            dots: '<circle cx="12" cy="5.5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="18.5" r="1.7" fill="currentColor" stroke="none"/>',
+            chart: '<line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/>',
+            qa: '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',
+            doc: '<path d="M15 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9a3 3 0 0 0 3-3V8z"/><path d="M15 3v5h5"/>',
+            sliders: '<line x1="4" x2="4" y1="21" y2="14"/><line x1="4" x2="4" y1="10" y2="3"/><line x1="12" x2="12" y1="21" y2="12"/><line x1="12" x2="12" y1="8" y2="3"/><line x1="20" x2="20" y1="21" y2="16"/><line x1="20" x2="20" y1="12" y2="3"/><line x1="2" x2="6" y1="14" y2="14"/><line x1="10" x2="14" y1="8" y2="8"/><line x1="18" x2="22" y1="16" y2="16"/>'
         };
         const ic = (k, s = 20, sw = 2) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[k]}</svg>`;
         document.querySelectorAll('[data-ic]').forEach(el => {
@@ -2338,11 +3346,11 @@
 
         // Explicitly-labelled sample/demo people (simulated, not real participants).
         const SAMPLES = [
-            {uid: 'sample-rs', i: 'RS', n: 'Rithu Singh (Sample)', c: 't', speaking: true},
-            {uid: 'sample-ds', i: 'DS', n: 'Dawan S (Sample)', c: 'o'},
-            {uid: 'sample-jk', i: 'JK', n: 'Jhanavi Kumari (Sample)', c: 't', muted: true},
-            {uid: 'sample-aj', i: 'AJ', n: 'Ajay Tomar (Sample)', c: 't', hand: true},
-            {uid: 'sample-rk', i: 'RK', n: 'Roshan Kumar (Sample)', c: 'o', muted: true}
+            {uid: 'sample-rs', i: 'RS', n: 'Rithu Singh (Sample)', c: 't', speaking: true, sample: true},
+            {uid: 'sample-ds', i: 'DS', n: 'Dawan S (Sample)', c: 'o', sample: true},
+            {uid: 'sample-jk', i: 'JK', n: 'Jhanavi Kumari (Sample)', c: 't', muted: true, sample: true},
+            {uid: 'sample-aj', i: 'AJ', n: 'Ajay Tomar (Sample)', c: 't', hand: true, sample: true},
+            {uid: 'sample-rk', i: 'RK', n: 'Roshan Kumar (Sample)', c: 'o', muted: true, sample: true}
         ];
 
         // My own membership (carries local mute/hand state across renders).
@@ -2406,7 +3414,7 @@
                 const cls = p.speaking ? 'speaking' : p.hand ? 'raised' : '';
                 return `<div class="participant-row"><div class="participant-user-info"><div class="p-avatar bg-${p.c === 't' ? 'teal' : 'orange'}">${esc(p.i)}</div>
         <div class="p-details"><span class="p-name">${esc(p.n)}${p.you ? ' (You)' : ''}${p.host ? ' <span class="pill-host" style="font-size:10px;padding:2px 8px">Host</span>' : ''}</span><span class="p-role ${cls}">${role}</span></div></div>
-        <div class="participant-icons">${p.hand ? '<span class="icon-hand">✋</span>' : ''}<span class="${p.muted ? 'icon-muted' : ''}">${ic(p.muted ? 'micoff' : 'mic', 16)}</span>${ic('cam', 16)}</div></div>`;
+        <div class="participant-icons">${p.you || !isHost ? '' : `<button type="button" class="p-remove-btn host-only-rule" data-uid="${esc(p.uid)}" data-name="${esc(p.n)}" data-sample="${p.sample ? '1' : ''}" title="Remove from meeting" aria-label="Remove ${esc(p.n)}">${ic('x', 15)}</button>`}${p.hand ? '<span class="icon-hand">✋</span>' : ''}<span class="${p.muted ? 'icon-muted' : ''}">${ic(p.muted ? 'micoff' : 'mic', 16)}</span>${ic('cam', 16)}</div></div>`;
             }).join('') || '<div style="padding:16px;font-size:13px;color:#64748b">No participants match your search.</div>';
         }
 
@@ -2464,7 +3472,7 @@
         ];
         const CONTROLS = CONTROLS_BASE
             .concat(isHost ? CONTROLS_HOST_ONLY : [])
-            .concat([['Whiteboard', 'board', 'Whiteboard'], ['People', 'users', 'People'], ['Chat', 'chat', 'Chat'], ['View', 'grid', 'View']]);
+            .concat([['Whiteboard', 'board', 'Whiteboard'], ['People', 'users', 'People'], ['Chat', 'chat', 'Chat'], ['More', 'dots', 'More'], ['View', 'grid', 'View']]);
         $('controls').innerHTML = CONTROLS.map(([id, icon, label, v]) => `<div class="ctrl-item">
     <button class="ctrl-btn ${v === 't' ? 'active-teal' : v === 'o' ? 'active-orange' : ''}" id="ctrlBtn${id}" title="${label}" aria-label="${label}">
       ${icon ? ic(icon) : '<span style="font-size:19px">✋</span>'}${id === 'Chat' ? '<div class="btn-notification-badge" id="chatDotBadge"></div>' : ''}${id === 'Waiting' ? '<div class="btn-notification-badge" id="waitingDotBadge" style="display:none"></div>' : ''}</button>
@@ -2524,20 +3532,94 @@
         };
 
         // ---------- Side panels ----------
+        const PANEL_IDS = {
+            people: 'peoplePanel', chat: 'chatPanel', waiting: 'waitingPanel',
+            polls: 'pollsPanel', qna: 'qnaPanel', notes: 'notesPanel', av: 'avPanel', breakout: 'breakoutPanel'
+        };
+        const PANEL_BADGES = {People: 'people', Chat: 'chat', Waiting: 'waiting'};
+
         function showPanel(name) {
-            state.panel = state.panel === name ? 'none' : name;
-            $('peoplePanel').classList.toggle('hidden', state.panel !== 'people');
-            $('chatPanel').classList.toggle('hidden', state.panel !== 'chat');
-            $('waitingPanel').classList.toggle('hidden', state.panel !== 'waiting');
+            const nextPanel = state.panel === name ? 'none' : name;
+            state.panel = nextPanel;
+            Object.entries(PANEL_IDS).forEach(([key, id]) => {
+                const el = $(id);
+                if (el) el.classList.toggle('hidden', state.panel !== key);
+            });
             B('People').classList.toggle('active-teal', state.panel === 'people');
             B('Chat').classList.toggle('active-teal', state.panel === 'chat');
             if (B('Waiting')) B('Waiting').classList.toggle('active-orange', state.panel === 'waiting');
+            // "More" menu closes whenever a panel opens (or even when only toggled off).
+            closeMoreMenu();
             if (state.panel === 'chat') {
                 $('chatDotBadge').style.display = 'none';
                 $('chatCounterBadge').style.display = 'none';
                 scrollChat();
             }
+            if (state.panel === 'av') startLevelMeter();
+            else stopLevelMeter();
         }
+
+        // ---------- "More" bottom-bar menu ----------
+        function closeMoreMenu() {
+            $('moreMenu').classList.remove('show');
+            B('More').classList.remove('active-teal');
+            $('ctrlLabelMore').classList.remove('t');
+            const m = B('More');
+            if (m) {
+                m.setAttribute('aria-expanded', 'false');
+                m.classList.remove('active-orange');
+            }
+            const lbl = $('ctrlLabelMore');
+            if (lbl) lbl.classList.remove('o');
+        }
+
+        function toggleMoreMenu() {
+            const menu = $('moreMenu');
+            const open = !menu.classList.contains('show');
+            toggleHost(false);
+            closeCaptionMenu();
+            closeMoreMenu();
+            menu.classList.toggle('show', open);
+            B('More').classList.toggle('active-teal', open);
+            $('ctrlLabelMore').classList.toggle('t', open);
+            B('More').setAttribute('aria-expanded', String(open));
+        }
+
+        B('More').onclick = toggleMoreMenu;
+        $('moreMenu').addEventListener('click', (e) => {
+            const item = e.target.closest('.more-menu-item');
+            if (!item || item.disabled) return;
+            const action = item.dataset.action;
+            closeMoreMenu();
+            if (action === 'security') {
+                openSecurityDialog();
+            } else if (PANEL_IDS[action]) {
+                showPanel(action);
+            }
+        });
+
+        // Close floating menus on outside click / Escape.
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#moreMenu') && e.target !== B('More') && !e.target.closest('#ctrlBtnMore')) closeMoreMenu();
+            if (!e.target.closest('#captionLangMenu') && !e.target.closest('#captionLangBtn')) closeCaptionMenu();
+        });
+        document.addEventListener('keydown', e => {
+            if (e.key !== 'Escape') return;
+            closeMoreMenu();
+            closeCaptionMenu();
+            $('securityDialog').classList.remove('show');
+        });
+
+        // ---------- Security (E2EE) dialog ----------
+        function openSecurityDialog() {
+            $('securityDialog').classList.add('show');
+        }
+
+        $('securityBadge').onclick = openSecurityDialog;
+        $('btnSecurityClose').onclick = () => $('securityDialog').classList.remove('show');
+        $('securityDialog').addEventListener('click', e => {
+            if (e.target === $('securityDialog')) $('securityDialog').classList.remove('show');
+        });
 
         B('People').onclick = $('headerPeopleBadge').onclick = $('btnClosePeoplePanel').onclick = () => showPanel('people');
         B('Chat').onclick = $('btnCloseChatPanel').onclick = () => showPanel('chat');
@@ -2567,6 +3649,26 @@
             toast('All sample participants muted.');
         }
 
+        // Host removes a participant (roster members are removed from the shared
+        // roster; labelled samples are removed locally). Server-side enforcement
+        // in production comes from the backend session/room service.
+        $('participantsList').addEventListener('click', e => {
+            const btn = e.target.closest('.p-remove-btn');
+            if (!btn || !isHost) return;
+            const uid = btn.dataset.uid;
+            const name = btn.dataset.name || 'Participant';
+            if (btn.dataset.sample === '1') {
+                const idx = SAMPLES.findIndex(s => s.uid === uid);
+                if (idx >= 0) SAMPLES.splice(idx, 1);
+                toast(`${name} removed (demo: sample people are local to this tab).`);
+            } else {
+                if (app) app.removeRosterMember(meetingId, uid);
+                toast(`${name} removed from the meeting.`);
+                addSystem(`${name} was removed by the host.`);
+            }
+            render();
+        });
+
         // ---------- Host tools ----------
         const HOST_ROWS = [
             ['sec', 'MEETING'],
@@ -2587,6 +3689,10 @@
             if (r[0] === 'btn') return `<button class="host-tool-row" id="${r[3]}" style="width:100%">${label}</button>`;
             return `<div class="host-tool-row">${label}<label class="switch-toggle"><input type="checkbox" id="${r[3]}" ${r[4] ? 'checked' : ''} aria-label="${r[2]}"><span class="switch-slider"></span></label></div>`;
         }).join('');
+        // Initialise the security switches from the meeting record (they are set by the host).
+        $('toggleLockMeeting').checked = !!(RECORD && RECORD.locked);
+        $('toggleWaitingRoom').checked = !RECORD || RECORD.waitingRoom !== false;
+        applyMeetingSecurity(RECORD);
 
         function toggleHost(force) {
             state.hostTools = force ?? !state.hostTools;
@@ -2629,6 +3735,34 @@
             }
         };
 
+        // ---------- Lock meeting & waiting-room switches (host controls) ----------
+        // Both settings live on the shared demo meeting record so every tab (and
+        // the participant waiting page) sees them. A real backend must enforce
+        // both server-side; the UI state here is demonstration only.
+        function applyMeetingSecurity(record) {
+            const locked = !!(record && record.locked);
+            $('lockedBadge').classList.toggle('hidden', !locked);
+            $('headerMeetingId').textContent = (meetingId || 'demo (no ID)') + (locked ? ' • locked' : '');
+            const lockTog = $('toggleLockMeeting');
+            if (lockTog) lockTog.checked = locked;
+            const wrTog = $('toggleWaitingRoom');
+            if (wrTog) wrTog.checked = !record || record.waitingRoom !== false;
+        }
+
+        $('toggleLockMeeting').onchange = requireHost(e => {
+            const locked = e.target.checked;
+            if (app) app.updateDemoMeeting(meetingId, {locked});
+            toast(locked ? 'Meeting locked — new join requests are declined.' : 'Meeting unlocked — participants can request to join.');
+            applyMeetingSecurity(app ? app.getDemoMeeting(meetingId) : null);
+        });
+        $('toggleWaitingRoom').onchange = requireHost(e => {
+            const enabled = e.target.checked;
+            if (app) app.updateDemoMeeting(meetingId, {waitingRoom: enabled});
+            notify('success', enabled ? 'Waiting room enabled' : 'Waiting room disabled',
+                enabled ? 'Participants join through the waiting room so you can admit them.'
+                    : 'Participants now enter the meeting directly without host approval.');
+        });
+
         // ---------- Recording (nav-bar button + confirmation) ----------
         const fmtRec = s => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
 
@@ -2647,9 +3781,10 @@
             const starting = !state.recording;
             EuodooConfirm.ask({
                 title: starting ? 'Start recording?' : 'Stop recording?',
-                description: starting
+                description: (starting
                     ? 'Do you want to start the recording? Everyone in the meeting will see that it is being recorded.'
-                    : 'Do you want to stop the recording? You can start a new recording at any time.',
+                    : 'Do you want to stop the recording? You can start a new recording at any time.')
+                    + ' Demo scope: the indicator runs locally — no media is captured. Cloud capture and playback need the recording service (Spring Boot + LiveKit).',
                 confirmLabel: starting ? 'Start recording' : 'Stop recording',
                 cancelLabel: 'Cancel',
                 danger: !starting,
@@ -2661,8 +3796,9 @@
                 if (!ok) return;
                 if (starting) state.recSeconds = 0; // a new recording starts from 00:00
                 applyRecording(starting);
-                notify('success', starting ? 'Recording started' : 'Recording stopped',
-                    starting ? 'This meeting is now being recorded.' : 'The recording has been stopped.');
+                notify(starting ? 'info' : 'success', starting ? 'Recording indicator started' : 'Recording indicator stopped',
+                    starting ? 'Indicator runs locally only — no media is captured in this demo. Cloud recording requires the backend recording service.'
+                        : 'The demo indicator has been stopped. No media was captured.');
             });
         });
 
@@ -2733,13 +3869,15 @@
         }
 
         B('Camera').onclick = async () => {
+            if (avPrefs.audioOnly) return toast('Audio-only mode is on. Turn it off in More → Audio & video settings to use the camera.');
             if (state.camera) {
                 camStream.getTracks().forEach(t => t.stop());
                 camStream = null;
                 state.camera = false;
             } else {
                 try {
-                    camStream = await navigator.mediaDevices.getUserMedia({video: true});
+                    const qHeight = avPrefs.quality === 'sd' ? 480 : avPrefs.quality === 'hd' ? 1080 : 720;
+                    camStream = await navigator.mediaDevices.getUserMedia({video: {height: {ideal: qHeight}}});
                     state.camera = true;
                 } catch (err) {
                     return toast('Camera unavailable: ' + (err.message || 'permission denied'));
@@ -2861,6 +3999,7 @@
         };
 
         function sendChat() {
+            if (attachState) return sendFileMessage();
             const text = $('chatInputField').value.trim();
             if (!text) return;
             $('chatMessagesScroll').insertAdjacentHTML('beforeend', msgHtml(['You', null, null, clock(), text]));
@@ -2882,7 +4021,7 @@
             $(on).onclick = () => {
                 $(on).classList.add('active');
                 $(off).classList.remove('active');
-                if (on === 'btnChatPrivate') toast('Private chat is coming soon.');
+                if (on === 'btnChatPrivate') toast('Private chat needs the backend messaging service (Spring Boot + STOMP). It is not part of the local demo — use Everyone chat.');
             });
 
         // ---------- Recording timer ----------
@@ -3301,11 +4440,707 @@
             drag = null;
         });
 
+        // ============================================================
+        // Phase 2/3 feature panels: shared localStorage "backend"
+        // (each feature keys on the meeting ID and syncs across tabs).
+        // ============================================================
+        const lsRead = (k, fb) => {
+            try {
+                return JSON.parse(localStorage.getItem(k)) ?? fb;
+            } catch (e) {
+                return fb;
+            }
+        };
+        const lsWrite = (k, v) => {
+            try {
+                localStorage.setItem(k, JSON.stringify(v));
+            } catch (e) {
+            }
+        };
+        const fmtBytes = b => b < 1024 ? b + ' B' : b < 1024 * 1024 ? (b / 1024).toFixed(0) + ' KB' : (b / (1024 * 1024)).toFixed(1) + ' MB';
+        const fmtClockFull = ts => {
+            const d = new Date(ts);
+            const hm = `${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`;
+            return `${hm}`;
+        };
+
+        // ---------- Polls ----------
+        const pollsKey = () => 'euodoo_polls:' + (meetingId || 'demo');
+        let pollDraft = ['', ''];
+
+        function renderPollOptionInputs() {
+            $('pollOptionInputs').innerHTML = pollDraft.map((v, i) => `<div class="poll-create-row">
+        <input type="text" data-poll-opt="${i}" value="${esc(v)}" placeholder="Option ${i + 1}" aria-label="Poll option ${i + 1}" style="margin-bottom:0">
+        <button type="button" class="attach-cancel-btn" data-remove-opt="${i}" aria-label="Remove option ${i + 1}" ${pollDraft.length <= 2 ? 'disabled title="At least 2 options"' : ''} style="${pollDraft.length <= 2 ? 'opacity:.4;cursor:default' : ''}">✕</button>
+      </div>`).join('');
+        }
+
+        $('pollOptionInputs').addEventListener('input', e => {
+            const i = e.target.dataset.pollOpt;
+            if (i !== undefined) pollDraft[+i] = e.target.value;
+        });
+        $('pollOptionInputs').addEventListener('click', e => {
+            const rm = e.target.closest('[data-remove-opt]');
+            if (!rm || pollDraft.length <= 2) return;
+            pollDraft.splice(+rm.dataset.removeOpt, 1);
+            renderPollOptionInputs();
+        });
+        $('btnAddPollOption').onclick = () => {
+            if (pollDraft.length >= 5) return toast('Up to 5 options are allowed.');
+            pollDraft.push('');
+            renderPollOptionInputs();
+        };
+
+        function pollsData() {
+            return lsRead(pollsKey(), {list: []});
+        }
+
+        function votesFor(poll) {
+            const counts = poll.options.map(() => 0);
+            Object.values(poll.votes || {}).forEach(i => {
+                if (counts[i] !== undefined) counts[i]++;
+            });
+            return counts;
+        }
+
+        function renderPolls() {
+            const data = pollsData();
+            const list = data.list || [];
+            const openCount = list.filter(p => !p.closed).length;
+            $('pollsCounterBadge').textContent = openCount;
+            if (!list.length) {
+                $('pollsList').innerHTML = '<div style="font-size:12px;color:#64748b;text-align:center;padding:14px 6px;line-height:1.5">' + (isHost ? 'No polls yet. Create one above — it appears for every participant live.' : 'The host has not started any polls yet.') + '</div>';
+                return;
+            }
+            $('pollsList').innerHTML = list.slice().reverse().map(p => {
+                const counts = votesFor(p);
+                const total = counts.reduce((a, b) => a + b, 0);
+                const myVote = (p.votes || {})[myUid];
+                const rows = p.options.map((opt, i) => {
+                    const pct = total ? Math.round(counts[i] * 100 / total) : 0;
+                    const showResults = p.closed || myVote !== undefined;
+                    if (showResults) {
+                        return `<div class="poll-option-row${myVote === i ? ' voted' : ''}"><span class="poll-option-fill" style="width:${pct}%"></span><span class="poll-option-btn" style="cursor:default">${myVote === i ? '<b style="color:#0b6d67">●</b> ' : '○ '}${esc(opt)}</span><span class="poll-option-pct">${pct}%</span></div>`;
+                    }
+                    return `<div class="poll-option-row"><button type="button" class="poll-option-btn" data-vote="${i}" data-poll="${esc(p.id)}">${esc(opt)}</button></div>`;
+                }).join('');
+                const meta = `<div class="poll-meta">${esc(p.by || 'Host')} • ${new Date(p.ts).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}${total ? ' • ' + total + ' vote' + (total > 1 ? 's' : '') : ''}${p.closed ? '' : ''}</div>`;
+                const closeBtn = (isHost && !p.closed) ? `<div style="margin-top:8px"><button type="button" class="btn-panel-ghost" data-close-poll="${esc(p.id)}" style="padding:5px 12px;font-size:11.5px">Close poll</button></div>` : '';
+                return `<div class="poll-card"><p class="poll-question">${esc(p.q)}${p.closed ? '<span class="poll-closed-pill">Closed</span>' : ''}</p>${rows}${meta}${closeBtn}</div>`;
+            }).join('');
+        }
+
+        $('pollsList').addEventListener('click', e => {
+            const voteBtn = e.target.closest('[data-vote]');
+            const closeBtn = e.target.closest('[data-close-poll]');
+            if (voteBtn) {
+                const data = pollsData();
+                const poll = (data.list || []).find(p => p.id === voteBtn.dataset.poll);
+                if (!poll || poll.closed) return;
+                poll.votes = poll.votes || {};
+                if (poll.votes[myUid] !== undefined) return toast('You already voted in this poll (one vote per participant).');
+                poll.votes[myUid] = +voteBtn.dataset.vote;
+                lsWrite(pollsKey(), data);
+                renderPolls();
+            } else if (closeBtn) {
+                if (!isHost) return;
+                const data = pollsData();
+                const poll = (data.list || []).find(p => p.id === closeBtn.dataset.closePoll);
+                if (!poll) return;
+                EuodooConfirm.ask({
+                    title: 'Close poll?',
+                    description: `"${poll.q}" — participants can no longer vote after closing. Results stay visible.`,
+                    confirmLabel: 'Close poll',
+                    cancelLabel: 'Keep open'
+                }).then(ok => {
+                    if (!ok) return;
+                    poll.closed = true;
+                    lsWrite(pollsKey(), data);
+                    renderPolls();
+                    toast('Poll closed.');
+                });
+            }
+        });
+
+        $('btnPublishPoll').onclick = requireHost(() => {
+            const q = $('pollQuestionInput').value.trim();
+            const options = pollDraft.map(v => v.trim()).filter(Boolean);
+            if (!q) {
+                $('pollQuestionInput').focus();
+                return toast('Enter the poll question first.');
+            }
+            if (Object.keys(options).length < 2 || new Set(options).size < 2) {
+                return toast('A poll needs at least 2 different options.');
+            }
+            const data = pollsData();
+            data.list = data.list || [];
+            data.list.push({id: 'p' + Date.now(), q, options, votes: {}, closed: false, by: session.name, ts: Date.now()});
+            lsWrite(pollsKey(), data);
+            $('pollQuestionInput').value = '';
+            pollDraft = ['', ''];
+            renderPollOptionInputs();
+            renderPolls();
+            notify('success', 'Poll launched', 'Every participant can vote now (live across tabs in this demo).');
+        });
+
+        // ---------- Q&A ----------
+        const qnaKey = () => 'euodoo_qna:' + (meetingId || 'demo');
+
+        function qnaData() {
+            return lsRead(qnaKey(), {list: []});
+        }
+
+        let qaSort = 'top';
+
+        function renderQna() {
+            const data = qnaData();
+            const list = (data.list || []).slice();
+            $('qnaCounterBadge').textContent = list.filter(q => !q.answered).length;
+            if (qaSort === 'top') list.sort((a, b) => (b.votes.length - a.votes.length) || (b.ts - a.ts));
+            else list.sort((a, b) => b.ts - a.ts);
+            if (!list.length) {
+                $('qnaList').innerHTML = '<div style="font-size:12px;color:#64748b;text-align:center;padding:14px 6px;line-height:1.5">No questions yet.<br/>Use the box above — everyone sees new questions instantly in this demo.</div>';
+                return;
+            }
+            $('qnaList').innerHTML = list.map(q => {
+                const voted = q.votes.includes(myUid);
+                return `<div class="qa-item${q.answered ? ' answered' : ''}">
+                    <div class="qa-item-top">
+                        <button type="button" class="qa-upvote-btn${voted ? ' voted' : ''}" data-upvote="${esc(q.id)}" aria-label="${voted ? 'Remove upvote' : 'Upvote'}" ${q.answered ? 'disabled style="opacity:.5;cursor:default"' : ''}>▲<span>${q.votes.length}</span></button>
+                        <div class="qa-body">
+                            <div class="qa-author">${esc(q.name)}${q.uid === myUid ? ' (you)' : ''} • ${fmtClockFull(q.ts)}${q.answered ? ' <span class="qa-answered-pill">Answered</span>' : ''}</div>
+                            <p class="qa-text">${esc(q.text)}</p>
+                        </div>
+                    </div>
+                    ${isHost && !q.answered ? `<button type="button" class="qa-mark-btn" data-answer="${esc(q.id)}">Mark as answered</button>` : ''}
+                </div>`;
+            }).join('');
+        }
+
+        $('qaSortTop').onclick = () => {
+            qaSort = 'top';
+            $('qaSortTop').classList.add('active');
+            $('qaSortNew').classList.remove('active');
+            renderQna();
+        };
+        $('qaSortNew').onclick = () => {
+            qaSort = 'new';
+            $('qaSortNew').classList.add('active');
+            $('qaSortTop').classList.remove('active');
+            renderQna();
+        };
+
+        function askQuestion() {
+            const text = $('qaInput').value.trim();
+            if (!text) return;
+            const data = qnaData();
+            data.list = data.list || [];
+            data.list.push({id: 'q' + Date.now(), uid: myUid, name: session.name, text, ts: Date.now(), votes: [], answered: false});
+            lsWrite(qnaKey(), data);
+            $('qaInput').value = '';
+            renderQna();
+            toast('Question submitted.');
+        }
+
+        $('btnAskQuestion').onclick = askQuestion;
+        $('qaInput').onkeydown = e => {
+            if (e.key === 'Enter') askQuestion();
+        };
+
+        $('qnaList').addEventListener('click', e => {
+            const up = e.target.closest('[data-upvote]');
+            const mark = e.target.closest('[data-answer]');
+            if (!up && !mark) return;
+            const data = qnaData();
+            const q = (data.list || []).find(x => x.id === (up ? up.dataset.upvote : mark.dataset.answer));
+            if (!q) return;
+            if (up) {
+                if (q.answered) return;
+                const i = q.votes.indexOf(myUid);
+                if (i >= 0) q.votes.splice(i, 1);
+                else q.votes.push(myUid);
+            } else if (mark && isHost) {
+                q.answered = true;
+            }
+            lsWrite(qnaKey(), data);
+            renderQna();
+        });
+
+        // ---------- Shared notes ----------
+        const notesKey = () => 'euodoo_notes:' + (meetingId || 'demo');
+        let notesSaveTimer = null;
+
+        function renderNotesMeta(state, by, ts) {
+            const el = $('notesSaveState');
+            if (!el) return;
+            if (state === 'saving') {
+                el.textContent = 'Saving…';
+                el.classList.remove('saved');
+            } else if (state === 'saved') {
+                el.textContent = `Saved — last updated by ${by || 'someone'} at ${fmtClockFull(ts)}`;
+                el.classList.add('saved');
+            } else {
+                el.textContent = state || 'Ready';
+                el.classList.remove('saved');
+            }
+        }
+
+        function loadNotes() {
+            const data = lsRead(notesKey(), null);
+            $('notesArea').value = (data && data.text) || '';
+            if (data && data.updatedAt) renderNotesMeta('saved', data.by, data.updatedAt);
+            $('notesCounterBadge').textContent = (data && data.editors && data.editors.length) ? data.editors.length : 1;
+        }
+
+        let myNotesDirty = false;
+        $('notesArea').addEventListener('input', () => {
+            myNotesDirty = true;
+            renderNotesMeta('saving');
+            clearTimeout(notesSaveTimer);
+            notesSaveTimer = setTimeout(() => {
+                const data = {text: $('notesArea').value, by: session.name, updatedAt: Date.now()};
+                const prev = lsRead(notesKey(), {});
+                data.editors = Array.from(new Set([...(prev.editors || [myUid]), myUid]));
+                lsWrite(notesKey(), data);
+                renderNotesMeta('saved', data.by, data.updatedAt);
+                $('notesCounterBadge').textContent = data.editors.length;
+                myNotesDirty = false;
+            }, 500);
+        });
+        $('btnDownloadNotes').onclick = () => {
+            const blob = new Blob([$('notesArea').value || ''], {type: 'text/plain;charset=utf-8'});
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'euodoo-notes-' + (meetingId || 'meeting') + '.txt';
+            a.click();
+            setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+            toast('Notes downloaded as a .txt file.');
+        };
+        $('btnClearNotes').onclick = () => {
+            EuodooConfirm.ask({
+                title: 'Clear shared notes?',
+                description: 'The shared notes will be emptied for everyone in this demo workspace.',
+                confirmLabel: 'Clear notes',
+                danger: true
+            }).then(ok => {
+                if (!ok) return;
+                lsWrite(notesKey(), {text: '', by: session.name + ' (cleared)', updatedAt: Date.now(), editors: []});
+                loadNotes();
+                renderNotesMeta('Cleared');
+                toast('Shared notes cleared.');
+            });
+        };
+
+        // ---------- Breakout rooms ----------
+        const breakoutKey = () => 'euodoo_breakout:' + (meetingId || 'demo');
+        let myBreakoutRoom = null;
+
+        function breakoutData() {
+            return lsRead(breakoutKey(), {rooms: []});
+        }
+
+        function breakoutCandidates() {
+            return visiblePeople().filter(p => !p.you);
+        }
+
+        function renderBreakout() {
+            const data = breakoutData();
+            const rooms = data.rooms || [];
+            $('breakoutBadge').textContent = rooms.length ? rooms.length + ' rooms' : '';
+            if (!rooms.length) {
+                $('breakoutRoomsList').innerHTML = '<div style="font-size:12px;color:#64748b;text-align:center;padding:14px 6px">No rooms yet.</div>';
+                updateBreakoutBanner();
+                return;
+            }
+            $('breakoutRoomsList').innerHTML = rooms.map((r, ri) => {
+                const chips = (r.members || []).map(m => `<span class="breakout-chip">${esc(m.name)}${r.open && m.uid === myUid ? ' (you)' : ''}<button type="button" class="chip-x" data-unassign="${ri}" data-member="${esc(m.uid)}" aria-label="Remove ${esc(m.name)} from ${esc(r.name)}">✕</button></span>`).join('') || '<span style="font-size:11.5px;color:#94a3b8">No members yet</span>';
+                return `<div class="breakout-room-card">
+                    <div class="breakout-room-title"><span>${esc(r.name)}</span><span class="breakout-room-state ${r.open ? 'open' : 'closed'}">${r.open ? 'Open' : 'Closed'}</span></div>
+                    <div class="breakout-members">${chips}</div>
+                    <div class="breakout-move-row">
+                        <select data-move-target="${ri}" aria-label="Assign a participant to ${esc(r.name)}" style="margin-top:0">
+                            <option value="">Assign participant…</option>
+                            ${breakoutCandidates().map(p => `<option value="${esc(p.uid)}" ${((r.members || []).some(m => m.uid === p.uid)) ? 'hidden' : ''}>${esc(p.n)}</option>`).join('')}
+                        </select>
+                        <button type="button" class="btn-panel-ghost" data-assign-room="${ri}" style="padding:7px 12px">Add</button>
+                        <button type="button" class="btn-panel-primary" data-join-room="${ri}" style="padding:7px 12px">Join</button>
+                    </div>
+                </div>`;
+            }).join('');
+            updateBreakoutBanner();
+        }
+
+        function updateBreakoutBanner() {
+            const data = breakoutData();
+            const rooms = data.rooms || [];
+            const found = rooms.find(r => r.open && (r.members || []).some(m => m.uid === myUid));
+            $('breakoutBannerText').textContent = found ? `You're in ${found.name}` : '';
+            $('breakoutBanner').classList.toggle('show', !!found);
+        }
+
+        $('breakoutRoomsList').addEventListener('click', e => {
+            const un = e.target.closest('[data-unassign]');
+            const asg = e.target.closest('[data-assign-room]');
+            const join = e.target.closest('[data-join-room]');
+            const data = breakoutData();
+            if (un) {
+                const room = (data.rooms || [])[+un.dataset.unassign];
+                if (!room) return;
+                room.members = (room.members || []).filter(m => m.uid !== un.dataset.member);
+                lsWrite(breakoutKey(), data);
+                renderBreakout();
+            } else if (asg) {
+                const ri = +asg.dataset.assignRoom;
+                const sel = document.querySelector(`#breakoutRoomsList [data-move-target="${ri}"]`);
+                const room = (data.rooms || [])[ri];
+                const cand = sel && sel.value ? breakoutCandidates().find(p => p.uid === sel.value) : null;
+                if (!room || !cand) return toast('Pick a participant to assign.');
+                room.members = room.members || [];
+                if (room.members.some(m => m.uid === cand.uid)) return;
+                room.members.push({uid: cand.uid, name: cand.n});
+                lsWrite(breakoutKey(), data);
+                renderBreakout();
+            } else if (join) {
+                const ri = +join.dataset.joinRoom;
+                const room = (data.rooms || [])[ri];
+                if (!room || !room.open) return toast('The room is closed. Open the rooms first.');
+                room.members = (room.members || []).filter(m => m.uid !== myUid);
+                room.members.push({uid: myUid, name: session.name + ' (You)'});
+                myBreakoutRoom = room.name;
+                lsWrite(breakoutKey(), data);
+                renderBreakout();
+                toast(`Joined ${room.name} (demo view — real rooms switch media, which is a LiveKit capability).`);
+            }
+        });
+
+        $('btnCreateRooms').onclick = requireHost(() => {
+            const n = +$('breakoutRoomCount').value;
+            const cands = breakoutCandidates();
+            const rooms = Array.from({length: n}, (_, i) => ({name: `Room ${i + 1}`, open: false, members: []}));
+            cands.forEach((p, i) => rooms[i % n].members.push({uid: p.uid, name: p.n}));
+            lsWrite(breakoutKey(), {rooms});
+            renderBreakout();
+            toast(`${n} rooms created — participants distributed round-robin.`);
+        });
+        $('btnOpenRooms').onclick = requireHost(() => {
+            const data = breakoutData();
+            if (!(data.rooms || []).length) return toast('Create the rooms first.');
+            data.rooms.forEach(r => r.open = true);
+            lsWrite(breakoutKey(), data);
+            renderBreakout();
+            notify('success', 'Breakout rooms opened', 'Assigned participants see the room banner. In this demo media is not switched — LiveKit rooms handle that after integration.');
+        });
+        $('btnCloseRooms').onclick = requireHost(() => {
+            const data = breakoutData();
+            if (!(data.rooms || []).length) return toast('Create the rooms first.');
+            data.rooms.forEach(r => {
+                r.open = false;
+            });
+            lsWrite(breakoutKey(), data);
+            renderBreakout();
+            toast('All breakout rooms closed. Everyone is back in the main meeting.');
+        });
+        $('btnLeaveBreakout').onclick = () => {
+            const data = breakoutData();
+            (data.rooms || []).forEach(r => r.members = (r.members || []).filter(m => m.uid !== myUid));
+            myBreakoutRoom = null;
+            lsWrite(breakoutKey(), data);
+            if (isHost) renderBreakout();
+            updateBreakoutBanner();
+            toast('Back in the main meeting.');
+        };
+
+        // ---------- Audio & video settings ----------
+        const AV_PREFS_KEY = 'euodoo_av_prefs';
+        let avPrefs = Object.assign({ns: true, audioOnly: false, quality: 'auto', mic: '', speaker: ''}, lsRead(AV_PREFS_KEY, {}));
+        let meterStream = null, meterCtx = null, meterRaf = null;
+
+        function saveAvPrefs() {
+            lsWrite(AV_PREFS_KEY, avPrefs);
+        }
+
+        function initAvUi() {
+            $('toggleNoiseSupp').checked = avPrefs.ns;
+            $('toggleAudioOnly').checked = avPrefs.audioOnly;
+            $('qualitySelect').value = avPrefs.quality;
+            listMediaDevices();
+        }
+
+        function listMediaDevices() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+                $('micDeviceSelect').innerHTML = '<option value="">Device list unavailable</option>';
+                return;
+            }
+            navigator.mediaDevices.enumerateDevices().then(devs => {
+                const mics = devs.filter(d => d.kind === 'audioinput');
+                const spks = devs.filter(d => d.kind === 'audiooutput');
+                const fill = (sel, list, defLabel) => {
+                    const val = sel.dataset.cur || '';
+                    sel.innerHTML = `<option value="">${defLabel}</option>` + list.map(d =>
+                        `<option value="${esc(d.deviceId)}"${d.deviceId === val ? ' selected' : ''}>${esc(d.label || `Device ${d.deviceId.slice(0, 5)}…`)}</option>`).join('');
+                };
+                fill($('micDeviceSelect'), mics, 'Default — system device');
+                fill($('speakerDeviceSelect'), spks, 'Default — system device');
+                if (!mics.some(d => d.label)) {
+                    // Unlabelled devices: permission for camera/mic has not been granted yet.
+                    const note = $('avPanel .panel-note');
+                }
+            }).catch(() => {
+                toast('Could not list media devices.');
+            });
+            const note = document.querySelector('#avPanel .panel-note');
+            if (note && navigator.mediaDevices && !navigator.mediaDevices.getUserMedia) {
+                note.textContent = 'This browser does not expose media device APIs.';
+            }
+        }
+
+        function startLevelMeter() {
+            if (meterStream) return;
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
+            const audio = {deviceId: avPrefs.mic ? {exact: avPrefs.mic} : undefined, noiseSuppression: avPrefs.ns, echoCancellation: avPrefs.ns, autoGainControl: true};
+            navigator.mediaDevices.getUserMedia({audio}).then(stream => {
+                meterStream = stream;
+                meterCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const src = meterCtx.createMediaStreamSource(stream);
+                const analyser = meterCtx.createAnalyser();
+                analyser.fftSize = 256;
+                src.connect(analyser);
+                const buf = new Uint8Array(analyser.frequencyBinCount);
+                const loop = () => {
+                    analyser.getByteFrequencyData(buf);
+                    let sum = 0;
+                    for (let i = 0; i < buf.length; i++) sum += buf[i];
+                    const level = Math.min(100, Math.round((sum / buf.length) * 2.2));
+                    const meter = $('avMlevelFill');
+                    if (meter) meter.style.width = level + '%';
+                    meterRaf = requestAnimationFrame(() => setTimeout(loop, 60));
+                };
+                loop();
+            }).catch(() => {
+                // Permission denied / no mic: the meter simply stays empty; the state is shown.
+                const meter = $('avMlevelFill');
+                if (meter) meter.style.width = '0%';
+            });
+        }
+
+        function stopLevelMeter() {
+            if (meterRaf) cancelAnimationFrame(meterRaf);
+            meterRaf = null;
+            if (meterStream) meterStream.getTracks().forEach(t => t.stop());
+            meterStream = null;
+            if (meterCtx && meterCtx.state !== 'closed') meterCtx.close().catch(() => {
+            });
+            meterCtx = null;
+        }
+
+        $('micDeviceSelect').onchange = e => {
+            avPrefs.mic = e.target.value;
+            saveAvPrefs();
+            toast('Microphone preference saved.');
+            stopLevelMeter(); // restart with the new device when the panel is open
+            if (state.panel === 'av') startLevelMeter();
+        };
+        $('speakerDeviceSelect').onchange = e => {
+            avPrefs.speaker = e.target.value;
+            saveAvPrefs();
+            // Route the local preview element if the browser supports sink selection.
+            try {
+                if (avPrefs.speaker && vid.setSinkId) {
+                    vid.setSinkId(avPrefs.speaker).then(() => toast('Speaker preference saved.'))
+                        .catch(() => toast('This browser blocked device output selection.'));
+                } else toast('Speaker preference saved.');
+            } catch (err) {
+                toast('Output selection is not supported in this browser.');
+            }
+        };
+        $('toggleNoiseSupp').onchange = e => {
+            avPrefs.ns = e.target.checked;
+            saveAvPrefs();
+            toast(avPrefs.ns ? 'Noise suppression on — applies to the microphone stream.' : 'Noise suppression off.');
+            if (meterStream) {
+                stopLevelMeter();
+                if (state.panel === 'av') startLevelMeter();
+            }
+        };
+        $('toggleAudioOnly').onchange = e => {
+            avPrefs.audioOnly = e.target.checked;
+            saveAvPrefs();
+            if (avPrefs.audioOnly) {
+                if (camStream) {
+                    camStream.getTracks().forEach(t => t.stop());
+                    camStream = null;
+                    state.camera = false;
+                    B('Camera').classList.remove('active-teal');
+                    syncVideo();
+                }
+                toast('Audio-only mode on — your video is released locally.');
+            } else {
+                toast('Audio-only mode off — you can turn the camera on again.');
+            }
+        };
+        $('qualitySelect').onchange = e => {
+            avPrefs.quality = e.target.value;
+            saveAvPrefs();
+            const track = camStream && camStream.getVideoTracks()[0];
+            if (track && track.applyConstraints) {
+                const caps = {auto: {height: 720}, sd: {height: 480}, hd: {height: 1080}}[avPrefs.quality];
+                track.applyConstraints({height: caps.height}).then(() => toast('Video quality set to ' + e.target.options[e.target.selectedIndex].text + '.'))
+                    .catch(() => toast('Quality target saved; the camera keeps browser defaults.'));
+            } else {
+                toast('Quality target saved — applied when the camera starts.');
+            }
+        };
+
+        // Close other floating menus when the AV-config closes.
+        $('btnClosePollsPanel').onclick = () => showPanel('polls');
+        $('btnCloseQnaPanel').onclick = () => showPanel('qna');
+        $('btnCloseNotesPanel').onclick = () => showPanel('notes');
+        $('btnCloseAvPanel').onclick = () => showPanel('av');
+        $('btnCloseBreakoutPanel').onclick = () => showPanel('breakout');
+
+        // ---------- Captions language selection (demo languages) ----------
+        const LANG_NAME = {en: 'English', te: 'Telugu', hi: 'Hindi', ta: 'Tamil'};
+        const CAPS_BY_LANG = {
+            en: [
+                ['Rithu Singh', 'We will discuss it tomorrow'], ['Dawan S', 'I can prepare the design presentation by noon.'],
+                ['Jhanavi Kumari', 'Checking QA test results on the beta staging build.'], ['Ajay Tomar', 'The team is aligned on the 15th November milestone.']
+            ],
+            te: [
+                ['Rithu Singh', 'మేము రేపు చర్చిస్తాము'], ['Dawan S', 'మధ్యాహ్నం నాటికి డిజైన్ ప్రెజెంటేషన్ సిద్ధం చేయగలను.'],
+                ['Jhanavi Kumari', 'బీటా స్టేజింగ్ బిల్డ్‌లో QA పరీక్ష ఫలితాలను తనిఖీ చేస్తున్నాను.'], ['Ajay Tomar', '15 నవంబర్ మైలురాయిపై జట్టు సుసంఘడితంగా ఉంది.']
+            ],
+            hi: [
+                ['Rithu Singh', 'हम कल इस पर चर्चा करेंगे'], ['Dawan S', 'मैं दोपहर तक डिज़ाइन प्रस्तुति तैयार कर सकता हूँ.'],
+                ['Jhanavi Kumari', 'बीटा स्टेजिंग बिल्ड पर QA परीक्षण परिणाम जांच रही हूँ.'], ['Ajay Tomar', 'टीम 15 नवंबर के मील के पत्थर पर सहमत है.']
+            ],
+            ta: [
+                ['Rithu Singh', 'நாளை இதைப் பற்றி விவாதிப்போம்'], ['Dawan S', 'மதியம் முதல் வடிவமைப்பு விளக்கக்காட்சியைத் தயாரிக்க முடியும்.'],
+                ['Jhanavi Kumari', 'பீட்டா ஸ்டேஜிங் கட்டமைப்பில் QA சோதனை முடிவுகளைச் சரிபார்க்கிறேன்.'], ['Ajay Tomar', 'அணி நவம்பர் 15 மைல்கல்லில் ஒத்துழைக்கிறது.']
+            ]
+        };
+        let capLang = 'en';
+
+        function closeCaptionMenu() {
+            $('captionLangMenu').classList.remove('show');
+            $('captionLangBtn').setAttribute('aria-expanded', 'false');
+        }
+
+        $('captionLangBtn').onclick = () => {
+            closeMoreMenu();
+            const menu = $('captionLangMenu');
+            const open = !menu.classList.contains('show');
+            menu.classList.toggle('show', open);
+            $('captionLangBtn').setAttribute('aria-expanded', String(open));
+        };
+        $('captionLangMenu').addEventListener('click', e => {
+            const item = e.target.closest('[data-lang]');
+            if (!item) return;
+            capLang = item.dataset.lang;
+            $('captionLangLabel').textContent = LANG_NAME[capLang] || capLang;
+            closeCaptionMenu();
+            capIdx = 0;
+            const cur = (CAPS_BY_LANG[capLang] || CAPS_BY_LANG.en)[0];
+            $('captionSpeaker').textContent = cur[0];
+            $('captionSpeech').textContent = cur[1];
+            toast(`Captions language set to ${LANG_NAME[capLang]} (demo captions — scripted sample text; live translation needs the transcription service).`);
+        });
+
+        // ---------- Chat attachments (demo upload pipeline) ----------
+        const ATTACH_MAX = 10 * 1024 * 1024; // 10 MB (demo limit; the backend enforces the real limit)
+        const ATTACH_TYPES = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'png', 'jpeg', 'jpg'];
+        let attachState = null;
+
+        function setAttachPreview(on) {
+            $('attachPreviewBar').classList.toggle('show', !!on);
+        }
+
+        function clearAttachment() {
+            attachState = null;
+            setAttachPreview(false);
+            if (attachInput) attachInput.value = '';
+            $('attachProgressFill').style.width = '0%';
+        }
+
+        const attachInput = document.createElement('input');
+        attachInput.type = 'file';
+        attachInput.accept = ATTACH_TYPES.map(t => '.' + t).join(',');
+        attachInput.style.display = 'none';
+        document.body.appendChild(attachInput);
+
+        $('btnAttachFile').onclick = () => attachInput.click();
+        attachInput.addEventListener('change', () => {
+            const f = attachInput.files && attachInput.files[0];
+            if (!f) return;
+            const ext = (f.name.split('.').pop() || '').toLowerCase();
+            if (!ATTACH_TYPES.includes(ext)) {
+                attachInput.value = '';
+                return notify('error', 'File type not supported', 'Allowed: PDF, DOC/DOCX, XLS/XLSX, PPT/PPTX, TXT, PNG, JPEG.');
+            }
+            if (f.size > ATTACH_MAX) {
+                attachInput.value = '';
+                return notify('error', 'File too large', `"${f.name}" is ${fmtBytes(f.size)}. The limit is 10 MB.`);
+            }
+            attachState = {file: f, progress: 0};
+            $('attachFileName').textContent = f.name;
+            $('attachFileSize').textContent = fmtBytes(f.size);
+            $('attachProgressFill').style.width = '0%';
+            setAttachPreview(true);
+        });
+        $('btnCancelAttachment').onclick = () => {
+            clearAttachment();
+            toast('Attachment removed.');
+        };
+
+        function sendFileMessage() {
+            if (!attachState) return;
+            const f = attachState.file;
+            const url = URL.createObjectURL(f);
+            const row = document.createElement('div');
+            row.className = 'chat-msg-row outgoing chat-msg-content outgoing-file';
+            row.innerHTML = `<div class="chat-msg-content"><div class="chat-msg-header"><span class="chat-author">You</span><span class="chat-timestamp">${clock()}</span></div>
+              <div class="chat-bubble"><div class="msg-attachment-box"><div class="attach-file-icon">${ic('doc', 18)}</div>
+              <div class="attach-meta"><div class="attach-name">${esc(f.name)}</div><div class="attach-size">${fmtBytes(f.size)} • demo upload</div></div>
+              <a class="link-download" href="${url}" download="${esc(f.name)}" title="Download">${ic('down', 18)}</a>
+              </div></div></div>`;
+            $('chatMessagesScroll').appendChild(row);
+            scrollChat();
+            clearAttachment();
+            toast('Attachment shared in chat (demo: stored only in this browser — the POST /api/meetings/{id}/chat/files endpoint sends it to real storage).');
+        }
+
+        // ---------- Cross-tab sync for the panels above ----------
+        function onSharedStateStorage(e) {
+            if (e.key === pollsKey()) renderPolls();
+            if (e.key === qnaKey()) renderQna();
+            if (e.key === notesKey()) {
+                const data = lsRead(notesKey(), null);
+                if (!myNotesDirty) {
+                    $('notesArea').value = (data && data.text) || '';
+                    if (data && data.updatedAt) renderNotesMeta('saved', data.by, data.updatedAt);
+                }
+                $('notesCounterBadge').textContent = (data && data.editors && data.editors.length) ? data.editors.length : 1;
+            }
+            if (e.key === breakoutKey()) {
+                if (isHost) renderBreakout();
+                updateBreakoutBanner();
+            }
+        }
+
+        window.addEventListener('storage', onSharedStateStorage);
+
         // ---------- Init ----------
         render();
         setView('grid');
         setTool('pen');
         showPanel('people');
+        // Phase 2/3 panels initialisation
+        renderPollOptionInputs();
+        renderPolls();
+        renderQna();
+        loadNotes();
+        if (isHost) renderBreakout();
+        updateBreakoutBanner();
+        initAvUi();
 
         // ---------- Demo state integration: roster, waiting room, meeting record ----------
         function formatTimeAgo(ts) {
@@ -3447,6 +5282,8 @@
         let endedHandled = false;
         const stopRecordListener = app ? app.listenToMeetingRecord(meetingId, record => {
             if (!record) return;
+            // Host lock / waiting-room switches (set in any tab) refresh everywhere.
+            applyMeetingSecurity(record);
             const sharedSample = record.sampleParticipants !== false;
             if (sharedSample !== sampleParticipants) {
                 sampleParticipants = sharedSample;
@@ -3472,8 +5309,11 @@
         function stopTimersAndListeners() {
             clearInterval(captionsInterval);
             clearInterval(recInterval);
-            [stopRosterListener, stopRecordListener, stopWaitingRequestsListener].forEach(s => s && s());
+            clearTimeout(notesSaveTimer);
+            stopLevelMeter();
             window.removeEventListener('storage', onWbStorage);
+            window.removeEventListener('storage', onSharedStateStorage);
+            [stopRosterListener, stopRecordListener, stopWaitingRequestsListener].forEach(s => s && s());
             stopShareScreen();
             if (camStream) camStream.getTracks().forEach(t => t.stop());
         }

@@ -1335,6 +1335,7 @@
       /* ---------- Multi-Tab Join Request Synchronization ---------- */
       let activeRequest = null;
       let stopRequestListener = null;
+      let stopLockListener = null;
       let stopEndedListener = null;
       let endedHandled = false;
 
@@ -1353,6 +1354,7 @@
         cancelBtn.hidden = true;
         rejoinBtn.hidden = true;
         if (stopRequestListener) stopRequestListener();
+        if (stopLockListener) stopLockListener();
       }
 
       // Invalid/missing meeting IDs: same terminal state, no request ever sent.
@@ -1386,12 +1388,56 @@
             showMeetingNotFoundState();
             return;
           }
+          // Host locked the meeting: no new joins until the host unlocks (set
+          // from the host's Host tools panel; the backend enforces it for real).
+          if (record.locked) {
+            stopWaiting();
+            const lockPill = cancelledState.querySelector('.status-pill');
+            if (lockPill) {
+              lockPill.style.background = '#fff7ed';
+              lockPill.style.color = '#9a3412';
+              lockPill.innerHTML = '<span class="status-dot" style="background:#ea580c;"></span> Meeting locked';
+            }
+            showCancelledState(
+              'This meeting is locked',
+              "The host has locked the meeting, so new participants can't join right now. You can rejoin once it's unlocked."
+            );
+            return;
+          }
+          // Waiting room disabled by the host: participants enter directly.
+          if (record.waitingRoom === false) {
+            showToast('The waiting room is off — joining the meeting directly...');
+            stopWaiting();
+            setTimeout(() => {
+              if (EuodooApp.goToCallPage) {
+                EuodooApp.goToCallPage(currentMeetingId, currentMeetingTitle);
+              } else {
+                window.location.href = 'Callpage.html?meetingId=' + encodeURIComponent(currentMeetingId) +
+                  '&meetingTitle=' + encodeURIComponent(currentMeetingTitle || '');
+              }
+            }, 700);
+            return;
+          }
         }
         activeRequest = EuodooApp.createJoinRequest(currentMeetingId, currentMeetingTitle, currentUser);
 
         if (stopRequestListener) stopRequestListener();
         stopRequestListener = EuodooApp.listenToRequest(activeRequest.requestId, (status, req) => {
           handleRequestStatusChange(status, req);
+        });
+        // If the host locks the meeting while someone is waiting, decline the queue.
+        stopLockListener = EuodooApp.listenToMeetingRecord(currentMeetingId, record => {
+          if (record && record.locked && activeRequest && !endedHandled) {
+            endedHandled = true;
+            if (stopRequestListener) stopRequestListener();
+            EuodooApp.cancelJoinRequest(activeRequest.requestId);
+            cancelBtn.hidden = true;
+            rejoinBtn.hidden = true;
+            showCancelledState(
+              'This meeting just got locked',
+              "The host locked the meeting while you were waiting, so the request was withdrawn. You can rejoin once it's unlocked."
+            );
+          }
         });
       }
 
@@ -1811,6 +1857,22 @@
 
       rejoinBtn.addEventListener('click', () => {
         if (window.EuodooApp && activeRequest) {
+          // Respect the host's lock / waiting-room settings on every re-entry.
+          const record = EuodooApp.getDemoMeeting ? EuodooApp.getDemoMeeting(currentMeetingId) : null;
+          if (record && record.endedAt) {
+            showMeetingEndedState();
+            return;
+          }
+          if (record && record.locked) {
+            showToast('The meeting is still locked by the host. Try again in a while.');
+            return;
+          }
+          if (record && record.waitingRoom === false) {
+            showToast('The waiting room is off — joining the meeting directly...');
+            window.location.href = 'Callpage.html?meetingId=' + encodeURIComponent(currentMeetingId) +
+              '&meetingTitle=' + encodeURIComponent(currentMeetingTitle || '');
+            return;
+          }
           activeRequest = EuodooApp.rejoinMeeting(activeRequest.requestId, currentMeetingId, currentMeetingTitle, currentUser);
           if (stopRequestListener) stopRequestListener();
           stopRequestListener = EuodooApp.listenToRequest(activeRequest.requestId, (status, req) => {
@@ -1850,6 +1912,7 @@
 
       window.addEventListener('pagehide', () => {
         if (stopRequestListener) stopRequestListener();
+        if (stopLockListener) stopLockListener();
         if (stopEndedListener) stopEndedListener();
         teardownMic();
         if (camStream) camStream.getTracks().forEach((t) => t.stop());
