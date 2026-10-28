@@ -92,7 +92,11 @@
                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg><span class="t-label">Meeting History</span></a>
             </li>
-            <li><a href="admin.html" th:href="@{/admin}" data-nav="analytics" class="nav-link"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+            <!-- Admin-only entry: removed by js for non-admin demo sessions.
+                 In the Spring Boot build, render this <li> server-side only
+                 (e.g. Thymeleaf sec:authorize="hasRole('ADMIN')"); hiding it in
+                 the markup alone must never be the authorization check. -->
+            <li data-admin-only><a href="admin.html" th:href="@{/admin}" data-nav="analytics" class="nav-link"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></svg><span class="t-label">Admin Analytics</span></a>
             </li>

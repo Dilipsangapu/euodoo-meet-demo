@@ -2128,12 +2128,30 @@ window.EuodooDemoData = {
         if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => moveThumb(false));
     }
 
+    /* Admin Analytics is only for administrators: the sidebar entry is removed
+       for everyone else (matching ADMIN_EMAILS in admin.html). Client-side
+       hiding is a presentation detail only — the admin.html gate AND the
+       backend role check are the real authorization layers. */
+    const ADMIN_EMAILS = ['kiran.s@euodoo.com'];
+
+    function isAdminSession() {
+        const s = (window.EuodooApp && EuodooApp.getSession && EuodooApp.getSession()) || state.user || {};
+        return !!(s.email && ADMIN_EMAILS.includes(String(s.email).toLowerCase()));
+    }
+
+    function syncAdminLink() {
+        document.querySelectorAll('[data-admin-only]').forEach((el) => {
+            if (!isAdminSession()) el.remove();
+        });
+    }
+
     async function init() {
         if (!U) {
             console.error('meet-utils.js must load before dashboard.js');
             return;
         }
         cacheElements();
+        syncAdminLink();
 
         state.today = getToday();
         state.todayKey = U.toKey(state.today);
